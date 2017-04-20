@@ -4,11 +4,9 @@
             [beer.models.db :as db]
             [noir.response :refer [redirect]]
             [noir.session :as session]
-            [noir.validation
-             :refer [rule errors? has-value? on-error]]
+            [noir.validation :refer [rule errors? has-value? on-error]]
             [noir.util.crypt :as crypt]
-            [hiccup.form :refer
-             [form-to label text-field password-field submit-button]]))
+            [hiccup.form :refer [form-to label text-field password-field submit-button]]))
 
 (defn format-error [[error]]
   [:p.error error])

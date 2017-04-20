@@ -1,7 +1,6 @@
-(ns beer.rules.rules
+(ns beer.models.rule
   (:require [compojure.core :refer :all]
-            [clara.rules :refer :all]
-            [beer.models.db :as db]))
+            [clara.rules :refer :all]))
 
 (defrecord SupportRequest [client level])
 
@@ -22,7 +21,8 @@
   (println "Notify" ?name "that"
           ?client "has a new support request!"))
 
-(-> (mk-session 'clara.example)
+(defn asd []
+  (-> (mk-session 'beer.models.rule)
     (insert (->ClientRepresentative "Alice" "Acme")
             (->SupportRequest "Acme" :high))
-    (fire-rules))
+    (fire-rules)))

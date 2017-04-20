@@ -4,7 +4,8 @@
             [hiccup.form :refer :all]
             [selmer.parser :refer [render-file]]
             [noir.session :as session]
-            [beer.models.db :as db]))
+            [beer.models.db :as db]
+            [beer.models.rule :as r]))
 
 (defn format-time [timestamp]
   (-> "dd.MM.yyyy"
@@ -19,7 +20,7 @@
       [:p "-" [:cite beername]]])])
 
 (defn home [& [name message error]]
-  (render-file "templates/home.html" {:title "Beer"}))
+  (render-file "templates/home.html" {:title "Beer" :test (r/asd)}))
 
 (defn save-message [name message]
   (cond

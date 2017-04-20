@@ -1,6 +1,7 @@
 {% extends "templates/base.html" %}
 
 {% block content %}
+<h1>{{test}}</h1>
   {% for entry in entries %}
     <h2>{{ entry.title }}</h2>
     <p>{{ entry.body }}</p>
