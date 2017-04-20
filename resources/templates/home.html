@@ -1,0 +1,8 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+  {% for entry in entries %}
+    <h2>{{ entry.title }}</h2>
+    <p>{{ entry.body }}</p>
+  {% endfor %}
+{% endblock %}
