@@ -2,10 +2,12 @@
   (:require [compojure.core :refer :all]
             [beer.views.layout :as layout]
             [hiccup.form :refer :all]
+            [beer.models.question :refer :all]
             [selmer.parser :refer [render-file]]
             [noir.session :as session]
             [beer.models.db :as db]
-            [beer.models.rule :as r]))
+            [beer.models.rule :as r])
+  (:import [beer.models.question Question]))
 
 (defn format-time [timestamp]
   (-> "dd.MM.yyyy"
@@ -19,8 +21,14 @@
       [:blockquote beerid]
       [:p "-" [:cite beername]]])])
 
+(def q (Question. nil 42 [1 2] nil false))
+
 (defn home [& [name message error]]
-  (render-file "templates/home.html" {:title "Beer" :test (r/asd)}))
+  (println "pre: " q)
+  (r/asd q)
+  (println "posle: " q)
+  (render-file "templates/home.html" {:title "Beer" :test q}))
+
 
 (defn save-message [name message]
   (cond
