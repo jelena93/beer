@@ -22,7 +22,8 @@
       :else
       (do (assoc (redirect "/"):session (assoc session :identity username))))))
 
-(defn registration-page [])
+(defn registration-page [&[error]]
+  (render-file "templates/register.html" {:title "Register" :error error}))
 
 (defn handle-registration [id pass pass1])
 
@@ -36,6 +37,6 @@
   (POST "/login" request
         (handle-login request))
   (GET "/logout" request (logout request))
-  (GET "/register" [_] (registration-page))
+  (GET "/register" [] (registration-page))
   (POST "/register" [id pass pass1]
         (handle-registration id pass pass1)))

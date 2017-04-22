@@ -34,7 +34,6 @@
 ;;   (render-file "templates/home.html" {:title "Beer" :test q}))
 
 (defn home [session]
-  (println (authenticated? session))
   (if-not (authenticated? session)
     (redirect "/login")
   (render-file "templates/home.html" {:title "Home"})))

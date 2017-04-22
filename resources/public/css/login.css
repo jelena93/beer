@@ -28,7 +28,7 @@ background-color:#33383E;
 
 form {
   position: relative;
-  width: 300px;
+  width: 100%;
   margin: 2 auto;
   background: rgba(130,130,130,.3);
   padding: 40px 40px;
@@ -40,7 +40,7 @@ form {
 }
 
 form input, form button {
-  width: 212px;
+  width: 100%;
   border: 1px solid;
   border-bottom-color: rgba(255,255,255,.5);
   border-right-color: rgba(60,60,60,.35);
@@ -48,11 +48,11 @@ form input, form button {
   border-left-color: rgba(80,80,80,.45);
   background-color: rgba(0,0,0,.2);
   background-repeat: no-repeat;
-  padding: 8px 24px 8px 10px;
+  padding: 10px 10px 10px 10px;
   letter-spacing: .075em;
   color: #fff;
   text-shadow: 0 1px 0 rgba(0,0,0,.1);
-  margin-bottom: 19px;
+  margin-bottom: 10px;
 }
 
 form input:focus { background-color: rgba(0,0,0,.4); }

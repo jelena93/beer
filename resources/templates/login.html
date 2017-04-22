@@ -20,7 +20,13 @@
   <div id="bg"></div>
 <div class="row">
     <div class="col-lg-4 col-lg-offset-4">
+      {% if error %}
+           <div class="alert alert-danger">
+  <strong>Danger!</strong> Indicates a dangerous or potentially negative action.
+</div>
+      {% endif %}
 <form action="" name="login" method="post">
+
   <div class="form-group form-group-lg">
     <label for=""></label>
   <input type="text" name="username" id="username" placeholder="Username" class="class="form-control username">
@@ -30,8 +36,10 @@
   <input type="password" name="password" id="password" placeholder="Password" class="class="form-control pass">
   </div>
   <button type="submit">Login</button>
-  {{error}}
+
 </form>
+              Don't have an account? Register <a href="/register">here</a>
+
   </div>
   </div>
   </div>
