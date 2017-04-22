@@ -6,6 +6,13 @@
             [selmer.parser :refer [render-file]]
             [noir.session :as session]
             [beer.models.db :as db]
+                        [buddy.auth.backends.session :refer [session-backend]]
+            [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
+            [buddy.auth :refer [authenticated? throw-unauthorized]]
+                        [compojure.response :refer [render]]
+
+            [clojure.java.io :as io]
+            [ring.util.response :refer [response redirect content-type]]
             [beer.models.rule :as r])
   (:import [beer.models.question Question]))
 
@@ -22,6 +29,13 @@
       [:p "-" [:cite beername]]])])
 
 (def q (Question. nil 42 [1 2] nil false))
+
+(defn homes
+  [request]
+  (if-not (authenticated? request)
+    (redirect "/login")
+    (let [content "index.html"]
+      (response content))))
 
 (defn home [& [name message error]]
   (println "pre: " q)
@@ -42,5 +56,5 @@
       (home))))
 
 (defroutes home-routes
-  (GET "/" [] (home))
+  (GET "/" [request] (homes request))
   (POST "/" [name message] (save-message name message)))

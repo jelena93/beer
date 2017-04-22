@@ -1,6 +1,7 @@
 (ns beer.routes.auth
   (:require [compojure.core :refer [defroutes GET POST]]
             [beer.views.layout :as layout]
+            [selmer.parser :refer [render-file]]
             [beer.models.db :as db]
             [noir.response :refer [redirect]]
             [noir.session :as session]
@@ -18,11 +19,7 @@
         [:br]))
 
 (defn login-page []
-  (layout/common
-    (form-to [:post "/login"]
-             (control text-field :id "Screen name")
-             (control password-field :pass "Password")
-             (submit-button "login"))))
+  (render-file "templates/login.html" {:title "Login"}))
 
 (defn handle-login [id pass]
   (let [user (db/get-user id pass)]
