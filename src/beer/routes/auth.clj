@@ -1,72 +1,41 @@
 (ns beer.routes.auth
   (:require [compojure.core :refer [defroutes GET POST]]
             [beer.views.layout :as layout]
+            [ring.util.response :refer [redirect]]
             [selmer.parser :refer [render-file]]
             [beer.models.db :as db]
-            [noir.response :refer [redirect]]
-            [noir.session :as session]
-            [noir.validation :refer [rule errors? has-value? on-error]]
-            [noir.util.crypt :as crypt]
             [hiccup.form :refer [form-to label text-field password-field submit-button]]))
 
-(defn format-error [[error]]
-  [:p.error error])
+(defn login-page [&[error]]
+  (render-file "templates/login.html" {:title "Login" :error error}))
 
-(defn control [field name text]
-  (list (on-error name format-error)
-        (label name text)
-        (field name)
-        [:br]))
-
-(defn login-page []
-  (render-file "templates/login.html" {:title "Login"}))
-
-(defn handle-login [id pass]
-  (let [user (db/get-user id pass)]
-    (rule (has-value? id)
-          [:id "Screen name is required"])
-    (rule (has-value? pass)
-          [:pass "Password is required"])
+(defn handle-login [request]
+  (let [username (:username (:params request))
+        password (:password (:params request))
+        user (db/get-user username password)
+        session (:session request)]
     (cond
-      (errors? :id :pass)
-      (login-page)
+      (or (nil? username) (nil? password))
+      (login-page "Please provide username and password")
       (nil? user)
-      (login-page)
+      (login-page "Bad credentials")
       :else
-      (do
-        (session/put! :user user)
-        (redirect "/")))))
+      (do (assoc (redirect "/"):session (assoc session :identity username))))))
 
-(defn registration-page []
-  (layout/common
-    (form-to [:post "/register"]
-             (control text-field :id "Screen name")
-             (control password-field :pass "Password")
-             (control password-field :pass1 "Retype Password")
-             (submit-button "Create Account"))))
+(defn registration-page [])
 
-(defn handle-registration [id pass pass1]
-  (rule (= pass pass1)
-        [:pass "Password was not retyped correctly"])
-  (if (errors? :pass)
-    (registration-page)
-    (do
-      (db/add-user id pass)
-      (redirect "/"))))
+(defn handle-registration [id pass pass1])
 
-(defn logout []
-  (layout/common
-    (form-to [:post "/logout"]
-             (submit-button "logout"))))
+(defn logout
+  [request]
+  (-> (redirect "/login")
+      (assoc :session {})))
 
 (defroutes auth-routes
   (GET "/login" [] (login-page))
-  (POST "/login" [id pass]
-        (handle-login id pass))
-  (GET "/logout" [] (logout))
-  (POST "/logout" []
-        (session/clear!)
-        (redirect "/"))
+  (POST "/login" request
+        (handle-login request))
+  (GET "/logout" request (logout request))
   (GET "/register" [_] (registration-page))
   (POST "/register" [id pass pass1]
         (handle-registration id pass pass1)))

@@ -8,11 +8,6 @@
             [selmer.parser :refer :all]
             [compojure.handler :as handler]
             [compojure.route :as route]
-            [noir.session :as session]
-            [noir.validation
-             :refer [wrap-noir-validation]]
-            [ring.middleware.session.memory
-             :refer [memory-store]]
             [buddy.auth.backends.session :refer [session-backend]]
             [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
             [buddy.auth :refer [authenticated? throw-unauthorized]]
@@ -36,10 +31,5 @@
 (def app
   (-> (routes auth-routes home-routes app-routes)
       (handler/site)
-      (session/wrap-noir-session
-        {:store (memory-store)})
-      (wrap-noir-validation)
       (wrap-authentication backend)
-          (wrap-params)
-    (wrap-session)
       (wrap-base-url)))
