@@ -25,7 +25,20 @@
 (defn registration-page [&[error]]
   (render-file "templates/register.html" {:title "Register" :error error}))
 
-(defn handle-registration [id pass pass1])
+(defn handle-registration [request]
+  (let [username (:username (:params request))
+        password (:password (:params request))
+        first_name (:first_name (:params request))
+        last_name (:last_name (:params request))
+        email (:email (:params request))
+        session (:session request)]
+  (if (or (nil? username) (nil? password) (nil? first_name) (nil? last_name) (nil? email))
+    (login-page "Please fill all fields"))
+  (do
+    (try
+      (db/add-user username password first_name last_name email)
+      (assoc (redirect "/"):session (assoc session :identity username))
+      (catch Exception  e (render-file "templates/register.html" {:title "Register" :error (str "User with username: " username " already exists") }))))))
 
 (defn logout
   [request]
@@ -38,5 +51,4 @@
         (handle-login request))
   (GET "/logout" request (logout request))
   (GET "/register" [] (registration-page))
-  (POST "/register" [id pass pass1]
-        (handle-registration id pass pass1)))
+  (POST "/register" request (handle-registration request)))

@@ -11,8 +11,9 @@
             [buddy.auth.backends.session :refer [session-backend]]
             [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
             [buddy.auth :refer [authenticated? throw-unauthorized]]
-            [beer.routes.home :refer [home-routes]]
             [beer.routes.auth :refer [auth-routes]]
+            [beer.routes.home :refer [home-routes]]
+            [beer.routes.questions :refer [question-routes]]
             [beer.models.db :as db]))
 
 (def backend (session-backend))
@@ -29,7 +30,7 @@
   (route/not-found "Not Found"))
 
 (def app
-  (-> (routes auth-routes home-routes app-routes)
+  (-> (routes auth-routes home-routes question-routes app-routes)
       (handler/site)
       (wrap-authentication backend)
       (wrap-base-url)))

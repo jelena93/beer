@@ -8,7 +8,6 @@
                         [buddy.auth.backends.session :refer [session-backend]]
             [buddy.auth :refer [authenticated? throw-unauthorized]]
                         [compojure.response :refer [render]]
-            [clojure.java.io :as io]
             [ring.util.response :refer [response redirect content-type]]
             [beer.models.rule :as r])
   (:import [beer.models.question Question]))
@@ -38,17 +37,5 @@
     (redirect "/login")
   (render-file "templates/home.html" {:title "Home"})))
 
-(defn save-message [name message]
-  (cond
-    (empty? name)
-    (home name message "No name")
-    (empty? message)
-    (home name message "No message")
-    :else
-    (do
-      (db/save-message name message)
-      (home))))
-
 (defroutes home-routes
-  (GET "/" request (home (:session request)))
-  (POST "/" [name message] (save-message name message)))
+  (GET "/" request (home (:session request))))

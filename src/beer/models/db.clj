@@ -7,11 +7,11 @@
          :user "admin"
          :password "admin"})
 
-(defn add-user [username password]
-  (let [sql "insert into user (username, password) values (? , ?)"]
+(defn add-user [username password first_name last_name email]
+  (let [sql "insert into user (username, password, first_name, last_name, email, role) values (?, ?, ?, ?, ?, ?)"]
     (sql/with-connection
       db
-      (sql/do-prepared sql [username password] ))))
+      (sql/do-prepared sql [username password first_name last_name email "USER"] ))))
 
 (defn get-user [username password]
   (sql/with-connection
@@ -33,10 +33,4 @@
       ["SELECT * FROM beer"]
       (doall res))))
 
-(defn save-message [name message]
-  (sql/with-connection
-    db
-    (sql/insert-values
-      :beer
-      [:name :message :timestamp]
-      [name message (new java.util.Date)])))
+
