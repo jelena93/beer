@@ -8,24 +8,35 @@
                         [compojure.response :refer [render]]
             [ring.util.response :refer [response redirect content-type]]
             [liberator.core :refer [resource defresource]]
-            [cheshire.core :refer [generate-string]]
-            [beer.models.rule :as r])
+            [clojure.data.json :as json]
+            [beer.models.rule :as rules])
     (:import [beer.models.question Question]))
-(deftype  Qu [text answer ])
+
+;(def q (Question. nil nil nil nil false nil))
+
+(defn get-question-as-map [text suggestedAnswers]
+  {:text text :suggestedAnswers suggestedAnswers})
 
 (defn get-question-page []
-  (render-file "templates/question.html" {:title "Questions"}))
+  (def q (Question. nil nil nil nil false nil))
+  (rules/askQuestion q)
+  (render-file "templates/question.html" {:title "Questions" :question (get-question-as-map (.getText q) (.getSuggestedAnswers q))}))
+
+(defn get-question-from-rules [answer]
+  (.setAnswer q answer)
+  (rules/askQuestion q))
 
 (defresource get-question [answer]
   :allowed-methods [:post]
   :handle-malformed "user name cannot be empty!"
-  :post!  (println answer)
-  :handle-created (generate-string (Qu. 42 false))
+  :post!  (get-question-from-rules answer)
+  :handle-created (json/write-str (get-question-as-map (.getText q) (.getSuggestedAnswers q)))
   :available-media-types ["application/json"])
 
 (defroutes question-routes
   (GET "/questions" [] (get-question-page))
   (POST "/questions" [answer] (get-question answer)))
+
 
 
 ;; (defroutes question-routes

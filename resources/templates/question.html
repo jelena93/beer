@@ -3,22 +3,25 @@
 
 <div class="contact">
 		<div class="container">
-			<div class="contact-info">					<h3>1. Question</h3>
-
+			<div class="contact-info">
+<!--         <h3>1. Question</h3> -->
 			</div>
 			<div class="contact-form">
 				<div class="contact-info">
-					<h3>Where are you?</h3>
+					<h3 id="question-text">{{question.text}}</h3>
 					<div class="strip-line"></div>
 				</div>
         <div class="row">
           <div class="col-lg-4 col-lg-offset-4">
-        <form>
-          <input type="radio" name="answer" value="male" checked> Male<br>
-          <input type="radio" name="answer" value="female"> Female<br>
-          <input type="radio" name="answer" value="other"> Other
+<!--         <form id="form-questions"> -->
+            <div id="question-suggestedAnswers">
+            {% for suggestedAnswer in question.suggestedAnswers %}
+          <input type="radio" name="answer" value="{{ suggestedAnswer }}"> {{ suggestedAnswer }}<br>
+            {% endfor %}
+              </div>
 					<input class="pull-right" type="button" value="NEXT" onclick="sendAnswer()">
-				</form>
+
+<!-- 				</form> -->
           </div>
         </div>
 

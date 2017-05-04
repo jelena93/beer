@@ -10,6 +10,7 @@
                  [buddy/buddy-auth "1.4.1"]
                  [mysql/mysql-connector-java "5.1.6"]
                  [liberator "0.10.0"]
+                 [ring/ring-json "0.4.0"]
                  [cheshire "5.2.0"]]
   :plugins [[lein-ring "0.8.12"]]
   :ring {:handler beer.handler/app

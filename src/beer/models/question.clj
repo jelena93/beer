@@ -1,7 +1,7 @@
 (ns beer.models.question
   (:require [compojure.core :refer :all]))
 
-(deftype  Question [text answer suggestedAnswers previousQuestion isEnd])
+;; (defrecord  Question [text answer suggestedAnswers previousQuestion isEnd beer])
 
 (defprotocol PQuestion
   (getText [this])
@@ -14,7 +14,8 @@
   (setPreviousAnswer [this val])
   (isEnd [this])
   (setEnd [this val])
-  )
+  (getBeer [this])
+  (setBeer [this val]))
 
 (deftype Question [
                        ^:volatile-mutable text
@@ -22,10 +23,11 @@
                        ^:volatile-mutable suggestedAnswers
                        ^:volatile-mutable previousQuestion
                        ^:volatile-mutable isEnd
+                       ^:volatile-mutable beer
                        ]
                          PQuestion
-  ;make repl responses nicer:
-  (toString [this]        (str text "->" answer " : " suggestedAnswers " : " previousQuestion ": " isEnd))
+
+  (toString [this]        (str text "->" answer " : " suggestedAnswers " : " previousQuestion " : " isEnd ", beer: " beer))
   (getText  [this]      text)
   (setText  [this val]  (set! text val))
   (getAnswer   [this]       answer)
@@ -36,4 +38,5 @@
   (setPreviousAnswer   [this val]  (set! previousQuestion val))
   (isEnd   [this]       isEnd)
   (setEnd   [this val]  (set! isEnd val))
-  )
+  (getBeer   [this]       beer)
+  (setBeer   [this val]  (set! beer val)))

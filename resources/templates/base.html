@@ -32,7 +32,12 @@
 <body >
     {% include "templates/header.html" %}
 {% include "templates/banner.html" %}
+      <div class="alert alert-danger alert-dismissable" id="error" style="display:none;">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+        <div id="error-message"></div>
+  </div>
         {% block content %}{% endblock %}
+
   {% include "templates/footer.html" %}
 </body>
 </html>

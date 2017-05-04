@@ -24,7 +24,7 @@
       [:blockquote beerid]
       [:p "-" [:cite beername]]])])
 
-(def q (Question. nil 42 [1 2] nil false))
+;; (def q (Question. nil 42 [1 2] nil false nil))
 
 ;; (defn home [& [name message error]]
 ;;   (println "pre: " q)
