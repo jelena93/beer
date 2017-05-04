@@ -239,92 +239,98 @@
 ; -------------------------------------suggesting-beer------------------------------
 
 (defrule bs-ale-low-sweet
-  [?bs <- BeerStyle (= "Ale" typeOfBeer) (= "Low" strength) (= "Sweet" taste)]
+  [?bs <- BeerStyle (= "Ale" typeOfBeerStyle) (= "Low" strength) (= "Sweet" taste)]
   =>
   (.setNameOfBeerStyle ?bs "Belgian Pale Ale")
   (println "bs-ale-low-sweet"))
 
 (defrule bs-ale-low-bitter
-  [?bs <- BeerStyle (= "Ale" typeOfBeer) (= "Low" strength) (= "Bitter" taste)]
+  [?bs <- BeerStyle (= "Ale" typeOfBeerStyle) (= "Low" strength) (= "Bitter" taste)]
   =>
   (.setNameOfBeerStyle ?bs "Indian Pale Ale")
   (println "bs-ale-low-bitter"))
 
 (defrule bs-ale-low-drinkable
-  [?bs <- BeerStyle (= "Ale" typeOfBeer) (= "Low" strength) (= "Drinkable" taste)]
+  [?bs <- BeerStyle (= "Ale" typeOfBeerStyle) (= "Low" strength) (= "Drinkable" taste)]
   =>
   (.setNameOfBeerStyle ?bs "Witbier")
   (println "bs-ale-low-drinkable"))
 
 (defrule bs-ale-low-full-taste-light
-  [?bs <- BeerStyle (= "Ale" typeOfBeer) (= "Low" strength) (= "With full taste" taste) (= "Light" color)]
+  [?bs <- BeerStyle (= "Ale" typeOfBeerStyle) (= "Low" strength) (= "With full taste" taste) (= "Light" color)]
   =>
   (.setNameOfBeerStyle ?bs "Kristalweizen")
   (println "bs-ale-low-full-taste-light"))
 
 (defrule bs-ale-low-full-taste-hazed
-  [?bs <- BeerStyle (= "Ale" typeOfBeer) (= "Low" strength) (= "With full taste" taste) (= "Hazed" color)]
+  [?bs <- BeerStyle (= "Ale" typeOfBeerStyle) (= "Low" strength) (= "With full taste" taste) (= "Hazed" color)]
   =>
   (.setNameOfBeerStyle ?bs "Heffeweizen")
   (println "bs-ale-low-full-taste-hazed"))
 
 (defrule bs-ale-low-full-taste-dark
-  [?bs <- BeerStyle (= "Ale" typeOfBeer) (= "Low" strength) (= "With full taste" taste) (= "Dark" color)]
+  [?bs <- BeerStyle (= "Ale" typeOfBeerStyle) (= "Low" strength) (= "With full taste" taste) (= "Dark" color)]
   =>
   (.setNameOfBeerStyle ?bs "Dunkelweizen")
   (println "bs-ale-low-full-taste-dark"))
 
 (defrule bs-ale-strong-sweet
-  [?bs <- BeerStyle (= "Ale" typeOfBeer) (= "Strong" strength) (= "Sweet" taste)]
+  [?bs <- BeerStyle (= "Ale" typeOfBeerStyle) (= "Strong" strength) (= "Sweet" taste)]
   =>
   (.setNameOfBeerStyle ?bs "Belgian Strong Ale")
   (println "bs-ale-strong-sweet"))
 
 (defrule bs-ale-strong-full-taste
-  [?bs <- BeerStyle (= "Ale" typeOfBeer) (= "Strong" strength) (= "With full taste" taste)]
+  [?bs <- BeerStyle (= "Ale" typeOfBeerStyle) (= "Strong" strength) (= "With full taste" taste)]
   =>
   (.setNameOfBeerStyle ?bs "Stout/Porter")
   (println "bs-ale-strong-full-taste"))
 
 (defrule bs-ale-strong-bitter
-  [?bs <- BeerStyle (= "Ale" typeOfBeer) (= "Strong" strength) (= "Bitter" taste)]
+  [?bs <- BeerStyle (= "Ale" typeOfBeerStyle) (= "Strong" strength) (= "Bitter" taste)]
   =>
   (.setNameOfBeerStyle ?bs "Scocth Ale")
   (println "bs-ale-strong-bitter"))
 
 (defrule bs-lager-light-bitter
-  [?bs <- BeerStyle (= "Lager" typeOfBeer) (= "Light" color) (= "Bitter" taste)]
+  [?bs <- BeerStyle (= "Lager" typeOfBeerStyle) (= "Light" color) (= "Bitter" taste)]
   =>
   (.setNameOfBeerStyle ?bs "Pilsner")
   (println "bs-lager-light-bitter"))
 
 (defrule bs-lager-light-sweet
-  [?bs <- BeerStyle (= "Lager" typeOfBeer) (= "Light" color) (= "Sweet" taste)]
+  [?bs <- BeerStyle (= "Lager" typeOfBeerStyle) (= "Light" color) (= "Sweet" taste)]
   =>
   (.setNameOfBeerStyle ?bs "Kellerbier")
   (println "bs-lager-light-sweet"))
 
 (defrule bs-lager-light-drinkable
-  [?bs <- BeerStyle (= "Lager" typeOfBeer) (= "Light" color) (= "Drinkable" taste)]
+  [?bs <- BeerStyle (= "Lager" typeOfBeerStyle) (= "Light" color) (= "Drinkable" taste)]
   =>
   (.setNameOfBeerStyle ?bs "Pale Lager")
   (println "bs-lager-light-drinkable"))
 
 (defrule bs-lager-dark-low
-  [?bs <- BeerStyle (= "Lager" typeOfBeer) (= "Dark" color) (= "Low" strength)]
+  [?bs <- BeerStyle (= "Lager" typeOfBeerStyle) (= "Dark" color) (= "Low" strength)]
   =>
   (.setNameOfBeerStyle ?bs "Dark Lager")
   (println "bs-lager-dark-low"))
 
 (defrule bs-lager-dark-strong
-  [?bs <- BeerStyle (= "Lager" typeOfBeer) (= "Dark" color) (= "Strong" strength)]
+  [?bs <- BeerStyle (= "Lager" typeOfBeerStyle) (= "Dark" color) (= "Strong" strength)]
   =>
   (.setNameOfBeerStyle ?bs "Bock")
   (println "bs-lager-dark-strong"))
 
 
-(defn askQuestion [q]
+(defn ask-question [q]
   (-> (mk-session 'beer.models.rule)
     (insert
       q)
+    (fire-rules)))
+
+(defn get-answer [bs]
+  (-> (mk-session 'beer.models.rule)
+    (insert
+      bs)
     (fire-rules)))

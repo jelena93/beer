@@ -12,19 +12,27 @@
             [beer.models.rule :as rules])
     (:import [beer.models.question Question]))
 
-;(def q (Question. nil nil nil nil false nil))
-
 (defn get-question-as-map [text suggestedAnswers]
   {:text text :suggestedAnswers suggestedAnswers})
 
 (defn get-question-page []
   (def q (Question. nil nil nil nil false nil))
-  (rules/askQuestion q)
+  (rules/ask-question q)
   (render-file "templates/question.html" {:title "Questions" :question (get-question-as-map (.getText q) (.getSuggestedAnswers q))}))
+
+(defn get-answer []
+  (rules/ask-question (.getBeerStyle (.getBeer q)))
+  (db/get-beer-style (.getBeerStyleName (.getBeerStyle (.getBeer q))) ))
 
 (defn get-question-from-rules [answer]
   (.setAnswer q answer)
-  (rules/askQuestion q))
+  (if (.isEnd q)
+    (get-answer))
+  (rules/ask-question q))
+
+;; (defn get-question-from-rules [answer]
+;;   (.setAnswer q answer)
+;;   (rules/askQuestion q))
 
 (defresource get-question [answer]
   :allowed-methods [:post]

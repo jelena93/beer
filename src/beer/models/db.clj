@@ -11,13 +11,20 @@
   (let [sql "insert into user (username, password, first_name, last_name, email, role) values (?, ?, ?, ?, ?, ?)"]
     (sql/with-connection
       db
-      (sql/do-prepared sql [username password first_name last_name email "USER"] ))))
+      (sql/do-prepared sql [username password first_name last_name email "USER"]))))
 
 (defn get-user [username password]
   (sql/with-connection
     db
     (sql/with-query-results
       res ["select * from user where username = ? and password = ?" username password] (first res))))
+
+(defn get-beer-style [bsname]
+  (sql/with-connection
+    db
+    (sql/with-query-results
+      res ["select * from beerstyle where name = ?" bsname] (doall res))))
+
 
 ;;(db/delete-user ((session/get :user):username))
 (defn delete-user [username]
