@@ -1385,20 +1385,20 @@ margin-top:40px;
 background: #2f6818;
 text-align:center;
   margin: 0 0 0px 0;
-  font-size: 19px;
-  color: #887f66;
-  font-weight: 200;
-  line-height: 1.6em;
-  text-transform: uppercase;
+  font-size: 16px;
+  color: white;
+/*   font-weight: 200; */
+/*   line-height: 1.6em; */
+/*   text-transform: uppercase; */
   letter-spacing: 1px;
   font-family: 'Bevan', cursive;
 }
 .business-grid p {
   color: #542f1d;
-  font-size: 14px;
+  font-size: 12px;
   text-shadow: 1px 1px 0px #fff;
-  margin: 10px 0 0 0;
-  line-height: 1.8em;
+  margin: 5px 0 0 0;
+/*   line-height: 1.8em; */
   }
 .business-grid img{
 width:100%;
