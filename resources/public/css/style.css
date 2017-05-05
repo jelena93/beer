@@ -762,7 +762,7 @@ margin:10px 0;
   margin: 0px 0 10px 0;
   line-height: 1.8em;
 }
-.event-grid_pic a{
+.more a{
   font-weight: 600;
   font-size: 14px;
   color: #2f6818;
@@ -775,7 +775,7 @@ font-size:16px;
 font-weight:600;
   background: #887f66;
   }
-.event-grid_pic a:hover{
+.more a:hover{
   color: #542f1d;
 }
 .banner-info a:hover{

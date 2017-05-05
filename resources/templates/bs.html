@@ -13,6 +13,8 @@
 					<h4>A FEW WORDS ABOUT THIS BEER STYLE</h4>
 					<p> {{bs.description}}</p>
 				</div>
+        							<li><a href="#" class="like">15</a></li>
+
 				<div class="clearfix"></div>
 			</div>
 		</div>
@@ -27,16 +29,12 @@
 			<div class="col-md-3 business-grid">
         <a href="{{b.info}}"><img class="img-responsive" src="/images/ggg.jpg" alt=""/></a>
 				<h3>{{b.beername}}</h3>
-				<p><strong>Domace: </strong> {{b.domace}}</p>
-        <p><strong>Jeftino: </strong>{{b.jeftino}}</p>
-        <p><strong>Alcohol: </strong> {{b.alkohol}}</p>
-        <p><strong>Manufacturer: </strong> {{b.proizvodjac}}</p>
-        <p><strong>Country: </strong> {{b.zemlja}}</p>
+        <p><hr/><strong>Alcohol: </strong> {{b.alkohol}}  <div class="more"><a href="/beer/{{b.beerid}}">Read More</a></div></p>
 			</div>
       {% endfor %}
 
+</div>
 			<div class="clearfix"></div>
 		</div>
 	</div>
-</div>
 {% endblock %}

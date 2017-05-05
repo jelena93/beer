@@ -31,6 +31,12 @@
     (sql/with-query-results
       res ["select * from beerstyle where beerStyleID = ?" id] (first res))))
 
+(defn get-beer-by-id [id]
+  (sql/with-connection
+    db
+    (sql/with-query-results
+      res ["select * from beer where beerID = ?" id] (first res))))
+
 (defn get-beers-for-beer-style [id]
   (sql/with-connection
     db

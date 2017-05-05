@@ -1,4 +1,4 @@
-(ns beer.routes.bs
+(ns beer.routes.beer
   (:require [compojure.core :refer :all]
             [hiccup.form :refer :all]
             [selmer.parser :refer [render-file]]
@@ -7,12 +7,11 @@
             [buddy.auth :refer [authenticated? throw-unauthorized]]
                         [compojure.response :refer [render]]
             [ring.util.response :refer [response redirect content-type]])
-  (:import [beer.models.question Question]))
+)
 
-
-(defn get-bs [id]
-  (render-file "templates/bs.html" {:bs (db/get-beer-style-by-id id) :beers (db/get-beers-for-beer-style id)})
+(defn get-beer [id]
+  (render-file "templates/beer.html" {:beer (db/get-beer-by-id id)})
   )
 
-(defroutes bs-routes
-  (GET "/bs/:id" [id] (get-bs id)))
+(defroutes beer-routes
+  (GET "/beer/:id" [id] (get-beer id)))
