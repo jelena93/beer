@@ -4,21 +4,21 @@
   <title>{{title}}</title>
 		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 	<!-- //for-mobile-apps -->
-			<link href="css/bootstrap.css" rel="stylesheet">
-			<link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
+			<link href="/css/bootstrap.css" rel="stylesheet">
+			<link href="/css/style.css" rel="stylesheet" type="text/css" media="all" />
 	<!--fonts-->
 		<link href='http://fonts.googleapis.com/css?family=Stint+Ultra+Condensed' rel='stylesheet' type='text/css'>
 		<link href='http://fonts.googleapis.com/css?family=Bevan' rel='stylesheet' type='text/css'>
 		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
 	<!--//fonts-->
 	<!-- js -->
-		<script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
-  	<script type="text/javascript" src="js/questions.js"></script>
+		<script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+  	<script type="text/javascript" src="/js/questions.js"></script>
 	<!-- js -->
 	<!-- start-smoth-scrolling -->
-	<script type="text/javascript" src="js/move-top.js"></script>
-	<script type="text/javascript" src="js/easing.js"></script>
+	<script type="text/javascript" src="/js/move-top.js"></script>
+	<script type="text/javascript" src="/js/easing.js"></script>
 	<script type="text/javascript">
 		jQuery(document).ready(function($) {
 			$(".scroll").click(function(event){
@@ -36,7 +36,16 @@
     <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
         <div id="error-message"></div>
   </div>
-        {% block content %}{% endblock %}
+
+<div class="footer-top">
+	<div class="container">
+		<div class="top-grids">
+{% block content %}{% endblock %}
+
+		</div>
+	</div>
+</div>
+
 
   {% include "templates/footer.html" %}
 </body>

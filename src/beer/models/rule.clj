@@ -9,7 +9,7 @@
            [beer.models.beerStyle BeerStyle]
            ))
 ;;beer -> location priceRange domestic nameOfBeer alcohol manufacturer country info beerStyle
-;;beerStyle -> nameOfBeerStyle description picture typeOfBeerStyle strength color taste
+;;beerStyle -> id nameOfBeerStyle description picture typeOfBeerStyle strength color taste
 
 (defrule location
   [?q <- Question (= nil text)]
@@ -21,7 +21,7 @@
 (defrule location-building
   [?q <- Question (= "Where would you rather drink beer?" text) (= "In front of a building" answer)]
   =>
-  (.setBeer ?q (Beer. (.getAnswer ?q) "no" nil nil nil nil nil nil (BeerStyle. nil nil nil "Lager" nil nil nil)))
+  (.setBeer ?q (Beer. (.getAnswer ?q) "no" nil nil nil nil nil nil (BeerStyle. nil nil nil nil "Lager" nil nil nil)))
   (.setText ?q "Would you rather drink light or dark beer?")
   (.setSuggestedAnswers ?q ["Light" "Dark"])
   (println "location-building"))

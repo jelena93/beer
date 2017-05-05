@@ -2,6 +2,8 @@
   (:require [compojure.core :refer :all]))
 
 (defprotocol PBeerStyle
+  (getId [this])
+  (setId [this val])
   (getNameOfBeerStyle [this])
   (setNameOfBeerStyle [this val])
   (getDescription [this])
@@ -19,6 +21,7 @@
   )
 
 (deftype BeerStyle [
+                ^:volatile-mutable id
                 ^:volatile-mutable nameOfBeerStyle
                 ^:volatile-mutable description
                 ^:volatile-mutable picture
@@ -29,7 +32,9 @@
                        ]
                          PBeerStyle
 
-  (toString [this]        (str nameOfBeerStyle ", " description))
+  (toString [this]        (str id ", " nameOfBeerStyle ", " description))
+  (getId  [this]      id)
+  (setId  [this val]  (set! id val))
   (getNameOfBeerStyle  [this]      nameOfBeerStyle)
   (setNameOfBeerStyle  [this val]  (set! nameOfBeerStyle val))
   (getDescription   [this]       description)

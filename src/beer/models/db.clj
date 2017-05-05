@@ -19,12 +19,23 @@
     (sql/with-query-results
       res ["select * from user where username = ? and password = ?" username password] (first res))))
 
-(defn get-beer-style [bsname]
+(defn get-beer-style-by-name [bsname]
   (sql/with-connection
     db
     (sql/with-query-results
-      res ["select * from beerstyle where name = ?" bsname] (doall res))))
+      res ["select * from beerstyle where name = ?" bsname] (first res))))
 
+(defn get-beer-style-by-id [id]
+  (sql/with-connection
+    db
+    (sql/with-query-results
+      res ["select * from beerstyle where beerStyleID = ?" id] (first res))))
+
+(defn get-beers-for-beer-style [id]
+  (sql/with-connection
+    db
+    (sql/with-query-results
+      res ["SELECT * FROM beer b JOIN beerstyle bs on (b.stil=bs.beerStyleID) WHERE bs.beerStyleID = ?" id] (doall res))))
 
 ;;(db/delete-user ((session/get :user):username))
 (defn delete-user [username]

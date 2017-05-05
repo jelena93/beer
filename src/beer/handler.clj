@@ -14,6 +14,7 @@
             [beer.routes.auth :refer [auth-routes]]
             [beer.routes.home :refer [home-routes]]
             [beer.routes.questions :refer [question-routes]]
+            [beer.routes.bs :refer [bs-routes]]
             [beer.models.db :as db]))
 
 (def backend (session-backend))
@@ -30,7 +31,7 @@
   (route/not-found "Not Found"))
 
 (def app
-  (-> (routes auth-routes home-routes question-routes app-routes)
+  (-> (routes auth-routes home-routes question-routes bs-routes app-routes)
       (handler/site)
       (wrap-authentication backend)
       (wrap-base-url)))
