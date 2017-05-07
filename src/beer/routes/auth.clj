@@ -12,7 +12,7 @@
 (defn handle-login [request]
   (let [username (:username (:params request))
         password (:password (:params request))
-        user (db/get-user username password)
+        user (db/get-user {:username username :password password})
         session (:session request)]
     (cond
       (or (nil? username) (nil? password))
@@ -36,7 +36,7 @@
     (login-page "Please fill all fields"))
   (do
     (try
-      (db/add-user username password first_name last_name email)
+      (db/add-user! {:username username :password password :first_name first_name :last_name last_name :email email :role "USER"})
       (assoc (redirect "/"):session (assoc session :identity username))
       (catch Exception  e (render-file "templates/register.html" {:title "Register" :error (str "User with username: " username " already exists") }))))))
 
