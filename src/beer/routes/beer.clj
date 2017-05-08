@@ -1,11 +1,8 @@
 (ns beer.routes.beer
   (:require [compojure.core :refer :all]
-            [hiccup.form :refer :all]
             [selmer.parser :refer [render-file]]
             [beer.models.db :as db]
-                        [buddy.auth.backends.session :refer [session-backend]]
-            [buddy.auth :refer [authenticated? throw-unauthorized]]
-                        [compojure.response :refer [render]]
+            [compojure.response :refer [render]]
             [ring.util.response :refer [response redirect content-type]])
 )
 

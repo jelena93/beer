@@ -1,10 +1,8 @@
 (ns beer.routes.auth
   (:require [compojure.core :refer [defroutes GET POST]]
-            [beer.views.layout :as layout]
             [ring.util.response :refer [redirect]]
             [selmer.parser :refer [render-file]]
-            [beer.models.db :as db]
-            [hiccup.form :refer [form-to label text-field password-field submit-button]]))
+            [beer.models.db :as db]))
 
 (defn login-page [&[error]]
   (render-file "templates/login.html" {:title "Login" :error error}))
@@ -20,7 +18,7 @@
       (empty? user)
       (login-page "Bad credentials")
       :else
-      (do (assoc (redirect "/"):session (assoc session :identity username))))))
+      (do (assoc (redirect "/"):session (assoc session :identity user))))))
 
 (defn registration-page [&[error]]
   (render-file "templates/register.html" {:title "Register" :error error}))

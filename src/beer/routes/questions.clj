@@ -5,43 +5,33 @@
             [beer.models.beerStyle :refer :all]
             [selmer.parser :refer [render-file]]
             [beer.models.db :as db]
-            [buddy.auth.backends.session :refer [session-backend]]
-            [buddy.auth :refer [authenticated? throw-unauthorized]]
-                        [compojure.response :refer [render]]
+            [compojure.response :refer [render]]
             [ring.util.response :refer [response redirect content-type]]
             [liberator.core :refer [resource defresource]]
             [clojure.data.json :as json]
             [beer.models.rule :as rules])
     (:import [beer.models.question Question]
-             [beer.models.beer Beer]
-             [beer.models.beerStyle BeerStyle]
-             ))
+             [beer.models.beer Beer]))
 
 (defn get-question-as-map [q]
-  {:text (.getText q) :suggestedAnswers (.getSuggestedAnswers q) :isEnd (.isEnd q) :bs (.getId (.getBeerStyle (.getBeer q)))})
+  {:text (.getText q) :suggestedAnswers (.getSuggestedAnswers q) :isEnd (.isEnd q) :bs (.getIdBs q)})
 
 (defn get-question-page []
-  (def q (Question. nil nil nil nil false (Beer. nil nil nil nil nil nil nil nil (BeerStyle. 0 nil nil nil nil nil nil nil))))
+  (def q (->Question nil nil nil nil false nil nil nil nil nil nil))
   (rules/ask-question q)
   (render-file "templates/question.html" {:title "Questions" :question (get-question-as-map q)}))
 
 (defn get-answer []
   (rules/ask-question (.getBeerStyle (.getBeer q)))
-  (let [bs (db/get-beer-style-by-name (.getNameOfBeerStyle (.getBeerStyle (.getBeer q))))]
-    (.setId (.getBeerStyle (.getBeer q)) (:beerstyleid bs)))
-  )
+  (let [bs (db/find-beer-style-by-name (.getNameBs q))]
+    (.setIdBs! q (:id bs))))
 
 (defn get-question-from-rules [answer]
-  (.setAnswer q answer)
+  (.setAnswer! q answer)
   (rules/ask-question q)
-  (println "id: " (.getId (.getBeerStyle (.getBeer q))))
+  (println "id: " (.getIdBs q))
   (if (.isEnd q)
-      (get-answer))
-  )
-
-;; (defn get-question-from-rules [answer]
-;;   (.setAnswer q answer)
-;;   (rules/askQuestion q))
+      (get-answer)))
 
 (defresource get-question [answer]
   :allowed-methods [:post]
