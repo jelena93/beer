@@ -28,8 +28,8 @@
     {% for b in beers %}
 			<div class="col-md-3 business-grid">
         <a href="{{b.info}}"><img class="img-responsive" src="/images/ggg.jpg" alt=""/></a>
-				<h3>{{b.beername}}</h3>
-        <p><hr/><strong>Alcohol: </strong> {{b.alkohol}}  <div class="more"><a href="/beer/{{b.beerid}}">Read More</a></div></p>
+				<h3>{{b.name}}</h3>
+        <p><hr/><strong>Alcohol: </strong> {{b.alcohol}}  <div class="more"><a href="/beer/{{b.id}}">Read More</a></div></p>
 			</div>
       {% endfor %}
 

@@ -3,7 +3,7 @@
   name VARCHAR(100) NOT NULL,
   origin VARCHAR(30) NOT NULL,
   price VARCHAR(20) NOT NULL,
-  style INT NOT NULL,
+  beer_style INT NOT NULL,
   alcohol VARCHAR(20) NOT NULL,
   manufacturer VARCHAR(100) NOT NULL,
   country VARCHAR(100) NOT NULL,
@@ -13,7 +13,7 @@
 );
 --;;
 INSERT INTO beer
-(id, name, origin, price, style, alcohol, manufacturer, country, info) VALUES
+(id, name, origin, price, beer_style, alcohol, manufacturer, country, info) VALUES
 (1, 'Zaječarsko Svetlo', 1, 1, 9, '4,5%', 'Heineken Srbija - Zaječar', 'Srbija', 'http://www.ratebeer.com/beer/zaje269arsko-svetlo-pivo/80809/'),
 (2, 'Staropramen', 1, 1, 9, '5%', 'Apatinska Pivara (MolsonCoors)', 'Srbija', 'http://www.ratebeer.com/beer/staropramen-lezak-premium-lager--beer-12o/3784/'),
 (3, 'BIP', 1, 1, 9, '4,5%', 'BIP-Beogradska Industrija Piva', 'Srbija', 'http://www.ratebeer.com/beer/bip-svetlo-pivo/12049/'),

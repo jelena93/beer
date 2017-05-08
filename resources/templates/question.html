@@ -1,19 +1,18 @@
 {% extends "templates/base.html" %}
 {% block content %}
-
 <div class="contact">
-		<div class="container">
-					<h3 id="question-text">{{question.text}}</h3>
-        <div class="row">
-          <div class="col-lg-4 col-lg-offset-4">
+   <div class="container">
+      <h3 id="question-text">{{question.text}}</h3>
+      <div class="row">
+         <div class="col-lg-4 col-lg-offset-4">
             <div id="question-suggestedAnswers">
-            {% for suggestedAnswer in question.suggestedAnswers %}
-          <input type="radio" name="answer" value="{{ suggestedAnswer }}"> {{ suggestedAnswer }}<br>
-            {% endfor %}
-              </div>
-					<input class="pull-right" type="button" value="NEXT" onclick="sendAnswer()">
-          </div>
-        </div>
-		</div>
-	</div>
+               {% for suggestedAnswer in question.suggestedAnswers %}
+               <input type="radio" name="answer" value="{{ suggestedAnswer }}"> {{ suggestedAnswer }}<br>
+               {% endfor %}
+            </div>
+            <input class="pull-right" type="button" value="NEXT" onclick="sendAnswer()">
+         </div>
+      </div>
+   </div>
+</div>
 {% endblock %}

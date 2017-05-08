@@ -11,7 +11,7 @@
 
 
 (defn get-bs [id]
-  (render-file "templates/bs.html" {:bs (db/get-beer-style-by-id id) :beers (db/get-beers-for-beer-style id)})
+  (render-file "templates/bs.html" {:bs (first (db/find-beer-style-by-id id)) :beers (db/get-beers-for-beer-style id)})
   )
 
 (defroutes bs-routes

@@ -10,8 +10,8 @@
 )
 
 (defn get-beer [id]
-  (render-file "templates/beer.html" {:beer (db/get-beer-by-id id)})
-  )
+  (println (db/find-beer-by-id id))
+  (render-file "templates/beer.html" {:beer (first (db/find-beer-by-id id))}))
 
 (defroutes beer-routes
   (GET "/beer/:id" [id] (get-beer id)))

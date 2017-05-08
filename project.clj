@@ -13,11 +13,13 @@
                  [ring/ring-json "0.4.0"]
                  [cheshire "5.2.0"]
                  [migratus "0.8.28"]
-                 [yesql/yesql "0.5.3"]]
+                 [korma/korma "0.4.3"]
+                 [log4j "1.2.15" :exclusions [javax.mail/mail
+                            javax.jms/jms
+                            com.sun.jdmk/jmxtools
+                            com.sun.jmx/jmxri]]]
   :plugins [[lein-ring "0.8.12"]
-;;             [migratus-lein "0.1.0"]
-            [migratus-lein "0.4.1"]
-            ]
+            [migratus-lein "0.4.1"]]
   :ring {:handler beer.handler/app
          :init beer.handler/init
          :destroy beer.handler/destroy}
