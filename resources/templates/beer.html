@@ -13,6 +13,10 @@
 						</div>
 						<h5>FRINGILLA CONDIMENTUM,FINIBUS BONORUM MALORUM, DONEC UT QUAM LIGULA, SED NISI.</h5>
 						<p class="snglp">Lorem ipsum dolor sit amet, consectetur adipisicext.</p>
+                      {% ifequal logged.role "admin" %}
+    <input type="button" value="Delete" onclick="deleteBeer({{beer.id}})"/>
+
+          {% endifequal %}
 					</div>
 					<div class="comment-icons">
 						<ul>

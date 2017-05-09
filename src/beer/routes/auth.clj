@@ -10,7 +10,7 @@
 (defn handle-login [request]
   (let [username (:username (:params request))
         password (:password (:params request))
-        user (db/find-user (:params request))
+        user (first (db/find-user (:params request)))
         session (:session request)]
     (cond
       (or (nil? username) (nil? password))

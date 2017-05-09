@@ -14,7 +14,7 @@
                      :password "admin"}))
 (defentity user
   (table :user)
-  (entity-fields :username :first_name :last_name :email :role)
+  (entity-fields :id :username :first_name :last_name :email :role)
   (prepare (fn [v] (cs/rename-keys v {:my-column :my_column})))
   (transform (fn [v] (cs/rename-keys v {:my_column :my-column}))))
 
@@ -28,34 +28,87 @@
   (prepare (fn [v] (cs/rename-keys v {:my-column :my_column})))
   (transform (fn [v] (cs/rename-keys v {:my_column :my-column}))))
 
-(defn find-user [params]
-  (select user
-  (where params)
-  (limit 1)))
-
 (defn add-user [params]
   (insert user
   (values params)))
 
+(defn get-user [id]
+  (select user
+  (where {:id id})))
+
+(defn delete-user [id]
+  (delete user
+  (where {:id id})))
+
+(defn find-user [params]
+  (select user
+  (where params)))
+
+(defn get-users []
+  (select user
+  (where {:role "user"})
+  (order :id :ASC)))
+
+(defn search-users [text]
+  (select user
+     (where (and {:role "user"} (or (like :username text) (like :first_name text) (like :email text)))))
+  )
+
+(defn add-beer [params]
+  (insert beer
+  (values params)))
+
+(defn add-beer [params]
+  (insert beer
+  (values params)))
+
+(defn update-beer [params]
+  (update beer
+          (set-fields params)
+          (where {:id (:id params)})))
+
+(defn delete-beer [id]
+  (delete beer
+  (where {:id id})))
+
+(defn get-beers []
+  (select beer)
+  (order :id :ASC))
+
+(defn search-beers [text]
+ (select beer
+  (where (or {:id text} (like :name text)
+             (:origin text) (:price text) (:beer_style text) (like :alcohol text) (like :country text)
+             (like :manufacturer text) (like :country text) (like :info text)))))
+
+(defn get-beer-styles []
+  (select beer-style))
+
+(defn update-beer-style [params]
+  (update beer-style
+          (set-fields
+            {:description (:description params)})
+          (where {:id (:id params)})))
+
+(defn search-beer-styles [text]
+ (select beer-style
+  (where (or {:id text} (like :name text) (like :description text)))))
+
 (defn find-beer-style-by-id [id]
   (select beer-style
-  (where {:id id})
-  (limit 1)))
+  (where {:id id})))
 
 (defn find-beer-style-by-name [bs-name]
   (select beer-style
-  (where {:name bs-name})
-  (limit 1)))
+  (where {:name bs-name})))
 
 (defn find-beer-style-by-name [bs-name]
   (select beer-style
-  (where {:name bs-name})
-  (limit 1)))
+  (where {:name bs-name})))
 
 (defn find-beer-by-id [id]
   (select beer-style
-  (where {:id id})
-  (limit 1)))
+  (where {:id id})))
 
 (defn find-beer-by-id [id]
   (select beer
@@ -67,23 +120,3 @@
   (where {:beer_style bs-id}))
 ;;   (order :beer.id :ASC)
   )
-
-;; (defn get-beers-for-beer-style [id]
-;;   (sql/with-connection
-;;     db
-;;     (sql/with-query-results
-;;       res ["SELECT * FROM beer b JOIN beerstyle bs on (b.stil=bs.beerStyleID) WHERE bs.beerStyleID = ?" id] (doall res)))
-;;   )
-
-;;(db/delete-user ((session/get :user):username))
-;; defn delete-user username
-;; (defn find-user [username password]
-;;   (select user
-;;   (fields :username :first_name :last_name)
-;;   (where {:username username :password password})
-;;   (limit 1)))
-
-;; (defn add-user [username password first_name last_name email role]
-;;   (insert user
-;;   (values {:username username :password password :first_name first_name :last_name last_name :email email :role role})))
-

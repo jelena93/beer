@@ -28,8 +28,8 @@
            :db {:classname "com.mysql.jdbc.Driver"
                 :subprotocol "mysql"
                 :subname "//localhost/beer"
-                :user "root"
-                :password ""}}
+                :user "admin"
+                :password "admin"}}
   :profiles
   {:uberjar {:aot :all}
    :production

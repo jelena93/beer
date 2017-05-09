@@ -2,7 +2,6 @@
   (:require [compojure.core :refer :all]
             [beer.models.question :refer :all]
             [beer.models.beer :refer :all]
-            [beer.models.beerStyle :refer :all]
             [selmer.parser :refer [render-file]]
             [beer.models.db :as db]
             [compojure.response :refer [render]]

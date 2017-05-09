@@ -18,12 +18,14 @@
             [beer.routes.home :refer [home-routes]]
             [beer.routes.questions :refer [question-routes]]
             [beer.routes.bs :refer [bs-routes]]
-            [beer.routes.beer :refer [beer-routes]]))
+            [beer.routes.beer :refer [beer-routes]]
+            [beer.routes.user :refer [user-routes]]))
 
 ;; (defn is-admin [{:keys [params] session :session}]
 ;;   (println "wtf" session)
 ;;   (contains? (apply hash-set (:role session)) "ADMIN"))
 (defn is-admin [request]
+  (println request)
   (contains? (apply hash-set (:role request)) "ADMIN"))
 
 (def rules [{:pattern #"^/admin/.*"
@@ -57,12 +59,6 @@
 ;;   (-> (response "Unauthorized request")
 ;;       (assoc :status 403)))
 
-(defn home-controller
-  [{:keys [params] session :session}]
-  (println "home" session)
-  (when (not (authenticated? session))
-    (redirect "/login")))
-
 (def backend (session-backend))
 
 (defn init []
@@ -75,9 +71,9 @@
   (route/not-found "Not Found"))
 
 (def app
-  (-> (routes auth-routes home-controller home-routes question-routes bs-routes beer-routes app-routes)
+  (-> (routes auth-routes home-routes question-routes bs-routes beer-routes user-routes app-routes)
       (handler/site)
-      (wrap-access-rules {:rules rules :on-error on-error})
-      (wrap-authentication backend)
+;;       (wrap-access-rules {:rules rules :on-error on-error})
       (wrap-authorization backend)
+      (wrap-authentication backend)
       (wrap-base-url)))

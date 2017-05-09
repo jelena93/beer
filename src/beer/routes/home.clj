@@ -2,16 +2,22 @@
   (:require [compojure.core :refer :all]
             [beer.models.question :refer :all]
             [selmer.parser :refer [render-file]]
-            [beer.models.db :as db]
-            [buddy.auth.backends.session :refer [session-backend]]
-            [buddy.auth :refer [authenticated? throw-unauthorized]]
             [compojure.response :refer [render]]
-            [ring.util.response :refer [response redirect content-type]]
-            [beer.models.rule :as r])
-  (:import [beer.models.question Question]))
+            [buddy.auth :refer [authenticated? throw-unauthorized]]
+            [ring.util.response :refer [response redirect content-type]]))
+
+(defn authenticated [session]
+  (authenticated? session))
+
+(defn admin [req]
+  (and (authenticated? req)
+       (#{:admin} (:role (:identity req)))))
 
 (defn home [session]
-  (render-file "templates/home.html" {:title "Home"}))
+  (if-not (authenticated session)
+    (redirect "/login")
+    (render-file "templates/home.html" {:title "Home" :logged (:identity session)})))
 
 (defroutes home-routes
-  (GET "/" request (home (:session request))))
+  (GET "/" request (home (:session request)))
+  )
