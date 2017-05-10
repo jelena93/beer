@@ -1,40 +1,27 @@
 {% extends "templates/base.html" %}
 {% block content %}
-	<div class="about">
-		<div class="container">
-			<div class="about-info">
-				<h3>{{bs.name}}</h3>
-			</div>
-			<div class="about-grids">
-				<div class="col-md-5 about-grid">
-					<img src="/images/g4.jpg" alt=""/>
-				</div>
-				<div class="col-md-7 about-grid-left">
-					<h4>A FEW WORDS ABOUT THIS BEER STYLE</h4>
-					<p> {{bs.description}}</p>
-				</div>
-        							<li><a href="#" class="like">15</a></li>
-
-				<div class="clearfix"></div>
-			</div>
-		</div>
-	</div>
-<div class="business-team">
-	<div class="container">
-<!-- 		<div class="team-info">
-			<h3>{{bs.name}}</h3>
-		</div> -->
-		<div class="business-grids">
-    {% for b in beers %}
-			<div class="col-md-3 business-grid">
-        <a href="{{b.info}}"><img class="img-responsive" src="/images/ggg.jpg" alt=""/></a>
-				<h3>{{b.name}}</h3>
-        <p><hr/><strong>Alcohol: </strong> {{b.alcohol}}  <div class="more"><a href="/beer/{{b.id}}">Read More</a></div></p>
-			</div>
-      {% endfor %}
-
+<div class="about">
+   <div class="about-info">
+      <h3>{{bs.name}}</h3>
+   </div>
+   <div class="about-grids">
+      <div class="col-md-12 about-grid">
+         <p> {{bs.description}}</p>
+      </div>
+   </div>
 </div>
-			<div class="clearfix"></div>
-		</div>
-	</div>
+<div class="business-team">
+   <div class="team-info">
+      <h3>BEERS</h3>
+   </div>
+   <div class="business-grids">
+      {% for b in beers %}
+      <div class="col-md-3 business-grid">
+         <a href="/beer/{{b.id}}"><img class="img-responsive" src="/images/ggg.jpg" alt=""/></a>
+         <h3>{{b.name}}</h3>
+      </div>
+      {% endfor %}
+   </div>
+   <div class="clearfix"></div>
+</div>
 {% endblock %}

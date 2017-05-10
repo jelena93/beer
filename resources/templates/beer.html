@@ -1,74 +1,79 @@
 {% extends "templates/base.html" %}
 {% block content %}
 <div class="blog">
-		<div class="container">
-			<div class="blog-head">
-				<h3>{{beer.name}}</h3>
-			</div>
-			<div class="col-md-8 col-md-offset-2 blog-left" >
-				<div class="blog-info">
-					<div class="blog-info-text">
-						<div class="blog-img">
-							<img src="/images/img12.jpg" alt=""/>
-						</div>
-						<h5>FRINGILLA CONDIMENTUM,FINIBUS BONORUM MALORUM, DONEC UT QUAM LIGULA, SED NISI.</h5>
-						<p class="snglp">Lorem ipsum dolor sit amet, consectetur adipisicext.</p>
-                      {% ifequal logged.role "admin" %}
-    <input type="button" value="Delete" onclick="deleteBeer({{beer.id}})"/>
-          {% endifequal %}
-                <input type="button" value="Like" onclick="likeBeer({{beer.id}})"/>
-					</div>
-					<div class="comment-icons">
-						<ul>
-							<li><span class="cmnts"></span> <a href="#">5 comments</a></li>
-							<li><a href="#" class="like">15</a></li>
-						</ul>
-					</div>
-					<div class="response">
-						<h4>Responses</h4>
-						<div class="media response-info">
-							<div class="media-left response-text-left">
-								<a href="#">
-									<img class="media-object" src="/images/icon1.png" alt=""/>
-								</a>
-								<h5><a href="#">Admin</a></h5>
-							</div>
-							<div class="media-body response-text-right">
-								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit,There are many variations of passages of Lorem Ipsum available,
-									sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-								<ul>
-									<li>MARCH 21, 2013</li>
-								</ul>
-							</div>
-							<div class="clearfix"> </div>
-						</div>
-						<div class="media response-info">
-							<div class="media-left response-text-left">
-								<a href="#">
-									<img class="media-object" src="/images/icon1.png" alt=""/>
-								</a>
-								<h5><a href="#">Admin</a></h5>
-							</div>
-							<div class="media-body response-text-right">
-								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit,There are many variations of passages of Lorem Ipsum available,
-									sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-								<ul>
-									<li>MARCH 21, 2013</li>
-								</ul>
-							</div>
-							<div class="clearfix"> </div>
-						</div>
-					</div>
-				</div>
-				<div class="coment-form">
-					<h4>Leave your comment</h4>
-					<form>
-						<textarea type="text" id="comment"  onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Your Comment...';}" required="">Your Comment...</textarea>
-						<input type="button" value="Comment" onclick="sendComment({{beer.id}})" >
-					</form>
-				</div>
-			</div>
-			<div class="clearfix"> </div>
-		</div>
-	</div>
+   <div class="blog-head">
+      <h3>{{beer.name}}</h3>
+   </div>
+   <div class="row">
+      <div class="col-md-4  blog-left" >
+         <div class="blog-img">
+            <img src="/images/img12.jpg" alt=""/>
+         </div>
+      </div>
+      <div class="col-md-4 col-md-offset-2 blog-right" >
+         <div class="blog-info-text">
+            <p class="snglp">Lorem ipsum dolor sit amet, consectetur adipisicext.</p>
+            {% ifequal logged.role "admin" %}
+            <input type="button" value="Delete" onclick="deleteBeer({{beer.id}})"/>
+            {% endifequal %}
+            <input type="button" value="Like" onclick="likeBeer({{beer.id}})"/>
+         </div>
+      </div>
+   </div>
+   <div class="row">
+      <div class="blog-info">
+         <div class="comment-icons">
+            <ul>
+               <li><span class="cmnts"></span> <a href="#">5 comments</a></li>
+               <li><a href="#" class="like">15 likes</a></li>
+            </ul>
+         </div>
+         <div class="response">
+            <h4>Comments</h4>
+            <div class="media response-info">
+               <div class="media-left response-text-left">
+                  <a href="#">
+                  <img class="media-object" src="/images/icon1.png" alt=""/>
+                  </a>
+                  <h5><a href="#">Admin</a></h5>
+               </div>
+               <div class="media-body response-text-right">
+                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit,There are many variations of passages of Lorem Ipsum available,
+                     sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                  </p>
+                  <ul>
+                     <li>MARCH 21, 2013</li>
+                  </ul>
+               </div>
+               <div class="clearfix"> </div>
+            </div>
+            <div class="media response-info">
+               <div class="media-left response-text-left">
+                  <a href="#">
+                  <img class="media-object" src="/images/icon1.png" alt=""/>
+                  </a>
+                  <h5><a href="#">Admin</a></h5>
+               </div>
+               <div class="media-body response-text-right">
+                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit,There are many variations of passages of Lorem Ipsum available,
+                     sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                  </p>
+                  <ul>
+                     <li>MARCH 21, 2013</li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="coment-form">
+         <h4>Leave your comment</h4>
+         <form>
+            <textarea id="comment" rows="3" placeholder="Your Comment..." ></textarea>
+            <input type="button" class="pull-right" value="Comment" onclick="sendComment({{beer.id}})" >
+         </form>
+      </div>
+   </div>
+</div>
+<div class="clearfix"> </div>
+</div>
 {% endblock %}

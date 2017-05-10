@@ -18,7 +18,7 @@
              </thead>
              <tbody>
                {% for b in beers %}
-               <tr id="{{b.id}}" onclick="getBeer(this.id)">
+               <tr id="{{b.id}}" onclick="getBeer(this.id)" class="clickable-row">
                <td>{{b.id}}</td>
                <td>{{b.name}}</td>
                <td>{{b.origin}}</td>
