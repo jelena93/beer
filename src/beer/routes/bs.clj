@@ -28,9 +28,10 @@
     (redirect "/login")
     (render-file "templates/bs-search.html" {:title "Search beer styles" :logged (:identity session) :beers (get-bs nil)})))
 
-(defresource search-bs [text]
+(defresource search-bs [{:keys [params session] request :request}]
   :allowed-methods [:post]
-  :handle-created (json/write-str (get-bs text))
+  :authenticated? (authenticated session)
+  :handle-created (json/write-str (get-bs (:text params)))
   :available-media-types ["application/json"])
 
 (defn find-bs [{:keys [params session] request :request}]

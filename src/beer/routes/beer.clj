@@ -35,14 +35,16 @@
 (defn get-search-beers [{:keys [params session] request :request}]
   (render-file "templates/beer-search.html" {:title "Search users" :logged (:identity session) :beers (get-beers nil)}))
 
-(defresource search-beers [text]
+(defresource search-beers [{:keys [params session] request :request}]
   :allowed-methods [:post]
-  :handle-created (json/write-str (get-beers text))
+  :authenticated? (authenticated session)
+  :handle-created (json/write-str (get-beers (:text session)))
   :available-media-types ["application/json"])
 
 (defresource delete-beer [{:keys [params session] request :request}]
   :allowed-methods [:delete]
   :handle-malformed "beer id cannot be empty"
+  :authenticated? (authenticated session)
   :delete! (db/delete-beer (:id params))
   :handle-created (json/write-str "ok")
   :available-media-types ["application/json"])
@@ -65,7 +67,7 @@
   (PUT "/beer" request (update-beer request))
   (DELETE "/beer" request (delete-beer request))
   (GET "/beers" request (get-search-beers request))
-  (POST "/beers" [text] (search-beers text))
+  (POST "/beers" request (search-beers request))
   (GET "/beer/:id" request (find-beer request))
 ;;   (GET "/beer" [] (restrict admin-view {:handler admin}))
   )

@@ -38,10 +38,11 @@
   (if (.isEnd q)
       (get-answer)))
 
-(defresource get-question [answer]
+(defresource get-question [{:keys [params session] request :request}]
   :allowed-methods [:post]
-  :handle-malformed "user name cannot be empty!"
-  :post!  (get-question-from-rules answer)
+  :handle-malformed "answer cannot be empty"
+  :authenticated? (authenticated session)
+  :post!  (get-question-from-rules (:answer params))
   :handle-created (json/write-str (get-question-as-map q))
   :available-media-types ["application/json"])
 

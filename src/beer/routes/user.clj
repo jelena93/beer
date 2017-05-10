@@ -41,23 +41,30 @@
   (and (authenticated? session)
        (="admin" (:role (:identity session)))))
 
-(defresource search-users [text]
+;; (defn delete-user [{:keys [params session] request :request}]
+;;   (if-not (authenticated session)
+;;     (redirect "/login")
+;;   (render-file "templates/user-search.html" {:title "Search users" :logged (:identity session) :users (get-users nil)})))
+
+(defresource search-users [{:keys [params session] request :request}]
   :allowed-methods [:post]
-  :handle-created (json/write-str (get-users text))
+  :authenticated? (authenticated session)
+  :handle-created (json/write-str (get-users (:text params)))
   :available-media-types ["application/json"])
 
-(defresource delete-user [id]
+(defresource delete-user [{:keys [params session] request :request}]
   :allowed-methods [:delete]
   :handle-malformed "username cannot be empty"
-  :delete!  (db/delete-user id)
+  :authenticated? (authenticated session)
+  :delete!  (db/delete-user (:id params))
   :handle-created (json/write-str "ok")
   :available-media-types ["application/json"])
 
 (defroutes user-routes
 ;;   (GET "/ds" [] (restrict admin-view {:handler admin}))
   (GET "/users" request (get-search-users request))
-  (POST "/users" [text] (search-users text))
-  (DELETE "/user" [id] (delete-user id))
+  (POST "/users" request (search-users request))
+  (DELETE "/user" request (delete-user request))
   (GET "/user/:id" request (get-user request))
 
   )
