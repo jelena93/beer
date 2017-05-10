@@ -15,8 +15,8 @@
 						<p class="snglp">Lorem ipsum dolor sit amet, consectetur adipisicext.</p>
                       {% ifequal logged.role "admin" %}
     <input type="button" value="Delete" onclick="deleteBeer({{beer.id}})"/>
-
           {% endifequal %}
+                <input type="button" value="Like" onclick="likeBeer({{beer.id}})"/>
 					</div>
 					<div class="comment-icons">
 						<ul>
@@ -63,8 +63,8 @@
 				<div class="coment-form">
 					<h4>Leave your comment</h4>
 					<form>
-						<textarea type="text"  onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Your Comment...';}" required="">Your Comment...</textarea>
-						<input type="submit" value="SUBMIT" >
+						<textarea type="text" id="comment"  onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Your Comment...';}" required="">Your Comment...</textarea>
+						<input type="button" value="Comment" onclick="sendComment({{beer.id}})" >
 					</form>
 				</div>
 			</div>

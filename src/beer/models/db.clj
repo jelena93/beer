@@ -28,6 +28,12 @@
   (prepare (fn [v] (cs/rename-keys v {:my-column :my_column})))
   (transform (fn [v] (cs/rename-keys v {:my_column :my-column}))))
 
+(defentity beer-like
+  (table :beer_like))
+
+(defentity beer-comment
+  (table :beer_comment))
+
 (defn add-user [params]
   (insert user
   (values params)))
@@ -48,6 +54,11 @@
   (select user
   (where {:role "user"})
   (order :id :ASC)))
+
+(defn update-user [id username password first-name last-name]
+  (update user
+          (set-fields {:username username :password password :first_name first-name :last_name last-name})
+          (where {:id id})))
 
 (defn search-users [text]
   (select user
@@ -115,3 +126,24 @@
           (join beer-style)
           (where {:beer_style bs-id})
           (order :beer.id :ASC)))
+
+(defn add-beer-like [user-id beer-id]
+  (insert beer-like
+  (values {:user_id user-id :beer_id beer-id})))
+
+(defn delete-beer-like [user-id beer-id]
+  (delete beer-like
+  (where {:user_id user-id :beer_id beer-id})))
+
+(defn get-beer-likes [beer-id]
+  (select beer-like
+  (where {:beer_id beer-id})))
+
+(defn add-beer-comment [user-id beer-id beer-comment]
+  (insert beer-comment
+  (values {:user_id user-id :beer_id beer-id :comment beer-comment})))
+
+(defn get-beer-comments [beer-id]
+  (select beer-comment
+  (where {:beer_id beer-id})
+          (order :id :ASC)))

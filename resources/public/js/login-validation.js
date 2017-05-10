@@ -1,17 +1,13 @@
-/*       email: {
-        required: true,
-        email: true
-      }, */
 $(function() {
   $("form[name='login']").validate({
     rules: {
       username: {
         required: true,
-        minlength: 5
+//         minlength: 5
       },
       password: {
         required: true,
-        minlength: 5
+//         minlength: 5
       }
     },
     messages: {

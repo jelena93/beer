@@ -46,3 +46,36 @@ function deleteBeer(id){
 function getBeer(id){
 window.location="/beer/"+id;
 }
+function likeBeer(id){
+    $.ajax({
+        type: "POST",
+        url: "/beer/like",
+        data: {id:id},
+        dataType: 'json',
+        success: function (data) {
+          console.log(data);
+        },
+        error: function (request, status, error) {
+          console.log(error);
+          console.log(request);
+        }
+    });
+}
+function sendComment(id){
+var text = $("#comment").val();
+  if(text!=null || text!=""){
+      $.ajax({
+        type: "POST",
+        url: "/beer/comment",
+        data: {id:id, text:text},
+        dataType: 'json',
+        success: function (data) {
+          console.log(data);
+        },
+        error: function (request, status, error) {
+          console.log(error);
+          console.log(request);
+        }
+    });
+  }
+}

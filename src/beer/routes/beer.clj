@@ -4,13 +4,25 @@
             [beer.models.db :as db]
             [compojure.response :refer [render]]
             [buddy.auth.accessrules :refer [restrict]]
-            [buddy.auth :refer [authenticated?]]
+            [buddy.auth :refer [authenticated? throw-unauthorized]]
             [liberator.core :refer [resource defresource]]
             [clojure.data.json :as json]
             [ring.util.response :refer [response redirect content-type]]))
 
 (defn authenticated [session]
   (authenticated? session))
+
+(defn authenticated-admin [session]
+  (if (and (not (authenticated? session))
+       (not="admin" (:role (:identity session))))
+    (throw-unauthorized {:message "Not authorized"})))
+
+(defn check-authenticated-admin [session]
+  (and (not (authenticated? session))
+       (not="admin" (:role (:identity session)))))
+
+(defn get-logged-user-id [session]
+  (:id (:identity session)))
 
 (defn get-add-beer [{:keys [params session] request :request}]
   (if-not (authenticated session)
@@ -49,6 +61,30 @@
   :handle-created (json/write-str "ok")
   :available-media-types ["application/json"])
 
+(defresource add-beer-like [{:keys [params session] request :request}]
+  :allowed-methods [:post]
+  :handle-malformed "beer id and user id cannot be empty"
+  :authenticated? (authenticated session)
+  :post! (db/add-beer-like (get-logged-user-id session) (:id params))
+  :handle-created (json/write-str (count (db/get-beer-likes (:id params))))
+  :available-media-types ["application/json"])
+
+(defresource delete-beer-like [{:keys [params session] request :request}]
+  :allowed-methods [:delete]
+  :handle-malformed "beer id and user id cannot be empty"
+  :authenticated? (authenticated session)
+  :delete! (db/delete-beer-like (get-logged-user-id session) (:id params))
+  :handle-created (json/write-str (count (db/get-beer-likes (:id params))))
+  :available-media-types ["application/json"])
+
+(defresource add-beer-comment [{:keys [params session] request :request}]
+  :allowed-methods [:post]
+  :handle-malformed "beer id and user id cannot be empty"
+  :authenticated? (authenticated session)
+  :post! (db/add-beer-comment (get-logged-user-id session) (:id params) (:text params))
+  :handle-created (json/write-str (db/get-beer-comments (:id params)))
+  :available-media-types ["application/json"])
+
 (defn find-beer [{:keys [params session] request :request}]
   (if-not (authenticated session)
     (redirect "/login")
@@ -69,12 +105,7 @@
   (GET "/beers" request (get-search-beers request))
   (POST "/beers" request (search-beers request))
   (GET "/beer/:id" request (find-beer request))
-;;   (GET "/beer" [] (restrict admin-view {:handler admin}))
-  )
+  (POST "/beer/like" request (add-beer-like request))
+  (DELETE "/beer/like" request (delete-beer-like request))
+  (POST "/beer/comment" request (add-beer-comment request)))
 
-;; {:keys [params] session :session}
-;; (defn is-admin [{user :identity :as session}]
-;; (defn is-admin [{{:keys [identity] :session}}]
-;;   (println "usao" session)
-;;   (println "ss" identity)
-;;   (contains? (apply hash-set (:roles identity)) "admin"))

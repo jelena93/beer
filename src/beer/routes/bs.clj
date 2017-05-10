@@ -2,6 +2,7 @@
   (:require [compojure.core :refer :all]
             [buddy.auth :refer [authenticated?]]
             [selmer.parser :refer [render-file]]
+            [buddy.auth :refer [authenticated? throw-unauthorized]]
             [beer.models.db :as db]
             [compojure.response :refer [render]]
             [liberator.core :refer [resource defresource]]
@@ -12,25 +13,34 @@
 (defn authenticated [session]
   (authenticated? session))
 
+(defn authenticated-admin [session]
+  (if (and (not (authenticated? session))
+       (not="admin" (:role (:identity session))))
+    (throw-unauthorized {:message "Not authorized"})))
+
+(defn check-authenticated-admin [session]
+  (and (not (authenticated? session))
+       (not="admin" (:role (:identity session)))))
+
 (defn get-bs [text]
   (if (or (nil? text) (= "" text))
     (db/get-beer-styles)
     (db/search-beer-styles (str "%" text "%"))))
 
 (defn update-bs [{:keys [params session] request :request}]
-  (if-not (authenticated session)
-    (redirect "/login")
+  (check-authenticated-admin session)
     (render-file "templates/beer-edit.html" {:title "Edit beer style"
-                                             :message (str "Beer style successfully edited, id: " (db/update-beer-style params))})))
+              :message (str "Beer style successfully edited, id: " (db/update-beer-style params))}))
 
 (defn get-search-bs [{:keys [params session] request :request}]
   (if-not (authenticated session)
     (redirect "/login")
-    (render-file "templates/bs-search.html" {:title "Search beer styles" :logged (:identity session) :beers (get-bs nil)})))
+  (render-file "templates/bs-search.html" {:title "Search beer styles"
+                                           :logged (:identity session) :beers (get-bs nil)})))
 
 (defresource search-bs [{:keys [params session] request :request}]
   :allowed-methods [:post]
-  :authenticated? (authenticated session)
+  :authenticated? (check-authenticated-admin session)
   :handle-created (json/write-str (get-bs (:text params)))
   :available-media-types ["application/json"])
 
@@ -45,5 +55,4 @@
   (GET "/bs" request (get-search-bs request))
   (POST "/bs" request (search-bs request))
   (GET "/bs/:id" request (find-bs request))
-  (PUT "/bs/:id" request (update-bs request))
-  )
+  (PUT "/bs/:id" request (update-bs request)))

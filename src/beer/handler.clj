@@ -11,7 +11,6 @@
             [buddy.auth.backends.session :refer [session-backend]]
             [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
             [buddy.auth :refer [authenticated? throw-unauthorized]]
-;;             [buddy.auth.accessrules :refer (success error)]
             [buddy.auth.accessrules :refer [wrap-access-rules]]
             [ring.util.response :refer (response redirect)]
             [beer.routes.auth :refer [auth-routes]]
@@ -48,12 +47,6 @@
 ;;              :handler authenticated-access
 ;;              :on-error (fn [req _] (response "Not authorized ;)"))}])
 
-(defn on-error
-  [request value]
-  {:status 403
-   :headers {}
-   :body "Not authorized"})
-
 ;; (defn unauthorized-handler
 ;;   [request metadata]
 ;;   (-> (response "Unauthorized request")
@@ -73,7 +66,6 @@
 (def app
   (-> (routes auth-routes home-routes question-routes bs-routes beer-routes user-routes app-routes)
       (handler/site)
-;;       (wrap-access-rules {:rules rules :on-error on-error})
       (wrap-authorization backend)
       (wrap-authentication backend)
       (wrap-base-url)))
