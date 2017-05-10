@@ -1,50 +1,46 @@
 <div class="header">
-	<div class="container">
-		<div class="logo">
-			<a href="/"><img src="/images/logo.png" alt=""></a>
-		</div>
-		<div class="navigation">
-			<span class="menu"><img src="/images/menu.png" alt=""/></span>
-				<ul class="nav1">
-					<li><a href="/">HOME</a></li>
-                    {% ifequal logged.role "admin" %}
-          <li><span></span></li>
-              <li><a href="/users">SEARCH USERS</a></li>
-          <li><span></span></li>
-              <li><a href="/bs">SEARCH BEER STYLES</a></li>
-                              <li><span></span></li>
-
-          <li class="dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#">BEER <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-          <li><a href="/beer">ADD BEER</a></li>
-          <li><a href="/beers">SEARCH BEERS</a></li>
-        </ul>
-      </li>
-          {% endifequal %}
-          					<li><span></span></li>
-					<li><a href="/questions">QUESTIONS</a></li>
-          <li><span></span></li>
-          <li class="dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#">ACCOUNT <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-          <li><a href="/profile">VIEW PROFILE</a></li>
-          <li><a href="/delete-account">DELETE ACCOUNT</a></li>
-          <li><a href="/logout">LOGOUT</a></li>
-        </ul>
-      </li>
-        <li><span></span></li>
-				</ul>
-				<!-- script for menu -->
-					<script>
-						$( "span.menu" ).click(function() {
-						$( "ul.nav1" ).slideToggle( 300, function() {
-						 // Animation complete.
-						});
-						});
-					</script>
-				<!-- //script for menu -->
-		</div>
-		<div class="clearfix"></div>
-	</div>
+    <div class="container">
+        <div class="logo">
+            <a href="/"><img src="/images/logo.png" alt=""></a>
+        </div>
+        <div class="navigation">
+            <span class="menu"><img src="/images/menu.png" alt=""/></span>
+            <ul class="nav1">
+                <li><a href="/">HOME</a></li>
+                {% ifequal logged.role "admin" %}
+                <li><span></span></li>
+                <li><a href="/users">SEARCH USERS</a></li>
+                <li><span></span></li>
+                <li><a href="/bs">SEARCH BEER STYLES</a></li>
+                <li><span></span></li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">BEER <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/beer">ADD BEER</a></li>
+                        <li><a href="/beers">SEARCH BEERS</a></li>
+                    </ul>
+                </li>
+                {% endifequal %}
+                <li><span></span></li>
+                <li><a href="/questions">QUESTIONS</a></li>
+                <li><span></span></li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">ACCOUNT <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/profile">VIEW PROFILE</a></li>
+                        <li><a href="/delete-account">DELETE ACCOUNT</a></li>
+                        <li><a href="/logout">LOGOUT</a></li>
+                    </ul>
+                </li>
+                <li><span></span></li>
+            </ul>
+            <script>
+                $("span.menu").click(function() {
+                    $("ul.nav1").slideToggle(300, function() {});
+                });
+            </script>
+        </div>
+        <div class="clearfix"></div>
+    </div>
 </div>
+

@@ -1,32 +1,28 @@
 {% extends "templates/base.html" %}
 {% block content %}
-<div class="contact">
-   <div class="container">
-      <div class="row">
-         <div class="col-lg-4 col-lg-offset-4">
-           <input type="text" name="search" value="" onkeyup="searchUsers(this.value);"/>
-           <table id="table-users">
-            <thead>
-              <th>ID</th>
-              <th>Username</th>
-              <th>First name</th>
-              <th>Last name</th>
-              <th>Email</th>
-             </thead>
-             <tbody>
-               {% for u in users %}
-               <tr>
+<div class="row">
+   <div class="col-lg-8 col-lg-offset-2">
+      <input type="text" name="search" value="" placeholder="Search users..." onkeyup="searchUsers(this.value);"/>
+      <table id="table-users" class="table">
+         <thead>
+            <th>ID</th>
+            <th>Username</th>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Email</th>
+         </thead>
+         <tbody>
+            {% for u in users %}
+            <tr>
                <td>{{u.id}}</td>
                <td>{{u.username}}</td>
                <td>{{u.first_name}}</td>
                <td>{{u.last_name}}</td>
-                <td>{{u.email}}</td>
-               </tr>
-               {% endfor %}
-             </tbody>
-           </table>
-         </div>
-      </div>
+               <td>{{u.email}}</td>
+            </tr>
+            {% endfor %}
+         </tbody>
+      </table>
    </div>
 </div>
 {% endblock %}

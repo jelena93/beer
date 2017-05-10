@@ -1,47 +1,43 @@
 <!DOCTYPE html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-  <title>{{title}}</title>
-			<link href="css/bootstrap.css" rel="stylesheet">
-			<link href="css/login.css" rel="stylesheet" type="text/css" media="all" />
-	<!--fonts-->
-		<link href='http://fonts.googleapis.com/css?family=Stint+Ultra+Condensed' rel='stylesheet' type='text/css'>
-		<link href='http://fonts.googleapis.com/css?family=Bevan' rel='stylesheet' type='text/css'>
-		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
-	<!--//fonts-->
-	<!-- js -->
-		<script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
-
-  <script type="text/javascript" src="js/login-validation.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.validation/1.15.1/jquery.validate.min.js"></script>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+   <title>{{title}}</title>
+   <link href="css/bootstrap.css" rel="stylesheet">
+   <link href="css/login.css" rel="stylesheet" type="text/css" media="all" />
+   <!--fonts-->
+   <link href='http://fonts.googleapis.com/css?family=Stint+Ultra+Condensed' rel='stylesheet' type='text/css'>
+   <link href='http://fonts.googleapis.com/css?family=Bevan' rel='stylesheet' type='text/css'>
+   <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+   <!--//fonts-->
+   <!-- js -->
+   <script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+   <script type="text/javascript" src="js/login-validation.js"></script>
+   <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.validation/1.15.1/jquery.validate.min.js"></script>
 </head>
 <body>
-<div class="container">
-  <div id="bg"></div>
-<div class="row">
-    <div class="col-lg-4 col-lg-offset-4">
-      {% if error %}
-           <div class="alert alert-danger">
-  <strong>{{error}}</strong>
-</div>
-      {% endif %}
-<form action="" name="login" method="post">
-
-  <div class="form-group form-group-lg">
-    <label for=""></label>
-  <input type="text" name="username" id="username" placeholder="Username" class="class="form-control username" autofocus>
-  </div>
-  <div class="form-group form-group-lg">
-    <label for=""></label>
-  <input type="password" name="password" id="password" placeholder="Password" class="class="form-control pass">
-  </div>
-  <button type="submit">Login</button>
-
-</form>
-              Don't have an account? Register <a href="/register">here</a>
-
-  </div>
-  </div>
-  </div>
+   <div class="container">
+      <div id="bg"></div>
+      <div class="row">
+         <div class="col-lg-4 col-lg-offset-4">
+            {% if error %}
+            <div class="alert alert-danger">
+               <strong>{{error}}</strong>
+            </div>
+            {% endif %}
+            <form action="" name="login" method="post">
+               <div class="form-group form-group-lg">
+                  <label for=""></label>
+                  <input type="text" name="username" id="username" placeholder="Username" class="class="form-control username" autofocus>
+               </div>
+               <div class="form-group form-group-lg">
+                  <label for=""></label>
+                  <input type="password" name="password" id="password" placeholder="Password" class="class="form-control pass">
+               </div>
+               <button type="submit">Login</button>
+            </form>
+            Don't have an account? Register <a href="/register">here</a>
+         </div>
+      </div>
+   </div>
 </body>
 </html>
