@@ -19,5 +19,4 @@
     (render-file "templates/home.html" {:title "Home" :logged (:identity session)})))
 
 (defroutes home-routes
-  (GET "/" request (home (:session request)))
-  )
+  (GET "/" request (home (:session request))))

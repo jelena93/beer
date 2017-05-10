@@ -23,9 +23,10 @@
     (render-file "templates/beer-edit.html" {:title "Edit beer style"
                                              :message (str "Beer style successfully edited, id: " (db/update-beer-style params))})))
 
-
 (defn get-search-bs [{:keys [params session] request :request}]
-  (render-file "templates/bs-search.html" {:title "Search beer styles" :logged (:identity session) :beers (get-bs nil)}))
+  (if-not (authenticated session)
+    (redirect "/login")
+    (render-file "templates/bs-search.html" {:title "Search beer styles" :logged (:identity session) :beers (get-bs nil)})))
 
 (defresource search-bs [text]
   :allowed-methods [:post]

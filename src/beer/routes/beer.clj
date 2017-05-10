@@ -15,17 +15,17 @@
 (defn get-add-beer [{:keys [params session] request :request}]
   (if-not (authenticated session)
     (redirect "/login")
-    (render-file "templates/beer-add.html" {:title "Add beer" })))
+    (render-file "templates/beer-add.html" {:title "Add beer" :logged (:identity session) })))
 
 (defn add-beer [{:keys [params session] request :request}]
   (if-not (authenticated session)
     (redirect "/login")
-    (render-file "templates/beer-add.html" {:title "Add beer" :message (str "Beer successfully added, id: " (db/add-beer params))})))
+    (render-file "templates/beer-add.html" {:title "Add beer" :logged (:identity session) :message (str "Beer successfully added, id: " (db/add-beer params))})))
 
 (defn update-beer [{:keys [params session] request :request}]
   (if-not (authenticated session)
     (redirect "/login")
-    (render-file "templates/beer-edit.html" {:title "Edit beer" :message (str "Beer successfully edited, id: " (db/update-beer params))})))
+    (render-file "templates/beer-edit.html" {:title "Edit beer" :logged (:identity session) :message (str "Beer successfully edited, id: " (db/update-beer params))})))
 
 (defn get-beers [text]
   (if (or (nil? text) (= "" text))

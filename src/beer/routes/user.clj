@@ -9,20 +9,26 @@
             [clojure.data.json :as json]
             [ring.util.response :refer [response redirect content-type]]))
 
+(defn authenticated [session]
+  (authenticated? session))
+
 (defn get-users [text]
   (if (or (nil? text) (= "" text))
     (db/get-users)
     (db/search-users (str "%" text "%"))))
 
 (defn get-search-users [{:keys [params session] request :request}]
-  (println (db/get-users))
-  (render-file "templates/user-search.html" {:title "Search users" :logged (:identity session) :users (get-users nil)}))
+  (if-not (authenticated session)
+    (redirect "/login")
+  (render-file "templates/user-search.html" {:title "Search users" :logged (:identity session) :users (get-users nil)})))
 
 (defn add-user [{session :session}]
   (render-file "templates/add-user.html" {:title "Add user" :logged (:identity session)}))
 
 (defn get-user [{:keys [params session] request :request}]
-  (render-file "templates/user.html" {:title (str "User " (:id params)) :logged (:identity session) :user (db/get-user (:id params))}))
+  (if-not (authenticated session)
+    (redirect "/login")
+  (render-file "templates/user.html" {:title (str "User " (:id params)) :logged (:identity session) :user (db/get-user (:id params))})))
 
 (defn admin-view []
   (response "ADMINS ONLY"))

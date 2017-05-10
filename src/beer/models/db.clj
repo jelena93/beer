@@ -51,8 +51,8 @@
 
 (defn search-users [text]
   (select user
-     (where (and {:role "user"} (or (like :username text) (like :first_name text) (like :email text)))))
-  )
+     (where (and {:role "user"} (or (like :username text) (like :first_name text) (like :email text))))
+          (order :id :ASC)))
 
 (defn add-beer [params]
   (insert beer
@@ -72,17 +72,19 @@
   (where {:id id})))
 
 (defn get-beers []
-  (select beer)
-  (order :id :ASC))
+  (select beer
+  (order :id :ASC)))
 
 (defn search-beers [text]
  (select beer
   (where (or {:id text} (like :name text)
              (:origin text) (:price text) (:beer_style text) (like :alcohol text) (like :country text)
-             (like :manufacturer text) (like :country text) (like :info text)))))
+             (like :manufacturer text) (like :country text) (like :info text)))
+         (order :id :ASC)))
 
 (defn get-beer-styles []
-  (select beer-style))
+  (select beer-style
+          (order :id :ASC)))
 
 (defn update-beer-style [params]
   (update beer-style
@@ -92,7 +94,8 @@
 
 (defn search-beer-styles [text]
  (select beer-style
-  (where (or {:id text} (like :name text) (like :description text)))))
+  (where (or {:id text} (like :name text) (like :description text)))
+         (order :id :ASC)))
 
 (defn find-beer-style-by-id [id]
   (select beer-style
@@ -100,23 +103,15 @@
 
 (defn find-beer-style-by-name [bs-name]
   (select beer-style
-  (where {:name bs-name})))
-
-(defn find-beer-style-by-name [bs-name]
-  (select beer-style
-  (where {:name bs-name})))
+  (where {:name bs-name})
+          (order :id :ASC)))
 
 (defn find-beer-by-id [id]
   (select beer-style
-  (where {:id id})))
-
-(defn find-beer-by-id [id]
-  (select beer
   (where {:id id})))
 
 (defn get-beers-for-beer-style [bs-id]
   (select beer
-   (join beer-style)
-  (where {:beer_style bs-id}))
-;;   (order :beer.id :ASC)
-  )
+          (join beer-style)
+          (where {:beer_style bs-id})
+          (order :beer.id :ASC)))

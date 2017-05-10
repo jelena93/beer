@@ -1,7 +1,7 @@
 function searchUsers(text){
     $.ajax({
         type: "POST",
-        url: "/user/search",
+        url: "/users",
         data: {text:text},
         dataType: 'json',
         success: function (data) {
