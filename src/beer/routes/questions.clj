@@ -2,14 +2,14 @@
   (:require [compojure.core :refer :all]
             [beer.models.question :refer :all]
             [beer.models.beer :refer :all]
-            [selmer.parser :refer [render-file]]
             [beer.models.db :as db]
+            [beer.models.rule :as rules]
+            [selmer.parser :refer [render-file]]
             [compojure.response :refer [render]]
             [ring.util.response :refer [response redirect content-type]]
             [liberator.core :refer [resource defresource]]
             [clojure.data.json :as json]
-            [buddy.auth :refer [authenticated?]]
-            [beer.models.rule :as rules])
+            [buddy.auth :refer [authenticated?]])
     (:import [beer.models.question Question]
              [beer.models.beer Beer]))
 
