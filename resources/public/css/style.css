@@ -1212,7 +1212,7 @@ ul.pagination li a {
     color: #2f6818;
     text-decoration: none;
 }
-input[type="text"] {
+input[type="text"], input[type="password"],input[type="email"]   {
     background: none;
     width: 100%;
     color: #542f1d;
@@ -2632,7 +2632,7 @@ blockquote {
     .ftrd-head p,
     .event-grid_pic p,
     .contact-right textarea,
-    .contact-left input[type="text"] {
+    input[type="text"], input[type="password"],input[type="email"]   {
         font-size: 12px;
     }
     .date span {
@@ -2673,7 +2673,7 @@ blockquote {
     .about-grid-left {
         padding: 0;
     }
-    .contact-left input[type="text"] {
+    input[type="text"], input[type="password"],input[type="email"]   {
         padding: 10px 10px;
     }
     .contact-right textarea {
@@ -3361,7 +3361,7 @@ blockquote {
     .contact-map {
         height: 165px;
     }
-    .contact-left input[type="text"] {
+    input[type="text"], input[type="password"], input[type="email"]   {
         padding: 8px 10px;
     }
     .contact-right textarea {

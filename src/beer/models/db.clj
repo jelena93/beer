@@ -40,6 +40,7 @@
 
 (defn get-user [id]
   (select user
+          (fields :username :password :first_name :last_name :email)
   (where {:id id})))
 
 (defn delete-user [id]
@@ -55,9 +56,10 @@
   (where {:role "user"})
   (order :id :ASC)))
 
-(defn update-user [id username password first-name last-name]
+(defn update-user [id username password first-name last-name email]
+  (println id username password first-name last-name email)
   (update user
-          (set-fields {:username username :password password :first_name first-name :last_name last-name})
+          (set-fields {:username username :password password :first_name first-name :last_name last-name :email email})
           (where {:id id})))
 
 (defn search-users [text]

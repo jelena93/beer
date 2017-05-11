@@ -21,9 +21,6 @@
   (and (not (authenticated? session))
        (not="admin" (:role (:identity session)))))
 
-(defn authenticated-same-user [{:keys [params session] request :request}]
-  (and (authenticated? session) (= (:username session) (:username params))))
-
 (defn get-users [text]
   (if (or (nil? text) (= "" text))
     (db/get-users)
@@ -37,9 +34,13 @@
   (render-file "templates/add-user.html" {:title "Add user" :logged (:identity session)}))
 
 (defn get-user [{:keys [params session] request :request}]
-  (if-not (authenticated session)
+  (cond
+    (not= (authenticated session))
     (redirect "/login")
-  (render-file "templates/user.html" {:title (str "User " (:id params)) :logged (:identity session) :user (db/get-user (:id params))})))
+    (not= (:id params) (str (:id (:identity session))))
+    (redirect "/")
+    :else
+    (render-file "templates/user-edit.html" {:title (str "User " (:id params)) :logged (:identity session) :user (first (db/get-user (:id params)))})))
 
 (defresource search-users [{:keys [params session] request :request}]
   :allowed-methods [:post]
@@ -50,22 +51,22 @@
 (defresource delete-user [{:keys [params session] request :request}]
   :allowed-methods [:delete]
   :handle-malformed "username cannot be empty"
-  :authenticated? (authenticated session)
-  :delete!  (db/delete-user (:id params))
+  :authenticated? (authenticated request)
+  :delete! (db/delete-user (:id (:identity session)))
   :handle-created (json/write-str "ok")
   :available-media-types ["application/json"])
 
 (defresource edit-user [{:keys [params session] request :request}]
-  :allowed-methods [:delete]
-  :handle-malformed "username cannot be empty"
-  :authenticated? (authenticated-same-user request)
-  :delete!  (db/update-user (:id session) (:username params) (:password params) (:first-name params) (:last-name params))
+  :allowed-methods [:put]
+  :handle-malformed "all field are required"
+  :authenticated? (authenticated request)
+  :put!  (db/update-user (:id (:identity session)) (:username params) (:password params) (:first_name params) (:last_name params) (:email params))
   :handle-created (json/write-str "ok")
   :available-media-types ["application/json"])
 
 (defroutes user-routes
   (GET "/users" request (get-search-users request))
   (POST "/users" request (search-users request))
-  (DELETE "/user" request (delete-user request))
-  (PUT "/user" request (edit-user request))
+  (DELETE "/user/:id" request (delete-user request))
+  (PUT "/user/:id" request (edit-user request))
   (GET "/user/:id" request (get-user request)))

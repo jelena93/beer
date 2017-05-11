@@ -1,0 +1,31 @@
+{% extends "templates/base.html" %}
+{% block content %}
+<div class="row">
+   <div class="col-lg-6 col-lg-offset-2">
+      {{message}}
+      <form action="" name="register" method="post">
+         <div class="form-group form-group-lg">
+            <input type="text" name="id" id="id" placeholder="Id" value="{{user.id}}" readonly/>
+         </div>
+        <div class="form-group form-group-lg">
+            <input type="text" name="userame" id="username" placeholder="Username" value="{{user.username}}"/>
+         </div>
+         <div class="form-group form-group-lg">
+            <input type="password" name="password" id="password" placeholder="Password" value="{{user.password}}"/>
+         </div>
+         <div class="form-group form-group-lg">
+            <input type="text" name="first_name" id="first_name" placeholder="First name" value="{{user.first_name}}"/>
+         </div>
+         <div class="form-group form-group-lg">
+            <input type="text" name="last_name" id="last_name" placeholder="Last name" value="{{user.last_name}}"/>
+         </div>
+         <div class="form-group form-group-lg">
+            <input type="email" name="email" id="email" placeholder="Email" value="{{user.email}}"/>
+         </div>
+        <div class="form-group form-group-lg pull-right">
+            <input type="button" value="Edit" onclick="editUser()"/>
+         </div>
+      </form>
+   </div>
+</div>
+{% endblock %}
