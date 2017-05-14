@@ -14,10 +14,12 @@
                  [cheshire "5.2.0"]
                  [migratus "0.8.28"]
                  [korma/korma "0.4.3"]
+                 [funcool/struct "1.0.0"]
                  [log4j "1.2.15" :exclusions [javax.mail/mail
                             javax.jms/jms
                             com.sun.jdmk/jmxtools
-                            com.sun.jmx/jmxri]]]
+                            com.sun.jmx/jmxri]]
+                 ]
   :plugins [[lein-ring "0.8.12"]
             [migratus-lein "0.4.1"]]
   :ring {:handler beer.handler/app

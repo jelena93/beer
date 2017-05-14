@@ -7,27 +7,20 @@
             <thead>
               <th>ID</th>
               <th>Name</th>
-              <th>Origin</th>
-              <th>Price</th>
               <th>Beer style</th>
-              <th>Price</th>
               <th>Alcohol</th>
               <th>Manufacturer</th>
               <th>Country</th>
-              <th>Info</th>
              </thead>
              <tbody>
                {% for b in beers %}
                <tr id="{{b.id}}" onclick="getBeer(this.id)" class="clickable-row">
                <td>{{b.id}}</td>
                <td>{{b.name}}</td>
-               <td>{{b.origin}}</td>
-               <td>{{b.price}}</td>
                 <td>{{b.beer_style}}</td>
                <td>{{b.alcohol}}</td>
                <td>{{b.manufacturer}}</td>
                <td>{{b.country}}</td>
-               <td>{{b.info}}</td>
                </tr>
                {% endfor %}
              </tbody>

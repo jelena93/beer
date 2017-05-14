@@ -1,0 +1,18 @@
+{% extends "templates/base.html" %}
+{% block content %}
+<h3>Welcome {{logged.first_name}} {{logged.last_name}}</h3>
+
+      {% for b in beers %}
+<div class="square">
+   <div class="content-pic">
+        <div class="table">
+            <div class="table-cell">
+                <a href="/beer/{{b.id}}"> <img class="rs" src="{{b.picture}}"/></a>
+                {{b.name}}
+            </div>
+        </div>
+    </div>
+</div>
+      {% endfor %}
+
+{% endblock %}

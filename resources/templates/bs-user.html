@@ -16,10 +16,16 @@
    </div>
    <div class="business-grids">
       {% for b in beers %}
-      <div class="col-md-3 business-grid">
-         <a href="/beer/{{b.id}}"><img class="img-responsive" src="/images/ggg.jpg" alt=""/></a>
-         <h3>{{b.name}}</h3>
-      </div>
+<div class="square">
+   <div class="content-pic">
+        <div class="table">
+            <div class="table-cell">
+                <a href="/beer/{{b.id}}"> <img class="rs" src="{{b.picture}}"/></a>
+                {{b.name}}
+            </div>
+        </div>
+    </div>
+</div>
       {% endfor %}
    </div>
    <div class="clearfix"></div>

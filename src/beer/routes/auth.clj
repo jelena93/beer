@@ -1,6 +1,6 @@
 (ns beer.routes.auth
   (:require [compojure.core :refer [defroutes GET POST]]
-             [clojure.string :refer [blank?]]
+            [clojure.string :refer [blank?]]
             [ring.util.response :refer [redirect]]
             [selmer.parser :refer [render-file]]
             [beer.models.db :as db]))
@@ -32,10 +32,10 @@
         email (:email (:params request))
         session (:session request)]
   (if (or (blank? username) (blank? password) (blank? first_name) (blank? last_name) (blank? email))
-    (registration-page "Please fill all fields")
+    (registration-page "Please fill out all fields")
   (do
     (try
-      (db/add-user (assoc (:params request) :role "USER"))
+      (db/add-user (assoc (:params request) :role "user"))
       (assoc (redirect "/"):session (assoc session :identity username))
       (catch Exception  e (render-file "templates/register.html" {:title "Register"
 :error (str e "User with username: " username " already exists") })))))))

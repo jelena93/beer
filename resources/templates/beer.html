@@ -5,18 +5,22 @@
       <h3>{{beer.name}}</h3>
    </div>
    <div class="row">
-      <div class="col-md-4  blog-left" >
-         <div class="blog-img">
-            <img src="/images/img12.jpg" alt=""/>
-         </div>
+      <div class="col-md-6">
+        <div class="blog-img">
+          <img src="/image/{{beer.id}}" class="img-responsive zoom-img"/>
+        </div>
       </div>
-      <div class="col-md-4 col-md-offset-2 blog-right" >
+      <div class="col-md-6">
          <div class="blog-info-text">
-            <p class="snglp">Lorem ipsum dolor sit amet, consectetur adipisicext.</p>
+            <p class="snglp"><strong>Origin:</strong> {{beer.origin}}</p>
+            <p class="snglp"><strong>Price:</strong> {{beer.price}}</p>
+            <p class="snglp"><strong>Beer style:</strong> <a href="/bs/{{beer.beer_style}}">{{beer.beer_style_name}}</a></p>
+            <p class="snglp"><strong>Manufacturer:</strong> {{beer.manufacturer}}</p>
+            <p class="snglp"><strong>Country:</strong> {{beer.country}}</p>
+            <p class="snglp"><strong>Info:</strong> {{beer.info}}</p>
             {% ifequal logged.role "admin" %}
-            <input type="button" value="Delete" onclick="deleteBeer({{beer.id}})"/>
+            <input class="pull-right" type="button" value="Delete" onclick="deleteBeer({{beer.id}})"/>
             {% endifequal %}
-            <input type="button" value="Like" onclick="likeBeer({{beer.id}})"/>
          </div>
       </div>
    </div>
@@ -24,53 +28,49 @@
       <div class="blog-info">
          <div class="comment-icons">
             <ul>
-               <li><span class="cmnts"></span> <a href="#">5 comments</a></li>
-               <li><a href="#" class="like">15 likes</a></li>
+               <li><span class="cmnts"></span> <a id="comments-count" data-toggle="collapse" href="#comments">{{comments|length}} comments</a></li>
+               <li><a id="likes-count" href="#" class="like">{{likes|length}} likes</a></li>
+               {% ifequal logged.role "user" %}
+                            <div id="button-like" class="pull-right">
+                {% ifequal liked 0 %}
+              <input type="button" value="Like" onclick="likeBeer({{beer.id}})"/>
+            {% endifequal %}
+            {% ifunequal liked 0 %}
+              <input type="button" value="Dislike" onclick="dislikeBeer({{beer.id}})"/>
+            {% endifunequal  %}
+              </div>
+              {% endifequal %}
+
             </ul>
          </div>
-         <div class="response">
+         <div class="response" id="comments">
             <h4>Comments</h4>
-            <div class="media response-info">
+            {% for c in comments %}
+            <div class="media response-info" id="comment-{{c.id}}">
                <div class="media-left response-text-left">
-                  <a href="#">
-                  <img class="media-object" src="/images/icon1.png" alt=""/>
-                  </a>
-                  <h5><a href="#">Admin</a></h5>
+                  <a href="#"><img class="media-object" src="/images/icon1.png" alt=""/></a>
+                  <h5>{{c.first_name}} {{c.last_name}}</h5>
                </div>
                <div class="media-body response-text-right">
-                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit,There are many variations of passages of Lorem Ipsum available,
-                     sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  </p>
+                  <p>{{c.comment}}</p>
                   <ul>
-                     <li>MARCH 21, 2013</li>
-                  </ul>
+                    <li>{{c.date}}</li>
+                    {% ifequal logged.role "admin" %}
+                    <li><button class="btn" onclick="deleteComment({{c.id}})">Delete comment</button></li>
+                    {% endifequal %}
+                 </ul>
                </div>
                <div class="clearfix"> </div>
             </div>
-            <div class="media response-info">
-               <div class="media-left response-text-left">
-                  <a href="#">
-                  <img class="media-object" src="/images/icon1.png" alt=""/>
-                  </a>
-                  <h5><a href="#">Admin</a></h5>
-               </div>
-               <div class="media-body response-text-right">
-                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit,There are many variations of passages of Lorem Ipsum available,
-                     sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  </p>
-                  <ul>
-                     <li>MARCH 21, 2013</li>
-                  </ul>
-               </div>
-            </div>
+            {% endfor %}
          </div>
       </div>
       <div class="coment-form">
          <h4>Leave your comment</h4>
-         <form>
-            <textarea id="comment" rows="3" placeholder="Your Comment..." ></textarea>
-            <input type="button" class="pull-right" value="Comment" onclick="sendComment({{beer.id}})" >
-         </form>
+            <form action="/beer/comment/{{beer.id}}" name="comment" method="post">
+              <textarea id="comment" name="comment" rows="3" placeholder="Your Comment..." ></textarea>
+            <input type="submit" class="pull-right" value="Add Comment" >
+        </form>
       </div>
    </div>
 </div>

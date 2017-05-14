@@ -1,3 +1,50 @@
+var validatorUser;
+$(function() {
+    validatorUser = $("form[name='user']").validate({
+        rules: {
+            username: {
+                required: true
+            },
+            password: {
+                required: true
+            },
+            first_name: {
+                required: true
+            },
+            last_name: {
+                required: true
+            },
+            email: {
+                required: true,
+                email: true
+            }
+        },
+        messages: {
+            username: {
+                required: "Please provide a username"
+            },
+            password: {
+                required: "Please provide a password"
+            },
+            first_name: {
+                required: "Please provide a first name"
+            },
+            last_name: {
+                required: "Please provide a last name"
+            },
+            email: {
+                required: "Please provide an email"
+            },
+
+        },
+        submitHandler: function(form) {
+            form.submit();
+        }
+    });
+});
+
+
+
 function searchUsers(text) {
     $.ajax({
         type: "POST",
@@ -35,7 +82,8 @@ function editUser() {
   var first_name=$("#first_name").val();
   var last_name=$("#last_name").val();
   var email=$("#email").val();
-    $.ajax({
+  if(validatorUser.form()){
+      $.ajax({
         type: "PUT",
         url: "/user/"+id,
         data: {
@@ -50,6 +98,8 @@ function editUser() {
             console.log(request);
         }
     });
+  }
+
 }
 function deleteUser() {
   var id=$("#id").val();

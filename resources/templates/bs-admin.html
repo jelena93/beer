@@ -1,0 +1,37 @@
+{% extends "templates/base.html" %}
+{% block content %}
+<div class="about">
+   <div class="about-info">
+      <h3>{{bs.name}}</h3>
+   </div>
+   <div class="about-grids">
+      <div class="col-lg-6">
+        <form name="bs">
+          <textarea name="description" rows="5" id="description" placeholder="Description">{{bs.description}}</textarea>
+        </form>
+        <input class="pull-right" type="button" value="Edit" onclick="editBs({{bs.id}})"/>
+      </div>
+      <div class="col-lg-6">
+      <table class="table">
+       <thead>
+       <th>Name</th>
+       <th>Action</th>
+       </thead>
+       <tbody>
+         {% for b in beers %}
+         <tr id="{{b.id}}">
+            <td>{{b.name}}</td>
+           <td>
+             <a href="/beer/{{b.id}}">View</a>
+           <button class="btn" onclick="deleteBeerFromBs({{b.id}})">Delete</button>
+           </td>
+         </tr>
+      {% endfor %}
+       </tbody>
+     </table>
+     </div>
+   </div>
+</div>
+
+{% endblock %}
+

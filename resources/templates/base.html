@@ -4,7 +4,7 @@
    <title>{{title}}</title>
    <!-- 	<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script> -->
    <!-- //for-mobile-apps -->
-   <link href="/css/bootstrap.css" rel="stylesheet">
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" type="text/css" rel="stylesheet">
    <link href="/css/style.css" rel="stylesheet" type="text/css" media="all" />
    <!--fonts-->
    <link href='http://fonts.googleapis.com/css?family=Stint+Ultra+Condensed' rel='stylesheet' type='text/css'>
@@ -14,9 +14,12 @@
    <!-- js -->
    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+   <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.validation/1.15.1/jquery.validate.min.js"></script>
+   <script type="text/javascript" src="/js/shared.js"></script>
    <script type="text/javascript" src="/js/questions.js"></script>
    <script type="text/javascript" src="/js/user.js"></script>
    <script type="text/javascript" src="/js/beer.js"></script>
+   <script type="text/javascript" src="/js/bs.js"></script>
    <!-- js -->
    <!-- start-smoth-scrolling -->
    <script type="text/javascript" src="/js/move-top.js"></script>
@@ -34,10 +37,19 @@
 <body>
    {% include "templates/header.html" %}
    <div class="container">
-      <div class="alert alert-danger alert-dismissable" id="error" style="display:none;">
+     <br/>
+     {% ifequal message.type "error" %}
+           <div class="alert alert-danger alert-dismissable" id="error" style="display:none;">
          <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-         <div id="error-message"></div>
+         <div id="error-message">{{message.text}}</div>
       </div>
+{% endifequal %}
+          {% ifequal message.type "success" %}
+      <div class="alert alert-success alert-dismissable" id="success" style="display:none;">
+         <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+         <div id="success-message">{{message.text}}</div>
+      </div>
+{% endifequal %}
       {% block content %}{% endblock %}
    </div>
    {% include "templates/footer.html" %}

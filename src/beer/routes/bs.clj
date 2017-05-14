@@ -19,37 +19,46 @@
     (throw-unauthorized {:message "Not authorized"})))
 
 (defn check-authenticated-admin [session]
-  (and (not (authenticated? session))
-       (not="admin" (:role (:identity session)))))
+  (and (authenticated? session)
+       (="admin" (:role (:identity session)))))
 
 (defn get-bs [text]
   (if (or (nil? text) (= "" text))
     (db/get-beer-styles)
     (db/search-beer-styles (str "%" text "%"))))
 
-(defn update-bs [{:keys [params session] request :request}]
-  (check-authenticated-admin session)
-    (render-file "templates/beer-edit.html" {:title "Edit beer style"
-              :message (str "Beer style successfully edited, id: " (db/update-beer-style params))}))
-
 (defn get-search-bs [{:keys [params session] request :request}]
   (if-not (authenticated session)
     (redirect "/login")
   (render-file "templates/bs-search.html" {:title "Search beer styles"
-                                           :logged (:identity session) :beers (get-bs nil)})))
+                                           :logged (:identity session) :bs (get-bs nil)})))
+
+(defn find-bs [{:keys [params session] request :request}]
+  (println (not (authenticated session)))
+  (cond
+    (not (authenticated session))
+     (redirect "/login")
+    (check-authenticated-admin session)
+     (render-file "templates/bs-admin.html" {:title "Beer Style" :logged (:identity session)
+                                        :bs (first (db/find-beer-style-by-id (:id params)))
+                                    :beers (db/get-beers-for-beer-style (:id params ))})
+    :else
+     (render-file "templates/bs-user.html" {:title "Beer Style" :logged (:identity session)
+                                        :bs (first (db/find-beer-style-by-id (:id params)))
+                                    :beers (db/get-beers-for-beer-style (:id params ))})))
 
 (defresource search-bs [{:keys [params session] request :request}]
   :allowed-methods [:post]
-  :authenticated? (check-authenticated-admin session)
+  :authenticated? (not (check-authenticated-admin session))
   :handle-created (json/write-str (get-bs (:text params)))
   :available-media-types ["application/json"])
 
-(defn find-bs [{:keys [params session] request :request}]
-  (if-not (authenticated session)
-    (redirect "/login")
-    (render-file "templates/bs.html" {:title "Beer Style" :logged (:identity session)
-                                        :bs (first (db/find-beer-style-by-id (:id params)))
-                                    :beers (db/get-beers-for-beer-style (:id params ))})))
+(defresource update-bs [{:keys [params session] request :request}]
+  :allowed-methods [:put]
+  :authenticated? (not (check-authenticated-admin session))
+  :put! (db/update-beer-style params)
+  :handle-created (json/write-str "Beer style successfully edited")
+  :available-media-types ["application/json"])
 
 (defroutes bs-routes
   (GET "/bs" request (get-search-bs request))

@@ -40,7 +40,8 @@
     (not= (:id params) (str (:id (:identity session))))
     (redirect "/")
     :else
-    (render-file "templates/user-edit.html" {:title (str "User " (:id params)) :logged (:identity session) :user (first (db/get-user (:id params)))})))
+    (render-file "templates/user-edit.html"
+                 {:title (str "User " (:id params)) :logged (:identity session) :user (first (db/get-user (:id params)))})))
 
 (defresource search-users [{:keys [params session] request :request}]
   :allowed-methods [:post]
@@ -61,7 +62,7 @@
   :handle-malformed "all field are required"
   :authenticated? (authenticated request)
   :put!  (db/update-user (:id (:identity session)) (:username params) (:password params) (:first_name params) (:last_name params) (:email params))
-  :handle-created (json/write-str "ok")
+  :handle-created (json/write-str "User successfully edited")
   :available-media-types ["application/json"])
 
 (defroutes user-routes

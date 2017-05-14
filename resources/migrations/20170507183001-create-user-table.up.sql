@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS user (
 --;;
 INSERT INTO user
 (username, password, first_name, last_name, email, role) VALUES
-('asd', 'asd', 'Admin', 'Admin', 'admin@gmail.com', 'admin'),
-('usder', 'asdd', 'Admin', 'Admdin', 'admin@gmail.com', 'user'),
-('dasd', 'asd', 'Addmin', 'Admin', 'admin@gmail.com', 'user'),
-('d', 'asdd', 'Admdin', 'Admin', 'admin@gmail.com', 'user');
+('a', 'a', 'Admin', 'Admin', 'admin@gmail.com', 'admin'),
+('u', 'u', 'Admin', 'Admdin', 'admin@gmail.com', 'user'),
+('d', 'd', 'Addmin', 'Admin', 'admin@gmail.com', 'user'),
+('s', 's', 'Admdin', 'Admin', 'admin@gmail.com', 'user');

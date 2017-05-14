@@ -4,6 +4,7 @@
             [selmer.parser :refer [render-file]]
             [compojure.response :refer [render]]
             [buddy.auth :refer [authenticated? throw-unauthorized]]
+            [beer.models.db :as db]
             [ring.util.response :refer [response redirect content-type]]))
 
 (defn authenticated [session]
@@ -16,7 +17,10 @@
 (defn home [session]
   (if-not (authenticated session)
     (redirect "/login")
-    (render-file "templates/home.html" {:title "Home" :logged (:identity session)})))
+    (render-file "templates/home-user.html"
+                 {:title "Home"
+                  :logged (:identity session)
+                  :beers (db/get-beers)})))
 
 (defroutes home-routes
   (GET "/" request (home (:session request))))

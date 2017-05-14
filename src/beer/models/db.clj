@@ -3,36 +3,30 @@
             [clojure.string :as str]
             [korma.core :refer :all]
             [korma.db :refer :all]
-            [clojure.set :as cs])
-  (:import java.sql.DriverManager)
-;;   (:use [korma.db]
-;;         [korma.core])
-  )
+            [clojure.set :as cs]
+            [clj-time.coerce :as c]
+            [clj-time.core :as t])
+  (:import java.sql.DriverManager))
 
 (defdb db (mysql {:db "beer"
                      :user "admin"
                      :password "admin"}))
 (defentity user
   (table :user)
-  (entity-fields :id :username :first_name :last_name :email :role)
-  (prepare (fn [v] (cs/rename-keys v {:my-column :my_column})))
-  (transform (fn [v] (cs/rename-keys v {:my_column :my-column}))))
+  (entity-fields :id :username :first_name :last_name :email :role))
 
 (defentity beer-style
-  (table :beer_style)
-  (prepare (fn [v] (cs/rename-keys v {:my-column :my_column})))
-  (transform (fn [v] (cs/rename-keys v {:my_column :my-column}))))
+  (table :beer_style))
 
 (defentity beer
-  (table :beer)
-  (prepare (fn [v] (cs/rename-keys v {:my-column :my_column})))
-  (transform (fn [v] (cs/rename-keys v {:my_column :my-column}))))
+  (table :beer))
 
 (defentity beer-like
   (table :beer_like))
 
 (defentity beer-comment
-  (table :beer_comment))
+  (table :beer_comment)
+  (belongs-to user))
 
 (defn add-user [params]
   (insert user
@@ -66,10 +60,6 @@
   (select user
      (where (and {:role "user"} (or (like :username text) (like :first_name text) (like :email text))))
           (order :id :ASC)))
-
-(defn add-beer [params]
-  (insert beer
-  (values params)))
 
 (defn add-beer [params]
   (insert beer
@@ -120,12 +110,13 @@
           (order :id :ASC)))
 
 (defn find-beer-by-id [id]
-  (select beer-style
+(select beer
+        (fields :* [:beer_style.name :beer_style_name])
+        (join beer-style (= :beer_style :beer_style.id))
   (where {:id id})))
 
 (defn get-beers-for-beer-style [bs-id]
   (select beer
-          (join beer-style)
           (where {:beer_style bs-id})
           (order :beer.id :ASC)))
 
@@ -141,11 +132,20 @@
   (select beer-like
   (where {:beer_id beer-id})))
 
-(defn add-beer-comment [user-id beer-id beer-comment]
+(defn find-user-like-for-beer [beer-id user-id]
+  (select beer-like
+  (where {:beer_id beer-id :user_id user-id})))
+
+(defn add-beer-comment [user-id beer-id text]
   (insert beer-comment
-  (values {:user_id user-id :beer_id beer-id :comment beer-comment})))
+  (values {:user_id user-id :beer_id beer-id :comment text :date (c/to-sql-time (t/now))})))
 
 (defn get-beer-comments [beer-id]
   (select beer-comment
-  (where {:beer_id beer-id})
+          (with user)
+          (where {:beer_id beer-id})
           (order :id :ASC)))
+
+(defn delete-beer-comment [id]
+  (delete beer-comment
+  (where {:id id})))
