@@ -7,7 +7,7 @@
          {{title}}
          <hr/>
       </h3>
-      <form action="" name="beer_add" method="post">
+      <form action="" name="beer_add" method="post" enctype="multipart/form-data">
          <div class="form-group form-group-lg">
             <input type="text" name="name" placeholder="Name"/>
          </div>
@@ -20,15 +20,22 @@
             <label class="radio-inline"><input type="radio" name="price" value="1">Cheap</label>
          </div>
          <div class="form-group form-group-lg">
-           <label for="beer_style">Beer style</label>
+            <label for="beer_style">Beer style</label>
             <select id="beer_style" name="beer_style">
-              {% for b in bs %}
-              <option value="{{b.id}}">{{b.name}}</option>
-              {% endfor %}
+               {% for b in bs %}
+               <option value="{{b.id}}">{{b.name}}</option>
+               {% endfor %}
             </select>
          </div>
          <div class="form-group form-group-lg">
-           <label class="btn btn-default btn-file"><span class="glyphicon glyphicon-upload"></span> <input type="file" name="picture" accept="image/*" style="display: none;"></label>
+            <label class="radio-inline">
+            <input type="radio" name="optradio" checked value="upload">Upload image</label>
+            <label class="radio-inline">
+            <input type="radio" name="optradio" value="url">Copy image url</label>
+         </div>
+         <div class="form-group form-group-lg">
+            <input type="file" id="pic-upload" name="picture" accept="image/*" >
+            <input style="display:none;" type="url" id="pic-url" name="picture_url" placeholder="Image url"/>
          </div>
          <div class="form-group form-group-lg">
             <input type="text" name="alcohol" placeholder="Alcohol (%)"/>
@@ -42,7 +49,7 @@
          <div class="form-group form-group-lg">
             <textarea name="info" rows="5" placeholder="Info"></textarea>
          </div>
-        <div class="form-group form-group-lg pull-right">
+         <div class="form-group form-group-lg pull-right">
             <input type="submit" value="Add"/>
          </div>
       </form>

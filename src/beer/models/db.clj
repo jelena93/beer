@@ -61,9 +61,9 @@
      (where (and {:role "user"} (or (like :username text) (like :first_name text) (like :email text))))
           (order :id :ASC)))
 
-(defn add-beer [params]
+(defn add-beer [beer-name origin price beer-style alcohol manufacturer country info picture]
   (insert beer
-  (values params)))
+  (values {:name beer-name :origin origin :price price :beer_style beer-style :alcohol alcohol :manufacturer manufacturer :country country :info info :picture picture})))
 
 (defn update-beer [params]
   (update beer

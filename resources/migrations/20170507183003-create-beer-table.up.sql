@@ -8,7 +8,7 @@
   manufacturer VARCHAR(100) NOT NULL,
   country VARCHAR(100) NOT NULL,
   info VARCHAR(100) NOT NULL,
-  picture BLOB,
+  picture VARCHAR(255) DEFAULT '/images/default.jpg',
   PRIMARY KEY (id),
   FOREIGN KEY (beer_style) REFERENCES beer_style(id) ON UPDATE CASCADE ON DELETE CASCADE
 );

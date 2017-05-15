@@ -19,7 +19,8 @@
    :alcohol [st/required st/number]
    :manufacturer [st/required st/string]
    :country [st/required st/string]
-   :info [st/required st/string]})
+   :info [st/required st/string]
+   :picture [st/required st/string]})
 
 (def beer-comment-schema
   {:user-id [st/required st/number]
@@ -49,7 +50,6 @@
                                             :message message
                                             :bs (db/get-beer-styles) })))
 (defn get-beer [{:keys [params session] request :request} &[message]]
-    (println message)
   (if-not (authenticated session)
     (redirect "/login")
     (render-file "templates/beer.html" {:title (str "Beer " (:id params))
@@ -60,6 +60,9 @@
                                             :liked (count (db/find-user-like-for-beer (:id params) (:id (:identity session))))
                                             :comments (db/get-beer-comments (:id params))})))
 
+(defn upload-picture [{:keys [filename tempfile] picture :picture}]
+  (io/copy tempfile (io/file "resources" "public" "images" "beer" filename)))
+
 (defn add-beer [{:keys [params session] request :request}]
   (let [beer-name (:name params)
         origin (read-string (:origin params))
@@ -68,7 +71,8 @@
         alcohol (read-string (:alcohol params))
         manufacturer (:manufacturer params)
         country (:country params)
-        info (:info params)]
+        info (:info params)
+        picture-name (if (not (nil? (:picture params))) (str "/images/beer/" (:filename (:picture params))) (:picture_url params))]
     (cond
     (not= (authenticated session))
      (redirect "/login")
@@ -79,9 +83,12 @@
                      :alcohol alcohol
                      :manufacturer manufacturer
                      :country country
-                     :info info} beer-schema))
-;;       (-> (get-add-beer session {:text (str "Beer successfully added, id: " (db/add-beer params)) :type "success"}))
-      (redirect (str "/beer/" (:generated_key (db/add-beer params))))
+                     :info info
+                     :picture picture-name} beer-schema))
+      (do
+        (if (not(nil? (:picture params)))
+        (upload-picture (:picture params)))
+        (redirect (str "/beer/" (:generated_key (db/add-beer beer-name origin price beer-style alcohol manufacturer country info picture-name)))))
     :else
       (-> (get-add-beer session {:text "All fields are required" :type "error"})))))
 
@@ -150,21 +157,6 @@
   :handle-ok (fn [_] (json/write-str (count (db/get-beer-comments (:beer params)))))
   :available-media-types ["application/json"])
 
-(defresource tests [{:keys [params session] request :request}]
-  :allowed-methods [:get]
-  :handle-malformed "id cannot be empty"
-  :authenticated? (authenticated session)
-  :new? false
-  :respond-with-entity? true
-  :get (println (io/input-stream  (:picture (first (db/find-beer-by-id (:id params))))))
-;;   :handle-ok (fn [_] (slurp (:picture (first (db/find-beer-by-id (:id params))))))
-  :handle-ok (fn [_] (io/input-stream  (:picture (first (db/find-beer-by-id (:id params))))))
-  :available-media-types ["image/jpeg"]
-  )
-;; (defn tests [{:keys [params session] request :request}]
-;; (let [beer (first (db/find-beer-by-id (:id params)))]
-;;   ))
-
 (defn admin-view []
   (response "ADMINS ONLY"))
 
@@ -174,7 +166,6 @@
 
 (defroutes beer-routes
   (GET "/beer" request (get-add-beer (:session request)))
-  (GET "/image/:id" request (tests request))
   (POST "/beer" request (add-beer request))
   (PUT "/beer" request (update-beer request))
   (DELETE "/beer" request (delete-beer request))
