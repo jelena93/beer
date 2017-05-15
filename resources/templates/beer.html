@@ -12,15 +12,83 @@
       </div>
       <div class="col-md-6">
          <div class="blog-info-text">
-            <p class="snglp"><strong>Origin:</strong> {{beer.origin}}</p>
-            <p class="snglp"><strong>Price:</strong> {{beer.price}}</p>
-            <p class="snglp"><strong>Beer style:</strong> <a href="/bs/{{beer.beer_style}}">{{beer.beer_style_name}}</a></p>
-            <p class="snglp"><strong>Manufacturer:</strong> {{beer.manufacturer}}</p>
-            <p class="snglp"><strong>Country:</strong> {{beer.country}}</p>
-            <p class="snglp"><strong>Info:</strong> {{beer.info}}</p>
-            {% ifequal logged.role "admin" %}
-            <input class="pull-right" type="button" value="Delete" onclick="deleteBeer({{beer.id}})"/>
-            {% endifequal %}
+           {% ifequal logged.role "admin" %}
+           <form action="" name="beer" method="post" enctype="multipart/form-data">
+             <div class="form-group form-group-lg">
+               <input type="text" id="id" name="id" value="{{beer.id}}" readonly/>
+             </div>
+         <div class="form-group form-group-lg">
+            <input type="text" name="name" id="name" placeholder="Name" value="{{beer.name}}"/>
+         </div>
+         <div class="form-group form-group-lg">
+           {% ifequal beer.origin "0" %}
+            <label class="radio-inline"><input type="radio" checked name="origin" value="0">Domestic</label>
+           <label class="radio-inline"><input type="radio" name="origin" value="1">Imported</label>
+              {% endifequal %}
+           {% ifequal beer.origin "1" %}
+            <label class="radio-inline"><input type="radio" name="origin" value="0">Domestic</label>
+           <label class="radio-inline"><input type="radio" checked name="origin" value="1">Imported</label>
+              {% endifequal %}
+         </div>
+         <div class="form-group form-group-lg">
+           {% ifequal beer.price "0" %}
+            <label class="radio-inline"><input type="radio" checked name="price" value="0">Expensive</label>
+            <label class="radio-inline"><input type="radio" name="price" value="1">Cheap</label>
+              {% endifequal %}
+           {% ifequal beer.price "1" %}
+            <label class="radio-inline"><input type="radio" name="price" value="0">Expensive</label>
+            <label class="radio-inline"><input type="radio" checked name="price" value="1">Cheap</label>
+              {% endifequal %}
+         </div>
+         <div class="form-group form-group-lg">
+            <label for="beer_style">Beer style</label>
+            <select id="beer_style" name="beer_style">
+               {% for b in bs %}
+              {% ifequal b.id beer.beer_style %}
+              <option value="{{b.id}}" selected>{{b.name}}</option>
+              {% endifequal %}
+              {% ifunequal b.id beer.beer_style %}
+              <option value="{{b.id}}">{{b.name}}</option>
+              {% endifunequal %}
+               {% endfor %}
+            </select>
+         </div>
+         <div class="form-group form-group-lg">
+           <label class="radio-inline"><input type="radio" name="optradio" checked value="url">Image url</label>
+           <label class="radio-inline"><input type="radio" name="optradio" value="upload">Upload image</label>
+         </div>
+         <div class="form-group form-group-lg">
+            <input type="text" id="pic-url" name="picture_url" placeholder="Image url"  value="{{beer.picture}}"/>
+            <input style="display:none;" type="file" id="pic-upload" name="picture" accept="image/*" >
+             </div>
+         <div class="form-group form-group-lg">
+            <input type="text" name="alcohol" id="alcohol" placeholder="Alcohol (%)" value="{{beer.alcohol}}"/>
+         </div>
+         <div class="form-group form-group-lg">
+            <input type="text" name="manufacturer" id="manufacturer" placeholder="Manufacturer" value="{{beer.manufacturer}}"/>
+         </div>
+         <div class="form-group form-group-lg">
+            <input type="text" name="country" id="country" placeholder="Country" value="{{beer.country}}"/>
+         </div>
+         <div class="form-group form-group-lg">
+            <textarea name="info" rows="5" id="info" placeholder="Info">{{beer.info}}</textarea>
+         </div>
+         <div class="form-group form-group-lg pull-right">
+           <input type="button" value="Edit" onclick="editBeer({{beer.id}})"/>
+           <input type="button" value="Delete" onclick="deleteBeer({{beer.id}})"/>
+         </div>
+      </form>
+
+
+           {% endifequal %}
+           {% ifequal logged.role "user" %}
+           <p class="snglp"><strong>Origin:</strong> {{beer.origin}}</p>
+           <p class="snglp"><strong>Price:</strong> {{beer.price}}</p>
+           <p class="snglp"><strong>Beer style:</strong> <a href="/bs/{{beer.beer_style}}">{{beer.beer_style_name}}</a></p>
+           <p class="snglp"><strong>Manufacturer:</strong> {{beer.manufacturer}}</p>
+           <p class="snglp"><strong>Country:</strong> {{beer.country}}</p>
+           <p class="snglp"><strong>Info:</strong> {{beer.info}}</p>
+           {% endifequal %}
          </div>
       </div>
    </div>

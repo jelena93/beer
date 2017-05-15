@@ -65,10 +65,10 @@
   (insert beer
   (values {:name beer-name :origin origin :price price :beer_style beer-style :alcohol alcohol :manufacturer manufacturer :country country :info info :picture picture})))
 
-(defn update-beer [params]
+(defn update-beer [id beer-name origin price beer-style alcohol manufacturer country info picture]
   (update beer
-          (set-fields params)
-          (where {:id (:id params)})))
+          (set-fields {:name beer-name :origin origin :price price :beer_style beer-style :alcohol alcohol :manufacturer manufacturer :country country :info info :picture picture})
+          (where {:id id})))
 
 (defn delete-beer [id]
   (delete beer

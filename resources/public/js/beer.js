@@ -1,6 +1,6 @@
 var validatorBeer;
 $(function() {
-    validatorBeer = $("form[name='beer_add']").validate({
+    validatorBeer = $("form[name='beer']").validate({
         rules: {
             name: {
                 required: true
@@ -116,6 +116,40 @@ function searchBeers(text) {
             showErrorMessage(error);
         }
     });
+}
+
+function editBeer() {
+  var params = {};
+  params["id"] = $("#id").val();
+  params["name"] = $("#name").val();
+  params["origin"] = $('input[name=origin]:checked').val();
+  params["price"] =  $('input[name=price]:checked').val();
+  params["beer_style"] = $("#beer_style").val();
+  params["alcohol"] = $("#alcohol").val();
+  params["manufacturer"] = $("#manufacturer").val();
+  params["country"] = $("#country").val();
+  params["info"] = $("#info").val();
+
+  if($('#pic-url').val()!=""){
+    params["picture_url"] = $('#pic-url').val();
+  }else{
+    params["picture"] = $('#pic-upload').val();
+  }
+  if (validatorBeer.form()) {
+        $.ajax({
+            type: "PUT",
+            url: "/beer",
+            data: params,
+            dataType: 'json',
+            success: function(data) {
+                showSuccessMessage(data);
+            },
+            error: function(request, status, error) {
+                 showErrorMessage(error);
+            }
+        });
+    }
+
 }
 
 function deleteBeer(id) {

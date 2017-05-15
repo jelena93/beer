@@ -56,6 +56,7 @@
                                             :logged (:identity session)
                                             :message message
                                             :beer (first (db/find-beer-by-id (:id params)))
+                                            :bs (db/get-beer-styles)
                                             :likes (db/get-beer-likes (:id params))
                                             :liked (count (db/find-user-like-for-beer (:id params) (:id (:identity session))))
                                             :comments (db/get-beer-comments (:id params))})))
@@ -92,11 +93,6 @@
     :else
       (-> (get-add-beer session {:text "All fields are required" :type "error"})))))
 
-(defn update-beer [{:keys [params session] request :request}]
-  (if-not (authenticated session)
-    (redirect "/login")
-    (render-file "templates/beer-edit.html" {:title "Edit beer" :logged (:identity session) :message (str "Beer successfully edited, id: " (db/update-beer params))})))
-
 (defn get-beers [text]
   (if (or (nil? text) (= "" text))
     (db/get-beers)
@@ -121,11 +117,51 @@
       (-> (get-beer (zipmap [:params :session] [params session])
                     {:text "All fields are required" :type "error"})))))
 
+(defn update-beer-data [params session]
+  (println params)
+  (let [beer-name (:name params)
+        origin (read-string (:origin params))
+        price (read-string (:price params))
+        beer-style (read-string (:beer_style params))
+        alcohol (read-string (:alcohol params))
+        manufacturer (:manufacturer params)
+        country (:country params)
+        info (:info params)
+        picture-name (if (not (nil? (:picture params))) (str "/images/beer/" (:filename (:picture params))) (:picture_url params))]
+    (cond
+    (not= (authenticated session))
+     (redirect "/login")
+    (and (st/valid? {:name beer-name
+                     :origin origin
+                     :price price
+                     :beer_style beer-style
+                     :alcohol alcohol
+                     :manufacturer manufacturer
+                     :country country
+                     :info info
+                     :picture picture-name} beer-schema))
+      (do
+        (if (not(nil? (:picture params)))
+        (upload-picture (:picture params)))
+        (db/update-beer params))
+    :else
+      {:text "All fields are required" :type "error"} )))
+
 
 (defresource search-beers [{:keys [params session] request :request}]
   :allowed-methods [:post]
   :authenticated? (authenticated session)
   :handle-created (json/write-str (get-beers (:text params)))
+  :available-media-types ["application/json"])
+
+(defresource update-beer [{:keys [params session] request :request}]
+  :allowed-methods [:put]
+  :handle-malformed "beer id cannot be empty"
+  :authenticated? (authenticated session)
+  :new? false
+  :respond-with-entity? true
+  :put! (fn [_] (update-beer-data params session))
+  :handle-ok (fn [_] (json/write-str "Beer successfully edited"))
   :available-media-types ["application/json"])
 
 (defresource delete-beer [{:keys [params session] request :request}]

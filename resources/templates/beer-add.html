@@ -7,7 +7,7 @@
          {{title}}
          <hr/>
       </h3>
-      <form action="" name="beer_add" method="post" enctype="multipart/form-data">
+      <form action="" name="beer" method="post" enctype="multipart/form-data">
          <div class="form-group form-group-lg">
             <input type="text" name="name" placeholder="Name"/>
          </div>
@@ -28,14 +28,12 @@
             </select>
          </div>
          <div class="form-group form-group-lg">
-            <label class="radio-inline">
-            <input type="radio" name="optradio" checked value="upload">Upload image</label>
-            <label class="radio-inline">
-            <input type="radio" name="optradio" value="url">Copy image url</label>
+            <label class="radio-inline"><input type="radio" name="optradio" checked value="url">Image url</label>
+           <label class="radio-inline"><input type="radio" name="optradio" value="upload">Upload image</label>
          </div>
          <div class="form-group form-group-lg">
-            <input type="file" id="pic-upload" name="picture" accept="image/*" >
-            <input style="display:none;" type="url" id="pic-url" name="picture_url" placeholder="Image url"/>
+           <input type="url" id="pic-url" name="picture_url" placeholder="Image url"/>
+           <input style="display:none;"type="file" id="pic-upload" name="picture" accept="image/*" >
          </div>
          <div class="form-group form-group-lg">
             <input type="text" name="alcohol" placeholder="Alcohol (%)"/>
