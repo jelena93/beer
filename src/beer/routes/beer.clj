@@ -119,7 +119,8 @@
 
 (defn update-beer-data [params session]
   (println params)
-  (let [beer-name (:name params)
+  (let [id (:id params)
+        beer-name (:name params)
         origin (read-string (:origin params))
         price (read-string (:price params))
         beer-style (read-string (:beer_style params))
@@ -143,7 +144,7 @@
       (do
         (if (not(nil? (:picture params)))
         (upload-picture (:picture params)))
-        (db/update-beer params))
+        (db/update-beer id beer-name origin price beer-style alcohol manufacturer country info picture-name))
     :else
       {:text "All fields are required" :type "error"} )))
 
@@ -210,6 +211,6 @@
   (GET "/beer/:id" request (get-beer request))
   (POST "/beer/comment/:id" request (add-beer-comment request))
   (DELETE "/beer/comment/:id" request (delete-beer-comment request))
-  (POST "/beer/like:/id" request (handle-beer-like request))
-  (DELETE "/beer/like/:id" request (handle-beer-like request)))
+  (POST "/beer/like" request (handle-beer-like request))
+  (DELETE "/beer/like" request (handle-beer-like request)))
 

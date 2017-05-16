@@ -142,7 +142,7 @@ function editBeer() {
             data: params,
             dataType: 'json',
             success: function(data) {
-                showSuccessMessage(data);
+                showSuccessMesage(data);
             },
             error: function(request, status, error) {
                  showErrorMessage(error);

@@ -8,16 +8,13 @@ if($("#success-message").text().length > 0){
 });
 function showSuccessMesage(text){
   if(text!=null){
-  $("#success-message").html(text);
-  $("#error").hide();
-  $("#success").show();
+
+    $("#message").html('<div class="alert alert-success alert-dismissable"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+text+'</div>');
   }
 
 }
 function showErrorMessage(text){
   if(text!=null){
-  $("#error-message").html(text);
-  $("#error").show();
-  $("#success").hide();
+    $("#message").html('<div class="alert alert-danger alert-dismissable"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+text+'</div>');
 }
 }
