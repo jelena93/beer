@@ -19,9 +19,8 @@ function sendAnswer() {
             },
             dataType: 'json',
             success: function(data) {
-              console.log(data);
-                if (data.bs !=null) {
-                    window.location = "/bs/" + data.bs;
+                if (data.id !=null) {
+                    window.location = "/result?bs=" + data.id+"&origin="+data.origin+"&price="+data.price;
                 } else {
                     $("#question-text").text(data.text);
                     $("#question-suggestedAnswers").html("");

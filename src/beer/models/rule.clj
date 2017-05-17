@@ -15,8 +15,8 @@
   [?q <- Question (= "Where would you rather drink beer?" text) (= "In front of a building" answer)]
   =>
   (.setTypeBs ?q "Lager")
-  (.setPrice ?q false)
-  (.setOrigin ?q "Domestic")
+  (.setPrice ?q 1)
+  (.setOrigin ?q 1)
   (.setLocation ?q (.getAnswer ?q))
   (.setText ?q "Would you rather drink light or dark beer?")
   (.setSuggestedAnswers ?q ["Light" "Dark"])
@@ -75,7 +75,6 @@
   =>
   (.setColor ?q "Dark")
   (.setStrength ?q "Strong")
-  ;;(.setEnd ?q true)
   (println "lager-dark-location-building"))
 
 (defrule lager-light-taste
@@ -98,14 +97,12 @@
   [?q <- Question (= "Do you prefer low or strong alcohol drinks?" text) (not= nil answer) (= "Lager" typeBs) (= "In front of a building" location)]
   =>
   (.setTaste ?q (.getAnswer ?q))
-  ;;(.setEnd ?q true)
   (println "lager-light-location-building-end"))
 
 (defrule lager-dark-strength-location-building-end
   [?q <- Question (= "Do you prefer low or strong alcohol drinks?" text) (not= nil answer) (= "Lager" typeBs) (= "In front of a building" location)]
   =>
   (.setStrength ?q (.getAnswer ?q))
-  ;;(.setEnd ?q true)
   (println "lager-dark-strength-location-building-end"))
 
 (defrule ale-strong
@@ -124,21 +121,33 @@
   (.setSuggestedAnswers ?q ["Bitter" "Sweet" "Drinkable" "With full taste"])
   (println "ale-low"))
 
-(defrule domestic-imported-Bock-end
-  [?q <- Question (= "Would you rather buy a domestic or imported product?" text) (not= nil answer) (= "Lager" typeBs) (= "Strong" strength)]
+(defrule domestic-Bock-end
+  [?q <- Question (= "Would you rather buy a domestic or imported product?" text) (= "Domestic" answer) (= "Lager" typeBs) (= "Strong" strength)]
   =>
-  (.setOrigin ?q (.getAnswer ?q))
-  (.setPrice ?q true)
-  ;;(.setEnd ?q true)
-  (println "domestic-imported-Bock-end"))
+  (.setOrigin ?q 1)
+  (.setPrice ?q 0)
+  (println "domestic-Bock-end"))
 
-(defrule domestic-imported-Kellerbier-end
-  [?q <- Question (= "Would you rather buy a domestic or imported product?" text) (not= nil answer) (= "Lager" typeBs) (= "Sweet" taste)]
+(defrule imported-Bock-end
+  [?q <- Question (= "Would you rather buy a domestic or imported product?" text) (= "Imported" answer) (= "Lager" typeBs) (= "Strong" strength)]
   =>
-  (.setOrigin ?q (.getAnswer ?q))
-  (.setPrice true)
-  ;;(.setEnd ?q true)
-  (println "domestic-imported-Kellerbier-end"))
+  (.setOrigin ?q 0)
+  (.setPrice ?q 0)
+  (println "imported-Bock-end"))
+
+(defrule domestic-Kellerbier-end
+  [?q <- Question (= "Would you rather buy a domestic or imported product?" text) (= "Domestic" answer) (= "Lager" typeBs) (= "Sweet" taste)]
+  =>
+  (.setOrigin ?q 1)
+  (.setPrice 0)
+  (println "domestic-Kellerbier-end"))
+
+(defrule imported-Kellerbier-end
+  [?q <- Question (= "Would you rather buy a domestic or imported product?" text) (= "Imported" answer) (= "Lager" typeBs) (= "Sweet" taste)]
+  =>
+  (.setOrigin ?q 0)
+  (.setPrice 0)
+  (println "imported-Kellerbier-end"))
 
 (defrule ale-low-full-taste
   [?q <- Question (= "You most like your beer?" text) (= "With full taste" answer) (= "Ale" typeBs) (= "Low" strength)]
@@ -164,59 +173,75 @@
   (.setSuggestedAnswers ?q ["Domestic" "Imported"])
   (println "ale-low-full-taste-color"))
 
-(defrule ale-low-full-taste-color-end
-  [?q <- Question (= "Would you rather buy a domestic or imported product?" text) (not= nil answer) (= "Ale" typeBs) (= "Low" strength) (not= nil color) (= "With full taste" taste)]
+(defrule ale-domestic-low-full-taste-color-end
+  [?q <- Question (= "Would you rather buy a domestic or imported product?" text) (= "Domestic" answer) (= "Ale" typeBs) (= "Low" strength) (not= nil color) (= "With full taste" taste)]
   =>
-  (.setOrigin ?q (.getAnswer ?q))
-  (.setPrice ?q true)
-  ;;(.setEnd ?q true)
-  (println "ale-low-full-taste-color-end"))
+  (.setOrigin ?q 1)
+  (.setPrice ?q 0)
+  (println "ale-domestic-low-full-taste-color-end"))
+
+(defrule ale-imported-low-full-taste-color-end
+  [?q <- Question (= "Would you rather buy a domestic or imported product?" text) (= "Imported" answer) (= "Ale" typeBs) (= "Low" strength) (not= nil color) (= "With full taste" taste)]
+  =>
+  (.setOrigin ?q 0)
+  (.setPrice ?q 0)
+  (println "ale-imported-low-full-taste-color-end"))
 
 (defrule ale-strong-sweet-bitter-end
   [?q <- Question (= "You most like your beer?" text) (not= "With full taste" answer) (= "Ale" typeBs) (= "Strong" strength)]
   =>
   (.setTaste ?q (.getAnswer ?q))
-  (.setOrigin ?q "Imported")
-  (.setPrice ?q true)
-  ;;(.setEnd ?q true)
+  (.setOrigin ?q 0)
+  (.setPrice ?q 0)
   (println "ale-strong-sweet-bitter-end"))
 
 (defrule ale-strong-full-taste
   [?q <- Question (= "You most like your beer?" text) (= "With full taste" answer) (= "Ale" typeBs) (= "Strong" strength)]
   =>
   (.setTaste ?q (.getAnswer ?q))
-  (.setPrice ?q true)
+  (.setPrice ?q 0)
   (.setText ?q "Would you rather buy a domestic or imported product?")
   (.setSuggestedAnswers ?q ["Domestic" "Imported"])
   (println "ale-strong-full-taste"))
 
-(defrule ale-strong-full-taste-end
-  [?q <- Question (= "Would you rather buy a domestic or imported product?" text) (not= nil answer) (= "Ale" typeBs) (= "Strong" strength) (= "With full taste" taste)]
+(defrule ale-domestic-strong-full-taste-end
+  [?q <- Question (= "Would you rather buy a domestic or imported product?" text) (= "Domestic" answer) (= "Ale" typeBs) (= "Strong" strength) (= "With full taste" taste)]
   =>
-  (.setOrigin ?q (.getAnswer ?q))
-  ;;(.setEnd ?q true)
-  (println "ale-strong-full-taste-end"))
+  (.setOrigin ?q 1)
+  (println "ale-domestic-strong-full-taste-end"))
 
-(defrule domestic-imported
-  [?q <- Question (= "Would you rather buy a domestic or imported product?" text) (not= nil answer)]
+(defrule ale-imported-strong-full-taste-end
+  [?q <- Question (= "Would you rather buy a domestic or imported product?" text) (= "Imported" answer) (= "Ale" typeBs) (= "Strong" strength) (= "With full taste" taste)]
   =>
-  (.setOrigin ?q (.getAnswer ?q))
+  (.setOrigin ?q 0)
+  (println "ale-imported-strong-full-taste-end"))
+
+(defrule domestic
+  [?q <- Question (= "Would you rather buy a domestic or imported product?" text) (= "Domestic" answer)]
+  =>
+  (.setOrigin ?q 1)
   (.setText ?q "Would you spend more money on beer?")
   (.setSuggestedAnswers ?q ["Yes" "No"])
-  (println "domestic-imported"))
+  (println "domestic"))
+
+(defrule imported
+  [?q <- Question (= "Would you rather buy a domestic or imported product?" text) (= "Imported" answer)]
+  =>
+  (.setOrigin ?q 0)
+  (.setText ?q "Would you spend more money on beer?")
+  (.setSuggestedAnswers ?q ["Yes" "No"])
+  (println "imported"))
 
 (defrule price-cheap
   [?q <- Question (= "Would you spend more money on beer?" text) (= "No" answer)]
   =>
-  (.setPrice ?q false)
-  ;;(.setEnd ?q true)
+  (.setPrice ?q 1)
   (println "price-cheap"))
 
 (defrule price-expensive
   [?q <- Question (= "Would you spend more money on beer?" text) (= "Yes" answer)]
   =>
-  (.setPrice ?q true)
-  ;;(.setEnd ?q true)
+  (.setPrice ?q 0)
   (println "price-expensive"))
 
 ; -------------------------------------suggesting-beer-------------------------------------

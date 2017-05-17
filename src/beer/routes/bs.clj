@@ -40,11 +40,11 @@
     (check-authenticated-admin session)
      (render-file "templates/bs-admin.html" {:title "Beer Style" :logged (:identity session)
                                         :bs (first (db/find-beer-style-by-id (:id params)))
-                                    :beers (db/get-beers-for-beer-style (:id params ))})
+                                    :beers (db/get-beers-for-beer-style (:id params))})
     :else
      (render-file "templates/bs-user.html" {:title "Beer Style" :logged (:identity session)
                                         :bs (first (db/find-beer-style-by-id (:id params)))
-                                    :beers (db/get-beers-for-beer-style (:id params ))})))
+                                    :beers (db/get-beers-for-beer-style (:id params))})))
 
 (defresource search-bs [{:keys [params session] request :request}]
   :allowed-methods [:post]

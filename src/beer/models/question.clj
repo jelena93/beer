@@ -1,5 +1,9 @@
 (ns beer.models.question
   (:require [compojure.core :refer :all]))
+;; origin-domestic 1 domace
+;; origin-imported 0 strano
+;; price-cheap 1 jeftino
+;; price-expensive 0 skupo ne
 
 (defprotocol PQuestion
   (getText [this])

@@ -120,6 +120,11 @@
           (where {:beer_style bs-id})
           (order :beer.id :ASC)))
 
+(defn find-beer-by-beer-style-origin-price [bs-id origin price]
+  (select beer
+          (where {:beer_style bs-id :origin origin :price price})
+          (order :beer.id :ASC)))
+
 (defn add-beer-like [user-id beer-id]
   (insert beer-like
   (values {:user_id user-id :beer_id beer-id})))
