@@ -15,34 +15,32 @@
   (authenticated? session))
 
 (defn get-question-as-map [q]
-  {:text (.getText q) :suggestedAnswers (.getSuggestedAnswers q) :isEnd (.isEnd q) :bs (.getIdBs q)})
+  {:text (.getText q) :suggestedAnswers (.getSuggestedAnswers q) :bs (.getIdBs q)})
 
 (defn get-question-page [{:keys [params session] request :request}]
    (if-not (authenticated session)
     (redirect "/login")
-     (do (def q (->Question nil nil nil nil false nil nil nil nil nil nil nil))
+     (do (def q (->Question nil nil nil nil nil nil nil nil nil nil nil nil))
        (rules/ask-question q)
        (render-file "templates/question.html" {:title "Questions" :logged (:identity session) :question (get-question-as-map q)}))))
-
-(defn get-answer []
-  (println "kraj")
-  (let [bs (db/find-beer-style-by-name (.getNameBs q))]
-    (.setIdBs! q (:id bs))))
 
 (defn get-question-from-rules [answer]
   (.setAnswer q answer)
   (rules/ask-question q)
-  (if (.isEnd q)
-      (get-answer)))
+(if-not (nil? (.getNameBs q))
+  (let [bs (first (db/find-beer-style-by-name (.getNameBs q)))]
+    (.setIdBs q  (:id bs)))))
 
 (defresource get-question [{:keys [params session] request :request}]
   :allowed-methods [:post]
   :handle-malformed "answer cannot be empty"
   :authenticated? (authenticated session)
+  :new? false
+  :respond-with-entity? true
   :post!  (get-question-from-rules (:answer params))
-  :handle-created (json/write-str (get-question-as-map q))
+  :handle-ok (fn [_] (json/write-str (get-question-as-map q)))
   :available-media-types ["application/json"])
 
 (defroutes question-routes
   (GET "/questions" request (get-question-page request))
-  (POST "/questions" [answer] (get-question answer)))
+  (POST "/questions" request (get-question request)))

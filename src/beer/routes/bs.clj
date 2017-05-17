@@ -34,7 +34,6 @@
                                            :logged (:identity session) :bs (get-bs nil)})))
 
 (defn find-bs [{:keys [params session] request :request}]
-  (println (not (authenticated session)))
   (cond
     (not (authenticated session))
      (redirect "/login")

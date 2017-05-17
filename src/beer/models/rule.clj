@@ -5,7 +5,7 @@
   (:import [beer.models.question Question]))
 
 (defrule location
-  [?q <- Question (= nil text)]
+  [?q <- Question (= nil text) (= nil answer)]
   =>
   (.setText ?q "Where would you rather drink beer?")
   (.setSuggestedAnswers ?q ["At home" "In front of a building" "In a pub" "In a club"])
@@ -14,6 +14,10 @@
 (defrule location-building
   [?q <- Question (= "Where would you rather drink beer?" text) (= "In front of a building" answer)]
   =>
+  (.setTypeBs ?q "Lager")
+  (.setPrice ?q false)
+  (.setOrigin ?q "Domestic")
+  (.setLocation ?q (.getAnswer ?q))
   (.setText ?q "Would you rather drink light or dark beer?")
   (.setSuggestedAnswers ?q ["Light" "Dark"])
   (println "location-building"))
@@ -71,7 +75,7 @@
   =>
   (.setColor ?q "Dark")
   (.setStrength ?q "Strong")
-  (.setEnd ?q true)
+  ;;(.setEnd ?q true)
   (println "lager-dark-location-building"))
 
 (defrule lager-light-taste
@@ -91,17 +95,17 @@
   (println "lager-dark-strength"))
 
 (defrule lager-light-location-building-end
-  [?q <- Question (= "Do you prefer low or strong alcohol drinks?" text) (not= nil answer) (= "Lager" typeBs) (not= "In front of a building" location)]
+  [?q <- Question (= "Do you prefer low or strong alcohol drinks?" text) (not= nil answer) (= "Lager" typeBs) (= "In front of a building" location)]
   =>
   (.setTaste ?q (.getAnswer ?q))
-  (.setEnd ?q true)
+  ;;(.setEnd ?q true)
   (println "lager-light-location-building-end"))
 
 (defrule lager-dark-strength-location-building-end
-  [?q <- Question (= "Do you prefer low or strong alcohol drinks?" text) (not= nil answer) (= "Lager" typeBs) (not= "In front of a building" location)]
+  [?q <- Question (= "Do you prefer low or strong alcohol drinks?" text) (not= nil answer) (= "Lager" typeBs) (= "In front of a building" location)]
   =>
-  (.setTaste ?q (.getAnswer ?q))
-  (.setEnd ?q true)
+  (.setStrength ?q (.getAnswer ?q))
+  ;;(.setEnd ?q true)
   (println "lager-dark-strength-location-building-end"))
 
 (defrule ale-strong
@@ -117,45 +121,45 @@
   =>
   (.setStrength ?q (.getAnswer ?q))
   (.setText ?q "You most like your beer?")
-  (.setSuggestedAnswers ?q ["Bitter" "Sweet" "Drinkable" "Full taste"])
+  (.setSuggestedAnswers ?q ["Bitter" "Sweet" "Drinkable" "With full taste"])
   (println "ale-low"))
 
 (defrule domestic-imported-Bock-end
   [?q <- Question (= "Would you rather buy a domestic or imported product?" text) (not= nil answer) (= "Lager" typeBs) (= "Strong" strength)]
   =>
-  (.setDomestic ?q (.getAnswer ?q))
-  (.setPriceRange ?q "yes")
-  (.setEnd ?q true)
+  (.setOrigin ?q (.getAnswer ?q))
+  (.setPrice ?q true)
+  ;;(.setEnd ?q true)
   (println "domestic-imported-Bock-end"))
 
 (defrule domestic-imported-Kellerbier-end
   [?q <- Question (= "Would you rather buy a domestic or imported product?" text) (not= nil answer) (= "Lager" typeBs) (= "Sweet" taste)]
   =>
-  (.setDomestic (.getBeer ?q) (.getAnswer ?q))
-  (.setPriceRange (.getBeer ?q) "yes")
-  (.setEnd ?q true)
+  (.setOrigin ?q (.getAnswer ?q))
+  (.setPrice true)
+  ;;(.setEnd ?q true)
   (println "domestic-imported-Kellerbier-end"))
 
 (defrule ale-low-full-taste
   [?q <- Question (= "You most like your beer?" text) (= "With full taste" answer) (= "Ale" typeBs) (= "Low" strength)]
   =>
-  (.setTaste (.getBeer ?q) (.getAnswer ?q))
-  (.setText ?q "Would you rather drink light, dark or Hazed pivo?")
+  (.setTaste ?q (.getAnswer ?q))
+  (.setText ?q "Would you rather drink light, dark or hazed beer?")
   (.setSuggestedAnswers ?q ["Light" "Dark" "Hazed"])
   (println "ale-low-full-taste"))
 
 (defrule ale-low-not-full-taste
   [?q <- Question (= "You most like your beer?" text) (not= "With full taste" answer) (= "Ale" typeBs) (= "Low" strength)]
   =>
-  (.setTaste (.getBeer ?q) (.getAnswer ?q))
+  (.setTaste ?q (.getAnswer ?q))
   (.setText ?q "Would you rather buy a domestic or imported product?")
   (.setSuggestedAnswers ?q ["Domestic" "Imported"])
   (println "ale-low-not-full-taste"))
 
 (defrule ale-low-full-taste-color
-  [?q <- Question (= "Would you rather drink light, dark or Hazed pivo?" text) (not= nil answer)]
+  [?q <- Question (= "Would you rather drink light, dark or hazed beer?" text) (not= nil answer)]
   =>
-  (.setColor (.getBeer ?q) (.getAnswer ?q))
+  (.setColor ?q (.getAnswer ?q))
   (.setText ?q "Would you rather buy a domestic or imported product?")
   (.setSuggestedAnswers ?q ["Domestic" "Imported"])
   (println "ale-low-full-taste-color"))
@@ -163,25 +167,25 @@
 (defrule ale-low-full-taste-color-end
   [?q <- Question (= "Would you rather buy a domestic or imported product?" text) (not= nil answer) (= "Ale" typeBs) (= "Low" strength) (not= nil color) (= "With full taste" taste)]
   =>
-  (.setDomestic (.getBeer ?q) (.getAnswer ?q))
-  (.setPriceRange (.getBeer ?q) "yes")
-  (.setEnd ?q true)
+  (.setOrigin ?q (.getAnswer ?q))
+  (.setPrice ?q true)
+  ;;(.setEnd ?q true)
   (println "ale-low-full-taste-color-end"))
 
 (defrule ale-strong-sweet-bitter-end
   [?q <- Question (= "You most like your beer?" text) (not= "With full taste" answer) (= "Ale" typeBs) (= "Strong" strength)]
   =>
-  (.setTaste (.getBeer ?q) (.getAnswer ?q))
-  (.setDomestic (.getBeer ?q) "Imported")
-  (.setPriceRange (.getBeer ?q) "yes")
-  (.setEnd ?q true)
+  (.setTaste ?q (.getAnswer ?q))
+  (.setOrigin ?q "Imported")
+  (.setPrice ?q true)
+  ;;(.setEnd ?q true)
   (println "ale-strong-sweet-bitter-end"))
 
 (defrule ale-strong-full-taste
   [?q <- Question (= "You most like your beer?" text) (= "With full taste" answer) (= "Ale" typeBs) (= "Strong" strength)]
   =>
-  (.setTaste (.getBeer ?q) (.getAnswer ?q))
-  (.setPriceRange (.getBeer ?q) "yes")
+  (.setTaste ?q (.getAnswer ?q))
+  (.setPrice ?q true)
   (.setText ?q "Would you rather buy a domestic or imported product?")
   (.setSuggestedAnswers ?q ["Domestic" "Imported"])
   (println "ale-strong-full-taste"))
@@ -189,119 +193,117 @@
 (defrule ale-strong-full-taste-end
   [?q <- Question (= "Would you rather buy a domestic or imported product?" text) (not= nil answer) (= "Ale" typeBs) (= "Strong" strength) (= "With full taste" taste)]
   =>
-  (.setDomestic (.getBeer ?q) (.getAnswer ?q))
-  (.setEnd ?q true)
+  (.setOrigin ?q (.getAnswer ?q))
+  ;;(.setEnd ?q true)
   (println "ale-strong-full-taste-end"))
 
 (defrule domestic-imported
   [?q <- Question (= "Would you rather buy a domestic or imported product?" text) (not= nil answer)]
   =>
-  (.setDomestic (.getBeer ?q) (.getAnswer ?q))
+  (.setOrigin ?q (.getAnswer ?q))
   (.setText ?q "Would you spend more money on beer?")
   (.setSuggestedAnswers ?q ["Yes" "No"])
   (println "domestic-imported"))
 
-(defrule domestic-imported
-  [?q <- Question (= "Would you rather buy a domestic or imported product?" text) (not= nil answer)]
+(defrule price-cheap
+  [?q <- Question (= "Would you spend more money on beer?" text) (= "No" answer)]
   =>
-  (.setDomestic (.getBeer ?q) (.getAnswer ?q))
-  (.setText ?q "Would you spend more money on a good beer?")
-  (.setSuggestedAnswers ?q ["Yes" "No"])
-  (println "domestic-imported"))
+  (.setPrice ?q false)
+  ;;(.setEnd ?q true)
+  (println "price-cheap"))
 
-(defrule expensive-cheap
-  [?q <- Question (= "Would you spend more money on a good beer?" text) (not= nil answer)]
+(defrule price-expensive
+  [?q <- Question (= "Would you spend more money on beer?" text) (= "Yes" answer)]
   =>
-  (.setPriceRange (.getBeer ?q) (.getAnswer ?q))
-  (.setEnd ?q true)
-  (println "expensive-cheap"))
+  (.setPrice ?q true)
+  ;;(.setEnd ?q true)
+  (println "price-expensive"))
 
-; -------------------------------------suggesting-beer------------------------------
+; -------------------------------------suggesting-beer-------------------------------------
 
-(defrule bs-ale-low-sweet
-  [?b <- Question (= true isEnd) (= "Ale" typeBs) (= "Low" strength) (= "Sweet" taste)]
+(defrule ale-low-sweet
+  [?q <- Question (= "Ale" typeBs) (= "Low" strength) (= "Sweet" taste)]
   =>
-  (.setNameOfBeerStyle ?b "Belgian Pale Ale")
-  (println "bs-ale-low-sweet"))
+  (.setNameBs ?q "Belgian Pale Ale")
+  (println "ale-low-sweet"))
 
-(defrule bs-ale-low-bitter
-  [?b <- Question (= true isEnd) (= "Ale" typeBs) (= "Low" strength) (= "Bitter" taste)]
+(defrule ale-low-bitter
+  [?q <- Question (= "Ale" typeBs) (= "Low" strength) (= "Bitter" taste)]
   =>
-  (.setNameOfBeerStyle ?b "Indian Pale Ale")
-  (println "bs-ale-low-bitter"))
+  (.setNameBs ?q "Indian Pale Ale")
+  (println "ale-low-bitter"))
 
-(defrule bs-ale-low-drinkable
-  [?b <- Question (= true isEnd) (= "Ale" typeBs) (= "Low" strength) (= "Drinkable" taste)]
+(defrule ale-low-drinkable
+  [?q <- Question (= "Ale" typeBs) (= "Low" strength) (= "Drinkable" taste)]
   =>
-  (.setNameOfBeerStyle ?b "Witbier")
-  (println "bs-ale-low-drinkable"))
+  (.setNameBs ?q "Witbier")
+  (println "ale-low-drinkable"))
 
-(defrule bs-ale-low-full-taste-light
-  [?b <- Question (= true isEnd) (= "Ale" typeBs) (= "Low" strength) (= "With full taste" taste) (= "Light" color)]
+(defrule ale-low-full-taste-light
+  [?q <- Question (= "Ale" typeBs) (= "Low" strength) (= "With full taste" taste) (= "Light" color)]
   =>
-  (.setNameOfBeerStyle ?b "Kristalweizen")
-  (println "bs-ale-low-full-taste-light"))
+  (.setNameBs ?q "Kristalweizen")
+  (println "ale-low-full-taste-light"))
 
-(defrule bs-ale-low-full-taste-hazed
-  [?b <- Question (= true isEnd) (= "Ale" typeBs) (= "Low" strength) (= "With full taste" taste) (= "Hazed" color)]
+(defrule ale-low-full-taste-hazed
+  [?q <- Question (= "Ale" typeBs) (= "Low" strength) (= "With full taste" taste) (= "Hazed" color)]
   =>
-  (.setNameOfBeerStyle ?b "Heffeweizen")
-  (println "bs-ale-low-full-taste-hazed"))
+  (.setNameBs ?q "Heffeweizen")
+  (println "ale-low-full-taste-hazed"))
 
-(defrule bs-ale-low-full-taste-dark
-  [?b <- Question (= true isEnd) (= "Ale" typeBs) (= "Low" strength) (= "With full taste" taste) (= "Dark" color)]
+(defrule ale-low-full-taste-dark
+  [?q <- Question (= "Ale" typeBs) (= "Low" strength) (= "With full taste" taste) (= "Dark" color)]
   =>
-  (.setNameOfBeerStyle ?b "Dunkelweizen")
-  (println "bs-ale-low-full-taste-dark"))
+  (.setNameBs ?q "Dunkelweizen")
+  (println "ale-low-full-taste-dark"))
 
-(defrule bs-ale-strong-sweet
-  [?b <- Question (= true isEnd) (= "Ale" typeBs) (= "Strong" strength) (= "Sweet" taste)]
+(defrule ale-strong-sweet
+  [?q <- Question (= "Ale" typeBs) (= "Strong" strength) (= "Sweet" taste)]
   =>
-  (.setNameOfBeerStyle ?b "Belgian Strong Ale")
-  (println "bs-ale-strong-sweet"))
+  (.setNameBs ?q "Belgian Strong Ale")
+  (println "ale-strong-sweet"))
 
-(defrule bs-ale-strong-full-taste
-  [?b <- Question (= true isEnd) (= "Ale" typeBs) (= "Strong" strength) (= "With full taste" taste)]
+(defrule ale-strong-full-taste
+  [?q <- Question (= "Ale" typeBs) (= "Strong" strength) (= "With full taste" taste)]
   =>
-  (.setNameOfBeerStyle ?b "Stout/Porter")
-  (println "bs-ale-strong-full-taste"))
+  (.setNameBs ?q "Stout/Porter")
+  (println "ale-strong-full-taste"))
 
-(defrule bs-ale-strong-bitter
-  [?b <- Question (= true isEnd) (= "Ale" typeBs) (= "Strong" strength) (= "Bitter" taste)]
+(defrule ale-strong-bitter
+  [?q <- Question (= "Ale" typeBs) (= "Strong" strength) (= "Bitter" taste)]
   =>
-  (.setNameOfBeerStyle ?b "Scocth Ale")
-  (println "bs-ale-strong-bitter"))
+  (.setNameBs ?q "Scocth Ale")
+  (println "ale-strong-bitter"))
 
-(defrule bs-lager-light-bitter
-  [?b <- Question (= true isEnd) (= "Lager" typeBs) (= "Light" color) (= "Bitter" taste)]
+(defrule lager-light-bitter
+  [?q <- Question (= "Lager" typeBs) (= "Light" color) (= "Bitter" taste)]
   =>
-  (.setNameOfBeerStyle ?b "Pilsner")
-  (println "bs-lager-light-bitter"))
+  (.setNameBs ?q "Pilsner")
+  (println "lager-light-bitter"))
 
-(defrule bs-lager-light-sweet
-  [?b <- Question (= true isEnd) (= "Lager" typeBs) (= "Light" color) (= "Sweet" taste)]
+(defrule lager-light-sweet
+  [?q <- Question (= "Lager" typeBs) (= "Light" color) (= "Sweet" taste)]
   =>
-  (.setNameOfBeerStyle ?b "Kellerbier")
-  (println "bs-lager-light-sweet"))
+  (.setNameBs ?q "Kellerbier")
+  (println "lager-light-sweet"))
 
-(defrule bs-lager-light-drinkable
-  [?b <- Question (= true isEnd) (= "Lager" typeBs) (= "Light" color) (= "Drinkable" taste)]
+(defrule lager-light-drinkable
+  [?q <- Question (= "Lager" typeBs) (= "Light" color) (= "Drinkable" taste)]
   =>
-  (.setNameOfBeerStyle ?b "Pale Lager")
-  (println "bs-lager-light-drinkable"))
+  (.setNameBs ?q "Pale Lager")
+  (println "lager-light-drinkable"))
 
-(defrule bs-lager-dark-low
-  [?b <- Question (= true isEnd) (= "Lager" typeBs) (= "Dark" color) (= "Low" strength)]
+(defrule lager-dark-low
+  [?q <- Question (= "Lager" typeBs) (= "Dark" color) (= "Low" strength)]
   =>
-  (.setNameOfBeerStyle ?b "Dark Lager")
-  (println "bs-lager-dark-low"))
+  (.setNameBs ?q "Dark Lager")
+  (println "lager-dark-low"))
 
-(defrule bs-lager-dark-strong
-  [?b <- Question (= true isEnd) (= "Lager" typeBs) (= "Dark" color) (= "Strong" strength)]
+(defrule lager-dark-strong
+  [?q <- Question (= "Lager" typeBs) (= "Dark" color) (= "Strong" strength)]
   =>
-  (.setNameOfBeerStyle ?b "Bock")
-  (println "bs-lager-dark-strong"))
-
+  (.setNameBs ?q "Bock")
+  (println "lager-dark-strong"))
 
 (defn ask-question [q]
   (-> (mk-session 'beer.models.rule)

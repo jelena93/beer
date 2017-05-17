@@ -19,7 +19,8 @@ function sendAnswer() {
             },
             dataType: 'json',
             success: function(data) {
-                if (data.isEnd) {
+              console.log(data);
+                if (data.bs !=null) {
                     window.location = "/bs/" + data.bs;
                 } else {
                     $("#question-text").text(data.text);
