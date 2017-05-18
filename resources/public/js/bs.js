@@ -35,8 +35,7 @@ function searchBeerStyles(text) {
             }
         },
         error: function(request, status, error) {
-            console.log(error);
-            console.log(request);
+          showErrorMessage(error);
         }
     });
 }
@@ -55,12 +54,10 @@ var description = $("#description").val();
         },
         dataType: 'json',
         success: function(data) {
-          $("#success-message").html(data);
-          $("#success").show();
+          showSuccessMessage(data);
         },
         error: function(request, status, error) {
-            console.log(error);
-            console.log(request);
+          showErrorMessage(error);
         }
     });
 
@@ -77,11 +74,10 @@ function deleteBeerFromBs(id){
         dataType: 'json',
         success: function(data) {
           $("#"+id).remove();
-          showSuccessMesage(data);
+          showSuccessMessage(data);
         },
         error: function(request, status, error) {
-            console.log(error);
-            console.log(request);
+          showErrorMessage(error);
         }
     });
 }

@@ -68,8 +68,7 @@ function searchUsers(text) {
             }
         },
         error: function(request, status, error) {
-            console.log(error);
-            console.log(request);
+          showErrorMessage(error);
         }
     });
 
@@ -95,11 +94,10 @@ function editUser() {
             },
             dataType: 'json',
             success: function(data) {
-                console.log(data);
+                showSuccessMessage(data);
             },
             error: function(request, status, error) {
-                console.log(error);
-                console.log(request);
+                showErrorMessage(error);
             }
         });
     }
@@ -121,8 +119,7 @@ function deleteUser() {
             window.location = "/login";
         },
         error: function(request, status, error) {
-            console.log(error);
-            console.log(request);
+          showErrorMessage(error);
         }
     });
 

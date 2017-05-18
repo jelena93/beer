@@ -6,7 +6,7 @@ if($("#success-message").text().length > 0){
   $("#error").show();
 }
 });
-function showSuccessMesage(text){
+function showSuccessMessage(text){
   if(text!=null){
 
     $("#message").html('<div class="alert alert-success alert-dismissable"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+text+'</div>');

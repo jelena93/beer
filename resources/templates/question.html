@@ -5,14 +5,29 @@
       <h3 id="question-text">{{question.text}}</h3>
       <div class="row">
          <div class="col-lg-4 col-lg-offset-4">
-            <div id="question-suggestedAnswers">
+              <div class="col-xs-3 col-xs-offset-5">
+               <div id="loadbar" style="display: none;">
+                  <div class="blockG" id="rotateG_01"></div>
+                  <div class="blockG" id="rotateG_02"></div>
+                  <div class="blockG" id="rotateG_03"></div>
+                  <div class="blockG" id="rotateG_04"></div>
+                  <div class="blockG" id="rotateG_05"></div>
+                  <div class="blockG" id="rotateG_06"></div>
+                  <div class="blockG" id="rotateG_07"></div>
+                  <div class="blockG" id="rotateG_08"></div>
+              </div>
+          </div>
+          <div class="quiz" id="quiz" data-toggle="buttons">
                {% for suggestedAnswer in question.suggestedAnswers %}
-               <input type="radio" name="answer" value="{{ suggestedAnswer }}"> {{ suggestedAnswer }}<br>
+              <label class="element-animation{{forloop.counter}} btn btn-lg btn-primary btn-block">
+                <span class="btn-label">
+                <i class="glyphicon glyphicon-chevron-right"></i></span>
+                <input type="radio" name="answer" value="{{suggestedAnswer}}">{{suggestedAnswer}}
+            </label>
                {% endfor %}
             </div>
-            <input class="pull-right" type="button" value="NEXT" onclick="sendAnswer()">
+           </div>
          </div>
       </div>
    </div>
-</div>
 {% endblock %}

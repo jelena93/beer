@@ -182,7 +182,6 @@ function likeBeer(id) {
         },
         dataType: 'json',
         success: function(data) {
-            console.log(data);
             $("#likes-count").text(data + " likes");
             $("#button-like").html('<input type="button" value="Dislike" onclick="dislikeBeer(' + id + ')"/>');
 
@@ -202,7 +201,6 @@ function dislikeBeer(id) {
         },
         dataType: 'json',
         success: function(data) {
-            console.log(data);
             $("#likes-count").text(data + " likes");
             $("#button-like").html('<input type="button" value="Like" onclick="likeBeer(' + id + ')"/>');
         },
