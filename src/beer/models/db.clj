@@ -137,6 +137,13 @@
   (select beer-like
   (where {:beer_id beer-id})))
 
+(defn get-beer-likes-count []
+  (select beer-like
+          (fields :beer.name)
+          (aggregate (count :*) :number)
+          (group :beer_id)
+          (join beer (= :beer_id :beer.id))))
+
 (defn find-user-like-for-beer [beer-id user-id]
   (select beer-like
   (where {:beer_id beer-id :user_id user-id})))
@@ -150,6 +157,13 @@
           (with user)
           (where {:beer_id beer-id})
           (order :id :ASC)))
+
+(defn get-beer-comments-count []
+  (select beer-comment
+          (fields :beer.name)
+          (aggregate (count :*) :number)
+          (group :beer_id)
+          (join beer (= :beer_id :beer.id))))
 
 (defn delete-beer-comment [id]
   (delete beer-comment

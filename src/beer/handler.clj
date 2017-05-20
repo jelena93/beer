@@ -18,7 +18,8 @@
             [beer.routes.questions :refer [question-routes]]
             [beer.routes.bs :refer [bs-routes]]
             [beer.routes.beer :refer [beer-routes]]
-            [beer.routes.user :refer [user-routes]]))
+            [beer.routes.user :refer [user-routes]]
+            [beer.routes.statistics :refer [stats-routes]]))
 
 ;; (defn is-admin [{:keys [params] session :session}]
 ;;   (println "wtf" session)
@@ -64,7 +65,7 @@
   (route/not-found "Not Found"))
 
 (def app
-  (-> (routes auth-routes home-routes question-routes bs-routes beer-routes user-routes app-routes)
+  (-> (routes auth-routes home-routes question-routes bs-routes beer-routes user-routes stats-routes app-routes)
       (handler/site)
       (wrap-authorization backend)
       (wrap-authentication backend)

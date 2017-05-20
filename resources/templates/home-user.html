@@ -1,8 +1,7 @@
 {% extends "templates/base.html" %}
 {% block content %}
 <h3>Welcome {{logged.first_name}} {{logged.last_name}}</h3>
-
-      {% for b in beers %}
+{% for b in beers %}
 <div class="square">
    <div class="content-pic">
         <div class="table">
@@ -13,6 +12,5 @@
         </div>
     </div>
 </div>
-      {% endfor %}
-
+{% endfor %}
 {% endblock %}

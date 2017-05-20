@@ -10,17 +10,24 @@
 (defn authenticated [session]
   (authenticated? session))
 
-(defn admin [req]
-  (and (authenticated? req)
-       (#{:admin} (:role (:identity req)))))
+(defn check-authenticated-admin [session]
+  (and (authenticated? session)
+       (="admin" (:role (:identity session)))))
 
 (defn home [session]
-  (if-not (authenticated session)
-    (redirect "/login")
-    (render-file "templates/home-user.html"
+  (cond
+    (not (authenticated session))
+     (redirect "/login")
+    (check-authenticated-admin session)
+     (render-file "templates/home-admin.html"
+                 {:title "Home"
+                  :logged (:identity session)})
+    :else
+     (render-file "templates/home-user.html"
                  {:title "Home"
                   :logged (:identity session)
                   :beers (db/get-beers)})))
+
 
 (defroutes home-routes
   (GET "/" request (home (:session request))))
