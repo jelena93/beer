@@ -8,9 +8,10 @@
             [clj-time.core :as t])
   (:import java.sql.DriverManager))
 
-(defdb db (mysql {:db "beer"
-                     :user "admin"
-                     :password "admin"}))
+(def db-config (clojure.edn/read-string (slurp "conf/db-config.edn")))
+
+(defdb db (mysql db-config))
+
 (defentity user
   (table :user)
   (entity-fields :id :username :first_name :last_name :email :role))

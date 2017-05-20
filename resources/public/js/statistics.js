@@ -29,7 +29,7 @@ function drawChart1() {
         var chart = new google.visualization.PieChart(document.getElementById('chart_div1'));
         chart.draw(data, options);
     } else {
-        $('#chart_div2').html("<p class='text-center'>There are no beer likes yet</p>");
+        $('#chart_div1').html("<p class='text-center'>There are no beer likes yet</p>");
 
     }
 }

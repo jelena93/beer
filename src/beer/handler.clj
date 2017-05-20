@@ -56,6 +56,10 @@
 (def backend (session-backend))
 
 (defn init []
+  (System/setProperties
+  (doto (java.util.Properties. (System/getProperties))
+    (.put "com.mchange.v2.log.MLog" "com.mchange.v2.log.FallbackMLog")
+    (.put "com.mchange.v2.log.FallbackMLog.DEFAULT_CUTOFF_LEVEL" "OFF")))
   (selmer.parser/cache-off!))
 
 (defn destroy [])
