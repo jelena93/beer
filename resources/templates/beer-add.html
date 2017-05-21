@@ -20,10 +20,10 @@
             <label class="radio-inline"><input type="radio" name="price" value="1">Cheap</label>
          </div>
          <div class="form-group form-group-lg">
-            <label for="beer_style">Beer style</label>
-            <select id="beer_style" name="beer_style">
-               {% for b in bs %}
-               <option value="{{b.id}}">{{b.name}}</option>
+            <label for="style">Style</label>
+            <select id="style" name="style">
+               {% for s in styles %}
+               <option value="{{s.id}}">{{s.name}}</option>
                {% endfor %}
             </select>
          </div>

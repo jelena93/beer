@@ -1,0 +1,76 @@
+{% extends "templates/base.html" %}
+{% block content %}
+<div class="blog">
+   <div class="blog-head">
+      <h3>{{beer.name}}</h3>
+   </div>
+   <div class="row">
+      <div class="col-md-6">
+         <div class="blog-img">
+            <img src="{{beer.picture}}" class="img-responsive zoom-img"/>
+         </div>
+      </div>
+      <div class="col-md-6">
+         <div class="blog-info-text">
+           {% ifequal beer.origin 0 %}
+            <p class="snglp"><strong>Origin:</strong> Imported</p>
+           {% endifequal %}
+           {% ifequal beer.origin 1 %}
+            <p class="snglp"><strong>Origin:</strong> Domestic</p>
+           {% endifequal %}
+           {% ifequal beer.price 0 %}
+            <p class="snglp"><strong>Price:</strong> Expensive</p>
+           {% endifequal %}
+           {% ifequal beer.price 1 %}
+            <p class="snglp"><strong>Price:</strong> Cheap</p>
+           {% endifequal %}
+            <p class="snglp"><strong>Style:</strong> <a href="/bs/{{beer.sname}}">{{beer.sname}}</a></p>
+            <p class="snglp"><strong>Manufacturer:</strong> {{beer.manufacturer}}</p>
+            <p class="snglp"><strong>Country:</strong> {{beer.country}}</p>
+            <p class="snglp"><strong>Info:</strong> {{beer.info}}</p>
+         </div>
+      </div>
+   </div>
+   <div class="row">
+      <div class="blog-info">
+         <div class="comment-icons">
+            <ul>
+               <li><span class="cmnts"></span> <a id="comments-count" data-toggle="collapse" href="#comments">{{comments|length}} comments</a></li>
+               <li><a id="likes-count" href="#" class="like">{{likes|length}} likes</a></li>
+               <div id="button-like" class="pull-right">
+                  {% ifequal liked 0 %}
+                  <input type="button" value="Like" onclick="like({{beer.id}})"/>
+                  {% endifequal %}
+                  {% ifunequal liked 0 %}
+                  <input type="button" value="Dislike" onclick="dislike({{beer.id}})"/>
+                  {% endifunequal  %}
+               </div>
+            </ul>
+         </div>
+         <div class="response" id="comments">
+            {% for c in comments %}
+            <ul id="comments" class="comments">
+               <li id="comment-{{c.id}}" class="comment clearfix">
+                  <div class="clearfix">
+                     <h4 class="pull-left">{{c.name}} {{c.surname}}</h4>
+                     <p class="pull-right">{{c.date}}</p>
+                  </div>
+                  <p>
+                     <em>{{c.comment}}</em>
+                  </p>
+               </li>
+            </ul>
+            {% endfor %}
+         </div>
+      </div>
+      <div class="coment-form">
+         <form action="/comment/{{beer.id}}" name="comment" method="post">
+            <textarea id="comment" name="comment" rows="3" placeholder="Leave your comment here..." ></textarea>
+            <input type="submit" class="pull-right" value="Add Comment" >
+         </form>
+      </div>
+   </div>
+</div>
+<div class="clearfix"> </div>
+</div>
+{% endblock %}

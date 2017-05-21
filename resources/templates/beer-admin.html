@@ -12,7 +12,6 @@
       </div>
       <div class="col-md-6">
          <div class="blog-info-text">
-            {% ifequal logged.role "admin" %}
             <form action="" name="beer" method="post" enctype="multipart/form-data">
                <div class="form-group form-group-lg">
                   <input type="text" id="id" name="id" value="{{beer.id}}" readonly/>
@@ -41,14 +40,14 @@
                   {% endifequal %}
                </div>
                <div class="form-group form-group-lg">
-                  <label for="beer_style">Beer style</label>
-                  <select id="beer_style" name="beer_style">
-                     {% for b in bs %}
-                     {% ifequal b.id beer.beer_style %}
-                     <option value="{{b.id}}" selected>{{b.name}}</option>
+                  <label for="style">Style:</label>
+                  <select id="style" name="style">
+                     {% for style in styles %}
+                     {% ifequal style.id beer.style %}
+                     <option value="{{style.id}}" selected>{{style.name}}</option>
                      {% endifequal %}
-                     {% ifunequal b.id beer.beer_style %}
-                     <option value="{{b.id}}">{{b.name}}</option>
+                     {% ifunequal style.id beer.style %}
+                     <option value="{{style.id}}">{{style.name}}</option>
                      {% endifunequal %}
                      {% endfor %}
                   </select>
@@ -78,15 +77,6 @@
                   <input type="button" value="Delete" onclick="deleteBeer({{beer.id}})"/>
                </div>
             </form>
-            {% endifequal %}
-            {% ifequal logged.role "user" %}
-            <p class="snglp"><strong>Origin:</strong> {{beer.origin}}</p>
-            <p class="snglp"><strong>Price:</strong> {{beer.price}}</p>
-            <p class="snglp"><strong>Beer style:</strong> <a href="/bs/{{beer.beer_style}}">{{beer.beer_style_name}}</a></p>
-            <p class="snglp"><strong>Manufacturer:</strong> {{beer.manufacturer}}</p>
-            <p class="snglp"><strong>Country:</strong> {{beer.country}}</p>
-            <p class="snglp"><strong>Info:</strong> {{beer.info}}</p>
-            {% endifequal %}
          </div>
       </div>
    </div>
@@ -96,20 +86,9 @@
             <ul>
                <li><span class="cmnts"></span> <a id="comments-count" data-toggle="collapse" href="#comments">{{comments|length}} comments</a></li>
                <li><a id="likes-count" href="#" class="like">{{likes|length}} likes</a></li>
-               {% ifequal logged.role "user" %}
-               <div id="button-like" class="pull-right">
-                  {% ifequal liked 0 %}
-                  <input type="button" value="Like" onclick="likeBeer({{beer.id}})"/>
-                  {% endifequal %}
-                  {% ifunequal liked 0 %}
-                  <input type="button" value="Dislike" onclick="dislikeBeer({{beer.id}})"/>
-                  {% endifunequal  %}
-               </div>
-               {% endifequal %}
             </ul>
          </div>
          <div class="response" id="comments">
-            <!--             <h4>Comments</h4> -->
             {% for c in comments %}
             <ul id="comments" class="comments">
                <li id="comment-{{c.id}}" class="comment clearfix">
@@ -119,20 +98,12 @@
                   </div>
                   <p>
                      <em>{{c.comment}}</em>
-                     {% ifequal logged.role "admin" %}
                      <button class="btn pull-right" onclick="deleteComment({{c.id}})">Delete comment</button>
-                     {% endifequal %}
                   </p>
                </li>
             </ul>
             {% endfor %}
          </div>
-      </div>
-      <div class="coment-form">
-         <form action="/beer/comment/{{beer.id}}" name="comment" method="post">
-            <textarea id="comment" name="comment" rows="3" placeholder="Leave your comment here..." ></textarea>
-            <input type="submit" class="pull-right" value="Add Comment" >
-         </form>
       </div>
    </div>
 </div>

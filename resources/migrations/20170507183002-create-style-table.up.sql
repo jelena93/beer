@@ -1,11 +1,11 @@
-CREATE TABLE IF NOT EXISTS beer_style (
+CREATE TABLE IF NOT EXISTS style (
   id INT AUTO_INCREMENT NOT NULL,
   name VARCHAR(100) NOT NULL,
   description TEXT NOT NULL,
   PRIMARY KEY (id)
 );
 --;;
-INSERT INTO beer_style
+INSERT INTO style
 (id, name, description) VALUES
 (1, 'Belgian Pale Ale', '„Belgian Pale Ale“ piva nastala su kao konkurencija, češkim pivima. Odlikuje ih slaba gorčina i slatkasta aroma. Postoji dosta varijacija u ovom stilu, uglavnom zavisno od mesta proizvodnje. Procenat alkohola se kreće između 4-7%.'),
 (2, 'Indian Pale Ale', '„IPA“ stil piva odlikuje izuzetna gorčina. Ta gorčina postoji zbog veće doze hmelja u ovom stilu piva. Pravljen je u 17. veku za potrebe britanskih trupa, koje su bile stacionirane u Indiji, a hmelj je dodat kao konzervans kako bi pivo izdržalo dug put.'),

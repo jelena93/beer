@@ -1,14 +1,9 @@
-google.charts.load('current', {
-    'packages': ['corechart']
-});
-google.charts.setOnLoadCallback(drawCharts);
-
 function drawCharts() {
-    drawChart1();
-    drawChart2();
+    drawChartLikes();
+    drawChartComments();
 }
 
-function drawChart1() {
+function drawChartLikes() {
     var jsonData = $.ajax({
         url: "/stats/likes",
         dataType: "json",
@@ -29,12 +24,12 @@ function drawChart1() {
         var chart = new google.visualization.PieChart(document.getElementById('chart_div1'));
         chart.draw(data, options);
     } else {
-        $('#chart_div1').html("<p class='text-center'>There are no beer likes yet</p>");
+        $('#chart_div1').html("<p class='text-center'>There are no likes yet</p>");
 
     }
 }
 
-function drawChart2() {
+function drawChartComments() {
     var jsonData = $.ajax({
         url: "/stats/comments",
         dataType: "json",
@@ -55,6 +50,6 @@ function drawChart2() {
         var chart = new google.visualization.PieChart(document.getElementById('chart_div2'));
         chart.draw(data, options);
     } else {
-        $('#chart_div2').html("<p class='text-center'>There are no beer comments yet</p>");
+        $('#chart_div2').html("<p class='text-center'>There are no comments yet</p>");
     }
 }

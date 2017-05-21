@@ -1,0 +1,22 @@
+{% extends "templates/base.html" %}
+{% block content %}
+<div class="row">
+   <div class="col-lg-8 col-lg-offset-2">
+      <input type="text" name="search" value="" placeholder="Search styles..." onkeyup="searchStyles(this.value);"/>
+      <table id="table-style"  class="table">
+         <thead>
+            <th>ID</th>
+            <th>Name</th>
+         </thead>
+         <tbody>
+            {% for style in styles %}
+            <tr id="{{style.id}}" onclick="getStyle(this.id)" class="clickable-row">
+               <td>{{style.id}}</td>
+               <td>{{style.name}}</td>
+            </tr>
+            {% endfor %}
+         </tbody>
+      </table>
+   </div>
+</div>
+{% endblock %}

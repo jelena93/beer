@@ -91,30 +91,31 @@ $(document).ready(function() {
 
 function searchBeers(text) {
     $.ajax({
-        type: "POST",
+        type: "GET",
         url: "/beers",
         data: {
             text: text
         },
         dataType: 'json',
         success: function(data) {
-            $("#table-beers tbody").html("");
+            var tableData = "";
             if (data != null) {
                 for (var i = 0; i < data.length; i++) {
-                    $("#table-beers tbody").append("<tr></tr>");
-                    $("#table-beers tbody").append("<td>" + data[i].id + "</td>");
-                    $("#table-beers tbody").append("<td>" + data[i].name + "</td>");
-                    $("#table-beers tbody").append("<td>" + data[i].beer_style + "</td>");
-                    $("#table-beers tbody").append("<td>" + data[i].alcohol + "</td>");
-                    $("#table-beers tbody").append("<td>" + data[i].manufacturer + "</td>");
-                    $("#table-beers tbody").append("<td>" + data[i].country + "</td>");
-                    $("#table-beers tbody").append("<tr>");
+                  tableData +="<tr>";
+                  tableData +="<tr id='"+data[i].id+"' onclick='getBeer(this.id)' class='clickable-row'>";
+                  tableData +="<td>" + data[i].name + "</td>";
+                  tableData +="<td>" + data[i].sname + "</td>";
+                  tableData +="<td>" + data[i].alcohol+ "</td>";
+                  tableData +="<td>" + data[i].manufacturer+ "</td>";
+                  tableData +="<td>" + data[i].country+ "</td>";
+                  tableData +="<tr>";
                 }
             }
+             $("#table-beers tbody").html(tableData);
         },
-        error: function(request, status, error) {
-            showErrorMessage(error);
-        }
+         error: function(xhr, status, error) {
+                showErrorMessage(xhr.responseText);
+            }
     });
 }
 
@@ -124,7 +125,7 @@ function editBeer() {
   params["name"] = $("#name").val();
   params["origin"] = $('input[name=origin]:checked').val();
   params["price"] =  $('input[name=price]:checked').val();
-  params["beer_style"] = $("#beer_style").val();
+  params["style"] = $("#style").val();
   params["alcohol"] = $("#alcohol").val();
   params["manufacturer"] = $("#manufacturer").val();
   params["country"] = $("#country").val();
@@ -142,10 +143,10 @@ function editBeer() {
             data: params,
             dataType: 'json',
             success: function(data) {
-                showSuccessMesage(data);
+                showSuccessMessage(data);
             },
-            error: function(request, status, error) {
-                 showErrorMessage(error);
+           error: function(xhr, status, error) {
+                showErrorMessage(xhr.responseText);
             }
         });
     }
@@ -163,9 +164,9 @@ function deleteBeer(id) {
         success: function(data) {
             window.location = "/beers";
         },
-        error: function(request, status, error) {
-            showErrorMessage(error);
-        }
+        error: function(xhr, status, error) {
+                showErrorMessage(xhr.responseText);
+            }
     });
 }
 
@@ -173,10 +174,10 @@ function getBeer(id) {
     window.location = "/beer/" + id;
 }
 
-function likeBeer(id) {
+function like(id) {
     $.ajax({
         type: "POST",
-        url: "/beer/like",
+        url: "/like",
         data: {
             id: id
         },
@@ -186,16 +187,16 @@ function likeBeer(id) {
             $("#button-like").html('<input type="button" value="Dislike" onclick="dislikeBeer(' + id + ')"/>');
 
         },
-        error: function(request, status, error) {
-            showErrorMessage(error);
-        }
+         error: function(xhr, status, error) {
+                showErrorMessage(xhr.responseText);
+            }
     });
 }
 
-function dislikeBeer(id) {
+function dislike(id) {
     $.ajax({
         type: "DELETE",
-        url: "/beer/like",
+        url: "/like",
         data: {
             id: id
         },
@@ -204,16 +205,16 @@ function dislikeBeer(id) {
             $("#likes-count").text(data + " likes");
             $("#button-like").html('<input type="button" value="Like" onclick="likeBeer(' + id + ')"/>');
         },
-        error: function(request, status, error) {
-            showErrorMessage(error);
-        }
+         error: function(xhr, status, error) {
+                showErrorMessage(xhr.responseText);
+            }
     });
 }
 
 function deleteComment(id, beer) {
     $.ajax({
         type: "DELETE",
-        url: "/beer/comment/" + id,
+        url: "/comment/" + id,
         data: {
             beer: beer
         },
@@ -222,8 +223,8 @@ function deleteComment(id, beer) {
             $("#comment-" + id).remove();
             $("#comments-count").text(data + " comments");
         },
-        error: function(request, status, error) {
-            showErrorMessage(error);
-        }
+        error: function(xhr, status, error) {
+                showErrorMessage(xhr.responseText);
+            }
     });
 }

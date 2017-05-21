@@ -3,31 +3,27 @@
             [beer.models.question :refer :all]
             [selmer.parser :refer [render-file]]
             [compojure.response :refer [render]]
-            [buddy.auth :refer [authenticated? throw-unauthorized]]
+            [buddy.auth :refer [authenticated?]]
             [beer.models.db :as db]
-            [ring.util.response :refer [response redirect content-type]]))
+            [ring.util.response :refer [redirect]]))
 
-(defn authenticated [session]
-  (authenticated? session))
-
-(defn check-authenticated-admin [session]
+(defn authenticated-admin? [session]
   (and (authenticated? session)
        (="admin" (:role (:identity session)))))
 
+(defn get-home-page [page session]
+  (render-file page
+               {:title "Home"
+                :logged (:identity session)}))
+
 (defn home [session]
   (cond
-    (not (authenticated session))
-     (redirect "/login")
-    (check-authenticated-admin session)
-     (render-file "templates/home-admin.html"
-                 {:title "Home"
-                  :logged (:identity session)})
+    (not (authenticated? session))
+    (redirect "/login")
+    (authenticated-admin? session)
+    (get-home-page "templates/home-admin.html" session)
     :else
-     (render-file "templates/home-user.html"
-                 {:title "Home"
-                  :logged (:identity session)
-                  :beers (db/get-beers)})))
-
+    (get-home-page "templates/home-user.html" session)))
 
 (defroutes home-routes
   (GET "/" request (home (:session request))))

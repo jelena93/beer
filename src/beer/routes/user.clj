@@ -2,72 +2,89 @@
   (:require [compojure.core :refer :all]
             [selmer.parser :refer [render-file]]
             [beer.models.db :as db]
-            [compojure.response :refer [render]]
-            [buddy.auth.accessrules :refer [restrict]]
-            [buddy.auth :refer [authenticated? throw-unauthorized]]
-            [liberator.core :refer [resource defresource]]
+            [struct.core :as st]
+            [buddy.auth :refer [authenticated?]]
+            [bcrypt-clj.auth :as bcrypt]
+            [liberator.core :refer [defresource]]
+            [liberator.representation :refer [ring-response as-response]]
             [clojure.data.json :as json]
-            [ring.util.response :refer [response redirect content-type]]))
+            [ring.util.response :refer [redirect]]))
 
-(defn authenticated [session]
-  (authenticated? session))
+(def user-schema
+  {:username [st/required st/string]
+   :password [st/required st/string]
+   :name [st/required st/string]
+   :surname [st/required st/string]
+   :email [st/required st/email]})
 
-(defn authenticated-admin [session]
-  (if (and (not (authenticated? session))
-       (not="admin" (:role (:identity session))))
-    (throw-unauthorized {:message "Not authorized"})))
+(defn user-validaton? [params]
+  (st/valid? {:username (:username params)
+              :password (:password params)
+              :name (:name params)
+              :surname (:surname params)
+              :email (:email params)} user-schema))
 
-(defn check-authenticated-admin [session]
-  (and (not (authenticated? session))
-       (not="admin" (:role (:identity session)))))
+(defn authorized-admin? [session]
+  (and (authenticated? session)
+       (="admin" (:role (:identity session)))))
 
-(defn get-users [text]
-  (if (or (nil? text) (= "" text))
-    (db/get-users)
-    (db/search-users (str "%" text "%"))))
+(defn same-user? [params session]
+  (= (:id params)
+     (str (:id (:identity session)))))
 
-(defn get-search-users [{:keys [params session] request :request}]
-(authenticated-admin session)
-  (render-file "templates/user-search.html" {:title "Search users" :logged (:identity session) :users (get-users nil)}))
+(defn update-user-pass-in-db [params session]
+  (->(update-in (:identity session) [:password] bcrypt/crypt-password)
+     (db/update-user)))
 
-(defn add-user [{session :session}]
-  (render-file "templates/add-user.html" {:title "Add user" :logged (:identity session)}))
+(defn update-user-in-db [params session]
+  (db/update-user (assoc params :id (:id (:identity session)))))
 
-(defn get-user [{:keys [params session] request :request}]
+(defn get-user-page [request]
   (cond
-    (not= (authenticated session))
+    (not= (authenticated? (:session request)))
     (redirect "/login")
-    (not= (:id params) (str (:id (:identity session))))
+    (not (same-user? (:params request) (:session request)))
     (redirect "/")
     :else
-    (render-file "templates/user-edit.html"
-                 {:title (str "User " (:id params)) :logged (:identity session) :user (first (db/get-user (:id params)))})))
+    (render-file "templates/user.html" {:title (str "User " (:username (:params request)))
+                                        :logged (:identity (:session request))
+                                        :user (first (db/get-user (:id (:params request))))})))
 
-(defresource search-users [{:keys [params session] request :request}]
-  :allowed-methods [:post]
-  :authenticated? (check-authenticated-admin session)
-  :handle-created (json/write-str (get-users (:text params)))
-  :available-media-types ["application/json"])
-
-(defresource delete-user [{:keys [params session] request :request}]
+(defresource delete-user [{:keys [params session]}]
   :allowed-methods [:delete]
-  :handle-malformed "username cannot be empty"
-  :authenticated? (authenticated request)
-  :delete! (db/delete-user (:id (:identity session)))
-  :handle-created (json/write-str "ok")
+  :handle-malformed "id cannot be empty"
+  :new? false
+  :respond-with-entity? false
+  :authorized? (authenticated? session)
+  :delete!  (fn [_] (db/delete-user (:id (:identity session))))
   :available-media-types ["application/json"])
 
-(defresource edit-user [{:keys [params session] request :request}]
+(defresource edit-user [{:keys [params session]}]
   :allowed-methods [:put]
-  :handle-malformed "all field are required"
-  :authenticated? (authenticated request)
-  :put!  (db/update-user (:id (:identity session)) (:username params) (:password params) (:first_name params) (:last_name params) (:email params))
-  :handle-created (json/write-str "User successfully edited")
+  :malformed? (fn [context] (user-validaton? params))
+  :handle-malformed "All fields are required"
+  :new? false
+  :respond-with-entity? true
+  :authorized? (authenticated? session)
+  :put!  (fn [_] (update-user-in-db params session))
+  :handle-ok (fn [ctx]
+               (ring-response (assoc-in (as-response (json/write-str "User successfully edited") ctx)
+                                        [:session :identity] (first (db/find-user params)))))
+  :available-media-types ["application/json"])
+
+(defresource change-user-pass [{:keys [params session]}]
+  :allowed-methods [:put]
+  :malformed? (fn [context] (empty? (:password params)))
+  :handle-malformed "Please provide a new password"
+  :new? false
+  :respond-with-entity? true
+  :authorized? (authenticated? session)
+  :put!  (fn [_] (update-user-pass-in-db session (assoc params :id (:id (:identity session)))))
+  :handle-ok (fn [_] (json/write-str "Password successfully edited"))
   :available-media-types ["application/json"])
 
 (defroutes user-routes
-  (GET "/users" request (get-search-users request))
-  (POST "/users" request (search-users request))
   (DELETE "/user/:id" request (delete-user request))
-  (PUT "/user/:id" request (edit-user request))
-  (GET "/user/:id" request (get-user request)))
+  (PUT "/user" request (edit-user request))
+  (PUT "/pass" request (change-user-pass request))
+  (GET "/user/:id" request (get-user-page request)))

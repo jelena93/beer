@@ -1,21 +1,28 @@
 {% extends "templates/base.html" %}
 {% block content %}
-<h1>Welcome {{logged.first_name}} {{logged.last_name}}</h1>
+<h3>Welcome {{logged.name}} {{logged.surname}}</h3>
 <br/>
 <h2 class="text-center">Statistics</h2>
 <hr/>
 <div class="row">
    <div class="col-lg-8 col-lg-offset-2">
-      <h2 class="text-center">Beer likes</h2>
+      <h2 class="text-center">Likes</h2>
       <br/>
       <div id="chart_div1" style="width:100%; height:100%;"></div>
    </div>
 </div>
+<hr/>
 <div class="row">
    <div class="col-lg-8 col-lg-offset-2">
-      <h2 class="text-center">Beer comments</h2>
+      <h2 class="text-center">Comments</h2>
       <br/>
       <div id="chart_div2" style="width:100%; height:100%;"></div>
    </div>
 </div>
+<script type="text/javascript">
+google.charts.load('current', {
+    'packages': ['corechart']
+});
+google.charts.setOnLoadCallback(drawCharts);
+</script>
 {% endblock %}

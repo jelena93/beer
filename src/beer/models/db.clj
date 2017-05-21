@@ -1,8 +1,7 @@
 (ns beer.models.db
   (:require [clojure.java.jdbc :as sql]
-            [clojure.string :as str]
-            [korma.core :refer :all]
-            [korma.db :refer :all]
+            [korma.core :as k]
+            [korma.db :refer [defdb mysql]]
             [clojure.set :as cs]
             [clj-time.coerce :as c]
             [clj-time.core :as t])
@@ -12,160 +11,178 @@
 
 (defdb db (mysql db-config))
 
-(defentity user
-  (table :user)
-  (entity-fields :id :username :first_name :last_name :email :role))
+(k/defentity user
+  (k/table :user))
 
-(defentity beer-style
-  (table :beer_style))
+(k/defentity style
+  (k/table :style))
 
-(defentity beer
-  (table :beer))
+(k/defentity beer
+  (k/table :beer))
 
-(defentity beer-like
-  (table :beer_like))
+(k/defentity likes
+  (k/table :likes))
 
-(defentity beer-comment
-  (table :beer_comment)
-  (belongs-to user))
+(k/defentity comments
+  (k/table :comments))
 
 (defn add-user [params]
-  (insert user
-  (values params)))
+  (k/insert user
+  (k/values params)))
 
 (defn get-user [id]
-  (select user
-          (fields :username :password :first_name :last_name :email)
-  (where {:id id})))
+  (k/select  user
+  (k/where {:id id})))
 
 (defn delete-user [id]
-  (delete user
-  (where {:id id})))
+  (k/delete user
+  (k/where {:id id})))
 
 (defn find-user [params]
-  (select user
-  (where params)))
+  (k/select user
+  (k/where params)))
 
 (defn get-users []
-  (select user
-  (where {:role "user"})
-  (order :id :ASC)))
+  (k/select user
+  (k/where {:role "user"})
+  (k/order :id :ASC)))
 
-(defn update-user [id username password first-name last-name email]
-  (println id username password first-name last-name email)
-  (update user
-          (set-fields {:username username :password password :first_name first-name :last_name last-name :email email})
-          (where {:id id})))
+(defn update-user [params]
+  (k/update user
+          (k/set-fields params)
+          (k/where {:id (:id params)})))
 
-(defn search-users [text]
-  (select user
-     (where (and {:role "user"} (or (like :username text) (like :first_name text) (like :email text))))
-          (order :id :ASC)))
+(defn add-beer [bname origin price style alcohol manufacturer country info picture]
+  (k/insert beer
+  (k/values {:name bname
+           :origin origin
+           :price price
+           :style style
+           :alcohol alcohol
+           :manufacturer manufacturer
+           :country country
+           :info info
+           :picture picture})))
 
-(defn add-beer [beer-name origin price beer-style alcohol manufacturer country info picture]
-  (insert beer
-  (values {:name beer-name :origin origin :price price :beer_style beer-style :alcohol alcohol :manufacturer manufacturer :country country :info info :picture picture})))
-
-(defn update-beer [id beer-name origin price beer-style alcohol manufacturer country info picture]
-  (update beer
-          (set-fields {:name beer-name :origin origin :price price :beer_style beer-style :alcohol alcohol :manufacturer manufacturer :country country :info info :picture picture})
-          (where {:id id})))
+(defn update-beer [id bname origin price style alcohol manufacturer country info picture]
+  (k/update beer
+          (k/set-fields {:name bname
+                       :origin origin
+                       :price price
+                       :style style
+                       :alcohol alcohol
+                       :manufacturer manufacturer
+                       :country country
+                       :info info
+                       :picture picture})
+          (k/where {:id id})))
 
 (defn delete-beer [id]
-  (delete beer
-  (where {:id id})))
+  (k/delete beer
+  (k/where {:id id})))
 
 (defn get-beers []
-  (select beer
-  (order :id :ASC)))
+  (k/select beer
+          (k/fields :* [:style.name :sname])
+          (k/join style (= :style :style.id))
+          (k/order :id :ASC)))
 
 (defn search-beers [text]
- (select beer
-  (where (or {:id text} (like :name text)
-             (:origin text) (:price text) (:beer_style text) (like :alcohol text) (like :country text)
-             (like :manufacturer text) (like :country text) (like :info text)))
-         (order :id :ASC)))
+  (k/select beer
+          (k/fields :* [:style.name :sname])
+          (k/join style (= :style :style.id))
+          (k/where (or {:id text}
+             (like :name text)
+             (:origin text)
+             (:price text)
+             (:style text)
+             (like :alcohol text)
+             (like :country text)
+             (like :manufacturer text)
+             (like :country text)
+             (like :info text)))
+         (k/order :id :ASC)))
 
-(defn get-beer-styles []
-  (select beer-style
-          (order :id :ASC)))
+(defn get-styles []
+  (k/select style
+          (k/order :id :ASC)))
 
-(defn update-beer-style [params]
-  (update beer-style
-          (set-fields
-            {:description (:description params)})
-          (where {:id (:id params)})))
+(defn update-style [params]
+  (k/update style
+          (k/set-fields {:description (:description params)})
+          (k/where {:id (:id params)})))
 
-(defn search-beer-styles [text]
- (select beer-style
-  (where (or {:id text} (like :name text) (like :description text)))
-         (order :id :ASC)))
+(defn search-styles [text]
+ (k/select style
+  (k/where (or {:id text} (like :name text) (like :description text)))
+         (k/order :id :ASC)))
 
-(defn find-beer-style-by-id [id]
-  (select beer-style
-  (where {:id id})))
+(defn find-style-by-id [id]
+  (k/select style
+  (k/where {:id id})))
 
-(defn find-beer-style-by-name [bs-name]
-  (select beer-style
-  (where {:name bs-name})
-          (order :id :ASC)))
+(defn find-style-by-name [bs-name]
+  (k/select style
+  (k/where {:name bs-name})
+          (k/order :id :ASC)))
 
 (defn find-beer-by-id [id]
-(select beer
-        (fields :* [:beer_style.name :beer_style_name])
-        (join beer-style (= :beer_style :beer_style.id))
-  (where {:id id})))
+  (k/select beer
+        (k/fields :* [:style.name :sname])
+        (k/join style (= :style :style.id))
+  (k/where {:id id})))
 
-(defn get-beers-for-beer-style [bs-id]
-  (select beer
-          (where {:beer_style bs-id})
-          (order :beer.id :ASC)))
+(defn get-beers-for-style [bs-id]
+  (k/select beer
+          (k/where {:style bs-id})
+          (k/order :beer.id :ASC)))
 
-(defn find-beer-by-beer-style-origin-price [bs-id origin price]
-  (select beer
-          (where {:beer_style bs-id :origin origin :price price})
-          (order :beer.id :ASC)))
+(defn find-beer-by-style-origin-price [bs-id origin price]
+  (k/select beer
+          (k/where {:style bs-id :origin origin :price price})
+          (k/order :beer.id :ASC)))
 
-(defn add-beer-like [user-id beer-id]
-  (insert beer-like
-  (values {:user_id user-id :beer_id beer-id})))
+(defn add-like [user beer]
+  (k/insert likes
+  (k/values {:user user :beer beer})))
 
-(defn delete-beer-like [user-id beer-id]
-  (delete beer-like
-  (where {:user_id user-id :beer_id beer-id})))
+(defn delete-like [user beer]
+  (k/delete likes
+  (k/where {:user user :beer beer})))
 
-(defn get-beer-likes [beer-id]
-  (select beer-like
-  (where {:beer_id beer-id})))
+(defn get-likes [beer]
+  (k/select  likes
+  (k/where {:beer beer})))
 
-(defn get-beer-likes-count []
-  (select beer-like
-          (fields :beer.name)
-          (aggregate (count :*) :number)
-          (group :beer_id)
-          (join beer (= :beer_id :beer.id))))
+(defn get-likes-count []
+  (k/select  likes
+          (k/fields :beer.name)
+          (k/aggregate (count :*) :number)
+          (k/group :beer)
+          (k/join beer (= :beer :beer.id))))
 
-(defn find-user-like-for-beer [beer-id user-id]
-  (select beer-like
-  (where {:beer_id beer-id :user_id user-id})))
+(defn find-user-like-for-beer [beer user]
+  (k/select likes
+  (k/where {:beer beer :user user})))
 
-(defn add-beer-comment [user-id beer-id text]
-  (insert beer-comment
-  (values {:user_id user-id :beer_id beer-id :comment text :date (c/to-sql-time (t/now))})))
+(defn add-comment [user beer text]
+  (k/insert comments
+  (k/values {:user user :beer beer :comment text :date (c/to-sql-time (t/now))})))
 
-(defn get-beer-comments [beer-id]
-  (select beer-comment
-          (with user)
-          (where {:beer_id beer-id})
-          (order :id :ASC)))
+(defn get-comments [beer]
+  (k/select comments
+          (k/fields :* :user.name :user.surname)
+          (k/join user (= :user :user.id))
+          (k/where {:beer beer})
+          (k/order :id :ASC)))
 
-(defn get-beer-comments-count []
-  (select beer-comment
-          (fields :beer.name)
-          (aggregate (count :*) :number)
-          (group :beer_id)
-          (join beer (= :beer_id :beer.id))))
+(defn get-comments-count []
+  (k/select comments
+          (k/fields :beer.name)
+          (k/aggregate (count :*) :number)
+          (k/group :beer)
+          (k/join beer (= :beer :beer.id))))
 
-(defn delete-beer-comment [id]
-  (delete beer-comment
-  (where {:id id})))
+(defn delete-comment [id]
+  (k/delete comments
+  (k/where {:id id})))
