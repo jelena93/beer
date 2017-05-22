@@ -1,12 +1,9 @@
 (ns beer.routes.statistics
   (:require [compojure.core :refer :all]
             [buddy.auth :refer [authenticated?]]
-            [buddy.auth :refer [authenticated?]]
             [beer.models.db :as db]
-            [compojure.response :refer [render]]
-            [liberator.core :refer [resource defresource]]
-            [clojure.data.json :as json]
-            [ring.util.response :refer [response redirect content-type]])
+            [liberator.core :refer [defresource]]
+            [clojure.data.json :as json])
   (:import [beer.models.question Question]))
 
 (defn authenticated-admin? [session]
@@ -14,15 +11,15 @@
        (="admin" (:role (:identity session)))))
 
 (defn get-cols [stats]
- (for [s stats]
-      {:label (:name s) :type "string"}))
+ (for [s stats] {:label (:name s) :type "string"}))
 
 (defn get-all-cols [stats]
-  (into [] (concat [{:label "Beer" :type "string"}] (get-cols stats))))
+  (-> (get-cols stats)
+      (concat [{:label "Beer" :type "string"}])
+      (into [])))
 
 (defn get-rows [stats]
- (for [s stats]
-      {:c [{:v (:name s)} {:v (:number s)}]}))
+ (for [s stats] {:c [{:v (:name s)} {:v (:number s)}]}))
 
 (defn get-likes []
   (let [likes (db/get-likes-count)]

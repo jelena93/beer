@@ -2,7 +2,6 @@
 {% block content %}
 <div class="row">
    <div class="col-lg-6 col-lg-offset-2">
-      {{message}}
       <h3>
          {{title}}
          <hr/>
@@ -32,7 +31,7 @@
            <label class="radio-inline"><input type="radio" name="optradio" value="upload">Upload image</label>
          </div>
          <div class="form-group form-group-lg">
-           <input type="url" id="pic-url" name="picture_url" placeholder="Image url"/>
+           <input type="text" id="pic-url" name="url" placeholder="Image url"/>
            <input style="display:none;"type="file" id="pic-upload" name="picture" accept="image/*" >
          </div>
          <div class="form-group form-group-lg">

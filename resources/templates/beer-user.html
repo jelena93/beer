@@ -49,7 +49,7 @@
          </div>
          <div class="response" id="comments">
             {% for c in comments %}
-            <ul id="comments" class="comments">
+            <ul class="comments">
                <li id="comment-{{c.id}}" class="comment clearfix">
                   <div class="clearfix">
                      <h4 class="pull-left">{{c.name}} {{c.surname}}</h4>
@@ -64,9 +64,9 @@
          </div>
       </div>
       <div class="coment-form">
-         <form action="/comment/{{beer.id}}" name="comment" method="post">
+         <form name="comment">
             <textarea id="comment" name="comment" rows="3" placeholder="Leave your comment here..." ></textarea>
-            <input type="submit" class="pull-right" value="Add Comment" >
+            <input type="button" class="pull-right" value="Add Comment" onclick="addComment({{beer.id}})" >
          </form>
       </div>
    </div>

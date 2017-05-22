@@ -1,8 +1,8 @@
  CREATE TABLE IF NOT EXISTS beer (
   id INT AUTO_INCREMENT NOT NULL,
   name VARCHAR(100) NOT NULL,
-  origin VARCHAR(30) NOT NULL,
-  price VARCHAR(20) NOT NULL,
+  origin INT NOT NULL,
+  price INT NOT NULL,
   style INT NOT NULL,
   alcohol VARCHAR(20) NOT NULL,
   manufacturer VARCHAR(100) NOT NULL,

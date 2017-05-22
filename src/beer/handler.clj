@@ -19,6 +19,8 @@
             [beer.routes.style :refer [style-routes]]
             [beer.routes.beer :refer [beer-routes]]
             [beer.routes.user :refer [user-routes]]
+            [beer.routes.comment :refer [comment-routes]]
+            [beer.routes.like :refer [like-routes]]
             [beer.routes.statistics :refer [stats-routes]]))
 
 (defn is-admin [request]
@@ -41,7 +43,7 @@
   (route/not-found "Not Found"))
 
 (def app
-  (-> (routes auth-routes home-routes question-routes style-routes beer-routes user-routes stats-routes app-routes)
+  (-> (routes auth-routes home-routes question-routes style-routes beer-routes comment-routes like-routes user-routes stats-routes app-routes)
       (handler/site)
       (wrap-authorization backend)
       (wrap-authentication backend)

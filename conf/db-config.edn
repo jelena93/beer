@@ -1,3 +1,1 @@
-{:db "beer"
- :user "admin"
- :password "admin"}
+{:db "beer" :user "admin" :password "admin"}

@@ -1,5 +1,1 @@
-{:classname "com.mysql.jdbc.Driver"
-                :subprotocol "mysql"
-                :subname "//localhost/beer"
-                :user "admin"
-                :password "admin"}
+{:classname "com.mysql.jdbc.Driver" :subprotocol "mysql" :subname "//localhost/beer" :user "admin" :password "admin"}

@@ -52,17 +52,10 @@
           (k/set-fields params)
           (k/where {:id (:id params)})))
 
-(defn add-beer [bname origin price style alcohol manufacturer country info picture]
+(defn add-beer [params]
+  (println params)
   (k/insert beer
-  (k/values {:name bname
-           :origin origin
-           :price price
-           :style style
-           :alcohol alcohol
-           :manufacturer manufacturer
-           :country country
-           :info info
-           :picture picture})))
+  (k/values params)))
 
 (defn update-beer [id bname origin price style alcohol manufacturer country info picture]
   (k/update beer
@@ -105,7 +98,7 @@
 
 (defn get-styles []
   (k/select style
-          (k/order :id :ASC)))
+            (k/order :id :ASC)))
 
 (defn update-style [params]
   (k/update style
@@ -142,13 +135,13 @@
           (k/where {:style bs-id :origin origin :price price})
           (k/order :beer.id :ASC)))
 
-(defn add-like [user beer]
+(defn add-like [params]
   (k/insert likes
-  (k/values {:user user :beer beer})))
+  (k/values params)))
 
-(defn delete-like [user beer]
+(defn delete-like [params]
   (k/delete likes
-  (k/where {:user user :beer beer})))
+  (k/where params)))
 
 (defn get-likes [beer]
   (k/select  likes
@@ -165,9 +158,13 @@
   (k/select likes
   (k/where {:beer beer :user user})))
 
-(defn add-comment [user beer text]
+(defn get-like [params]
+  (k/select likes
+  (k/where params)))
+
+(defn add-comment [params]
   (k/insert comments
-  (k/values {:user user :beer beer :comment text :date (c/to-sql-time (t/now))})))
+            (k/values (assoc params :date (c/to-sql-time (t/now))))))
 
 (defn get-comments [beer]
   (k/select comments
@@ -175,6 +172,10 @@
           (k/join user (= :user :user.id))
           (k/where {:beer beer})
           (k/order :id :ASC)))
+
+(defn find-comment-by-id [id]
+  (k/select comments
+  (k/where {:id id})))
 
 (defn get-comments-count []
   (k/select comments

@@ -15,6 +15,8 @@
    <script type="text/javascript" src="/js/questions.js"></script>
    <script type="text/javascript" src="/js/user.js"></script>
    <script type="text/javascript" src="/js/beer.js"></script>
+   <script type="text/javascript" src="/js/comment.js"></script>
+   <script type="text/javascript" src="/js/like.js"></script>
    <script type="text/javascript" src="/js/style.js"></script>
    <script type="text/javascript" src="/js/move-top.js"></script>
    <script type="text/javascript" src="/js/easing.js"></script>
@@ -31,7 +33,6 @@
 <body>
    {% include "templates/header.html" %}
    <div class="container">
-     <br/>
      <div id="message">
             {% ifequal message.type "error" %}
            <div class="alert alert-danger alert-dismissable" id="error">

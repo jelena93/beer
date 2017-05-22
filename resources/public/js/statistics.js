@@ -11,6 +11,9 @@ function drawChartLikes() {
     }).responseText;
     if (JSON.parse(jsonData).cols.length > 0 && JSON.parse(jsonData).rows.length > 0) {
         var data = new google.visualization.DataTable(jsonData);
+        var paddingHeight = 40;
+        var rowHeight = data.getNumberOfRows() * 50;
+        var chartHeight = rowHeight + paddingHeight;
         var options = {
             'title': 'Beer likes',
             'is3D': true,
@@ -18,7 +21,10 @@ function drawChartLikes() {
                 'fill': 'transparent',
                 stroke: 'white',
                 strokeWidth: 3
-
+            },
+            height: chartHeight,
+            chartArea: {
+                height: rowHeight,
             }
         };
         var chart = new google.visualization.PieChart(document.getElementById('chart_div1'));
@@ -37,14 +43,20 @@ function drawChartComments() {
     }).responseText;
     if (JSON.parse(jsonData).cols.length > 0 && JSON.parse(jsonData).rows.length > 0) {
         var data = new google.visualization.DataTable(jsonData);
+        var paddingHeight = 40;
+        var rowHeight = data.getNumberOfRows() * 50;
+        var chartHeight = rowHeight + paddingHeight;
         var options = {
-            'title': 'Beer likes',
+            'title': 'Beer comments',
             'is3D': true,
             'backgroundColor': {
                 'fill': 'transparent',
                 stroke: 'white',
                 strokeWidth: 3
-
+            },
+            height: chartHeight,
+            chartArea: {
+                height: rowHeight,
             }
         };
         var chart = new google.visualization.PieChart(document.getElementById('chart_div2'));

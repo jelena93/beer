@@ -3,74 +3,104 @@
 <div class="blog">
    <div class="blog-head">
       <h3>{{beer.name}}</h3>
+     <hr/>
    </div>
    <div class="row">
-      <div class="col-md-6">
+      <div class="col-lg-4">
          <div class="blog-img">
             <img src="{{beer.picture}}" class="img-responsive zoom-img"/>
          </div>
       </div>
-      <div class="col-md-6">
+      <div class="col-lg-8">
          <div class="blog-info-text">
-            <form action="" name="beer" method="post" enctype="multipart/form-data">
+            <form action="" name="beer" method="post" enctype="multipart/form-data" class="form-horizontal">
                <div class="form-group form-group-lg">
-                  <input type="text" id="id" name="id" value="{{beer.id}}" readonly/>
+                  <label for="id" class="control-label col-lg-2">ID:</label>
+                  <div class="col-lg-10">
+                     <input type="text" id="id" name="id" value="{{beer.id}}" readonly/>
+                  </div>
                </div>
                <div class="form-group form-group-lg">
-                  <input type="text" name="name" id="name" placeholder="Name" value="{{beer.name}}"/>
+                  <label for="name" class="control-label col-lg-2">Name:</label>
+                  <div class="col-lg-10">
+                     <input type="text" name="name" id="name" placeholder="Name" value="{{beer.name}}"/>
+                  </div>
                </div>
                <div class="form-group form-group-lg">
-                  {% ifequal beer.origin "0" %}
-                  <label class="radio-inline"><input type="radio" checked name="origin" value="0">Domestic</label>
-                  <label class="radio-inline"><input type="radio" name="origin" value="1">Imported</label>
-                  {% endifequal %}
-                  {% ifequal beer.origin "1" %}
-                  <label class="radio-inline"><input type="radio" name="origin" value="0">Domestic</label>
-                  <label class="radio-inline"><input type="radio" checked name="origin" value="1">Imported</label>
-                  {% endifequal %}
-               </div>
-               <div class="form-group form-group-lg">
-                  {% ifequal beer.price "0" %}
-                  <label class="radio-inline"><input type="radio" checked name="price" value="0">Expensive</label>
-                  <label class="radio-inline"><input type="radio" name="price" value="1">Cheap</label>
-                  {% endifequal %}
-                  {% ifequal beer.price "1" %}
-                  <label class="radio-inline"><input type="radio" name="price" value="0">Expensive</label>
-                  <label class="radio-inline"><input type="radio" checked name="price" value="1">Cheap</label>
-                  {% endifequal %}
-               </div>
-               <div class="form-group form-group-lg">
-                  <label for="style">Style:</label>
-                  <select id="style" name="style">
-                     {% for style in styles %}
-                     {% ifequal style.id beer.style %}
-                     <option value="{{style.id}}" selected>{{style.name}}</option>
+                  <label for="origin" class="control-label col-lg-2">Origin:</label>
+                  <div class="col-lg-10">
+                     {% ifequal beer.origin "0" %}
+                     <label class="radio-inline"><input type="radio" checked name="origin" value="0">Domestic</label>
+                     <label class="radio-inline"><input type="radio" name="origin" value="1">Imported</label>
                      {% endifequal %}
-                     {% ifunequal style.id beer.style %}
-                     <option value="{{style.id}}">{{style.name}}</option>
-                     {% endifunequal %}
-                     {% endfor %}
-                  </select>
+                     {% ifequal beer.origin "1" %}
+                     <label class="radio-inline"><input type="radio" name="origin" value="0">Domestic</label>
+                     <label class="radio-inline"><input type="radio" checked name="origin" value="1">Imported</label>
+                     {% endifequal %}
+                  </div>
                </div>
                <div class="form-group form-group-lg">
-                  <label class="radio-inline"><input type="radio" name="optradio" checked value="url">Image url</label>
-                  <label class="radio-inline"><input type="radio" name="optradio" value="upload">Upload image</label>
+                  <label for="price" class="control-label col-lg-2">Price:</label>
+                  <div class="col-lg-10">
+                     {% ifequal beer.price "0" %}
+                     <label class="radio-inline"><input type="radio" checked name="price" value="0">Expensive</label>
+                     <label class="radio-inline"><input type="radio" name="price" value="1">Cheap</label>
+                     {% endifequal %}
+                     {% ifequal beer.price "1" %}
+                     <label class="radio-inline"><input type="radio" name="price" value="0">Expensive</label>
+                     <label class="radio-inline"><input type="radio" checked name="price" value="1">Cheap</label>
+                     {% endifequal %}
+                  </div>
                </div>
                <div class="form-group form-group-lg">
-                  <input type="text" id="pic-url" name="picture_url" placeholder="Image url"  value="{{beer.picture}}"/>
-                  <input style="display:none;" type="file" id="pic-upload" name="picture" accept="image/*" >
+                  <label for="style" class="control-label col-lg-2">Style:</label>
+                  <div class="col-lg-10">
+                     <select id="style" name="style">
+                        {% for style in styles %}
+                        {% ifequal style.id beer.style %}
+                        <option value="{{style.id}}" selected>{{style.name}}</option>
+                        {% endifequal %}
+                        {% ifunequal style.id beer.style %}
+                        <option value="{{style.id}}">{{style.name}}</option>
+                        {% endifunequal %}
+                        {% endfor %}
+                     </select>
+                  </div>
                </div>
                <div class="form-group form-group-lg">
-                  <input type="text" name="alcohol" id="alcohol" placeholder="Alcohol (%)" value="{{beer.alcohol}}"/>
+                  <label for="alcohol" class="control-label col-lg-2">Picture:</label>
+                  <div class="col-lg-offset-2">
+                     <label class="radio-inline"><input type="radio" name="optradio" checked value="url">Image url</label>
+                     <label class="radio-inline"><input type="radio" name="optradio" value="upload">Upload image</label>
+                  </div>
+                  <div class="col-lg-10 col-lg-offset-2">
+                     <input type="text" id="pic-url" name="picture_url" placeholder="Image url"  value="{{beer.picture}}"/>
+                     <input style="display:none;" type="file" id="pic-upload" name="picture" accept="image/*" >
+                  </div>
                </div>
                <div class="form-group form-group-lg">
-                  <input type="text" name="manufacturer" id="manufacturer" placeholder="Manufacturer" value="{{beer.manufacturer}}"/>
+                  <label for="alcohol" class="control-label col-lg-2">Alcohol:</label>
+                  <div class="col-lg-10">
+                     <input type="text" name="alcohol" id="alcohol" placeholder="Alcohol (%)" value="{{beer.alcohol}}"/>
+                  </div>
                </div>
                <div class="form-group form-group-lg">
-                  <input type="text" name="country" id="country" placeholder="Country" value="{{beer.country}}"/>
+                  <label for="manufacturer" class="control-label col-lg-2">Manufacturer:</label>
+                  <div class="col-lg-10">
+                     <input type="text" name="manufacturer" id="manufacturer" placeholder="Manufacturer" value="{{beer.manufacturer}}"/>
+                  </div>
                </div>
                <div class="form-group form-group-lg">
-                  <textarea name="info" rows="5" id="info" placeholder="Info">{{beer.info}}</textarea>
+                  <label for="country" class="control-label col-lg-2">Country:</label>
+                  <div class="col-lg-10">
+                     <input type="text" name="country" id="country" placeholder="Country" value="{{beer.country}}"/>
+                  </div>
+               </div>
+               <div class="form-group form-group-lg">
+                  <label for="info" class="control-label col-lg-2">Info:</label>
+                  <div class="col-lg-10">
+                     <textarea name="info" rows="5" id="info" placeholder="Info">{{beer.info}}</textarea>
+                  </div>
                </div>
                <div class="form-group form-group-lg pull-right">
                   <input type="button" value="Edit" onclick="editBeer({{beer.id}})"/>
