@@ -8,6 +8,7 @@
             [clojure.data.json :as json]
             [struct.core :as st]
             [clojure.java.io :as io]
+            [liberator.representation :refer [ring-response as-response]]
             [ring.util.response :refer [redirect]]))
 
 (def file-config (clojure.edn/read-string (slurp "conf/file-config.edn")))
@@ -28,9 +29,9 @@
        (="admin" (:role (:identity session)))))
 
 (defn get-picture-url [params]
-  (if-not (contains? params :url)
-    (str (:short-img-location file-config) (:filename (:picture params)))
-    (:url params)))
+  (if (contains? params :url)
+    (:url params)
+    (str (:short-img-location file-config) (:filename (:file params)))))
 
 (defn beer-validation? [params]
   (st/valid? {:name (:name params)
@@ -43,10 +44,10 @@
               :info (:info params)
               :picture (get-picture-url params)} beer-schema))
 
-(defn upload-picture [{:keys [filename tempfile] picture :picture}]
+(defn upload-picture [{:keys [filename tempfile]}]
   (io/copy tempfile (io/file (:full-img-location file-config) filename)))
 
-(defn get-add-beer [session &[message]]
+(defn get-add-beer-page [session &[message]]
   (if-not (authenticated? session)
     (redirect "/login")
     (render-file "templates/beer-add.html" {:title "Add beer"
@@ -55,10 +56,9 @@
                                             :styles (db/get-styles)})))
 
 (defn add-beer->db [params]
-  (println params)
   (if-not (contains? params :url)
-    (upload-picture params))
-  (-> (assoc (select-keys params [:name :origin :price :style :alcohol :manufacturer :country :info]) :picture (get-picture-url params))
+    (upload-picture (:file params)))
+  (-> (dissoc (assoc params :picture (get-picture-url params)) :file :url)
     (db/add-beer)
     (:generated_key)))
 
@@ -69,7 +69,7 @@
     (beer-validation? params)
     (redirect (str "/beer/" (add-beer->db params)))
     :else
-    (-> (get-add-beer session {:text "All fields are required" :type "error"}))))
+    (-> (get-add-beer-page session {:text "All fields are required" :type "error"}))))
 
 (defn get-beer [{:keys [params session]} &[message]]
   (cond
@@ -98,43 +98,23 @@
   (if (or (nil? text)
           (= "" text))
     (db/get-beers)
-    (db/search-beers (str "%" text "%"))))
+    (db/search-beers text)))
 
 (defn get-search-beers [params session]
   (render-file "templates/beer-search.html" {:title "Search beers"
                                              :logged (:identity session)
                                              :beers (get-beers nil)}))
+(defn get-beer-picture-from-db [params]
+  (:picture (first (db/find-beer-by-id (:id params)))))
 
-(defn update-beer-data [params session]
-  (let [id (:id params)
-        beer-name (:name params)
-        origin (read-string (:origin params))
-        price (read-string (:price params))
-        style (read-string (:style params))
-        alcohol (read-string (:alcohol params))
-        manufacturer (:manufacturer params)
-        country (:country params)
-        info (:info params)
-        picture-name (if (not (nil? (:picture params))) (str "/images/beer/" (:filename (:picture params))) (:picture_url params))]
-    (cond
-    (not= (authenticated? session))
-     (redirect "/login")
-    (and (st/valid? {:name beer-name
-                     :origin origin
-                     :price price
-                     :style style
-                     :alcohol alcohol
-                     :manufacturer manufacturer
-                     :country country
-                     :info info
-                     :picture picture-name} beer-schema))
-      (do
-        (if (not(nil? (:picture params)))
-        (upload-picture (:picture params)))
-        (db/update-beer id beer-name origin price style alcohol manufacturer country info picture-name))
-    :else
-      {:text "All fields are required" :type "error"} )))
+(defn file-exists? [params]
+  (.exists (clojure.java.io/as-file (str (:resources-folder file-config) (get-beer-picture-from-db params)))))
 
+(defn update-beer-in-db [params]
+  (if (file-exists? params)
+  (io/delete-file (str (:resources-folder file-config) (get-beer-picture-from-db params)))
+  (-> (dissoc (assoc params :picture (get-picture-url params)) :file :url)
+    (db/update-beer))))
 
 (defresource search-beers [{:keys [params session]}]
   :allowed-methods [:post]
@@ -153,13 +133,17 @@
 
 (defresource update-beer [{:keys [params session]}]
   :allowed-methods [:put]
-  :handle-malformed "beer id cannot be empty"
-  :authenticated? (authenticated? session)
+  :available-media-types ["application/json"]
+  :malformed? (fn [_] (not (beer-validation? params)))
+  :handle-malformed "All fields are required"
+  :exists? (fn [_] (not (empty? (db/find-beer-by-id (:id params)))))
+  :can-put-to-missing? false
+  :authorized? (authenticated-admin? session)
   :new? false
   :respond-with-entity? true
-  :put! (fn [_] (update-beer-data params session))
-  :handle-ok (fn [_] (json/write-str "Beer successfully edited"))
-  :available-media-types ["application/json"])
+  :put! (fn [_] (update-beer-in-db params))
+  :handle-ok (fn [_] (json/write-str {:message "Beer successfully edited" :beer (first (db/find-beer-by-id (:id params)))}))
+  :handle-not-implemented (fn [_] (str "There is no beer with id " (:id params))))
 
 (defresource delete-beer [{:keys [params session]}]
   :allowed-methods [:delete]
@@ -167,7 +151,7 @@
   :handle-malformed (fn [_] "Please provide an id")
   :exists? (fn [_] (not (empty? (db/find-beer-by-id (:id params)))))
   :handle-not-found (fn [_] (str "There is no beer with id " (:id params)))
-  :authorized? (authenticated? session)
+  :authorized? (authenticated-admin? session)
   :new? false
   :respond-with-entity? true
   :delete! (fn [_] (db/delete-beer (:id params)))
@@ -175,7 +159,7 @@
   :available-media-types ["application/json"])
 
 (defroutes beer-routes
-  (GET "/beer" request (get-add-beer (:session request)))
+  (GET "/beer" request (get-add-beer-page (:session request)))
   (POST "/beer" request (add-beer request))
   (PUT "/beer" request (update-beer request))
   (DELETE "/beer" request (delete-beer request))

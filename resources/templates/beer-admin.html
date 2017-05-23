@@ -7,8 +7,8 @@
    </div>
    <div class="row">
       <div class="col-lg-4">
-         <div class="blog-img">
-            <img src="{{beer.picture}}" class="img-responsive zoom-img"/>
+         <div class="blog-img" id="beer-picture">
+            <img id="beer-img" src="{{beer.picture}}" class="img-responsive zoom-img"/>
          </div>
       </div>
       <div class="col-lg-8">
@@ -73,9 +73,8 @@
                      <label class="radio-inline"><input type="radio" name="optradio" checked value="url">Image url</label>
                      <label class="radio-inline"><input type="radio" name="optradio" value="upload">Upload image</label>
                   </div>
-                  <div class="col-lg-10 col-lg-offset-2">
-                     <input type="text" id="pic-url" name="picture_url" placeholder="Image url"  value="{{beer.picture}}"/>
-                     <input style="display:none;" type="file" id="pic-upload" name="picture" accept="image/*" >
+                  <div class="col-lg-10 col-lg-offset-2" id="input-picture">
+                     <input type="text" id="pic-url" name="url" placeholder="Image url" value="{{beer.picture}}"/>
                   </div>
                </div>
                <div class="form-group form-group-lg">

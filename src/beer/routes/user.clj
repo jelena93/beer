@@ -52,39 +52,41 @@
 
 (defresource delete-user [{:keys [params session]}]
   :allowed-methods [:delete]
-  :handle-malformed "id cannot be empty"
+  :available-media-types ["application/json"]
   :new? false
-  :respond-with-entity? false
+  :respond-with-entity? true
   :authorized? (authenticated? session)
   :delete!  (fn [_] (db/delete-user (:id (:identity session))))
-  :available-media-types ["application/json"])
+  :handle-ok (fn [ctx] (ring-response (assoc-in (as-response (json/write-str "User successfully deleted") ctx)
+                                        [:session :identity] nil))))
 
 (defresource edit-user [{:keys [params session]}]
   :allowed-methods [:put]
+  :available-media-types ["application/json"]
   :malformed? (fn [context] (user-validaton? params))
   :handle-malformed "All fields are required"
   :new? false
   :respond-with-entity? true
   :authorized? (authenticated? session)
   :put!  (fn [_] (update-user-in-db params session))
-  :handle-ok (fn [ctx]
-               (ring-response (assoc-in (as-response (json/write-str "User successfully edited") ctx)
-                                        [:session :identity] (first (db/find-user params)))))
-  :available-media-types ["application/json"])
+  :handle-ok (fn [ctx] (ring-response (assoc-in (as-response (json/write-str "User successfully edited") ctx)
+                                        [:session :identity] (first (db/find-user params))))))
 
 (defresource change-user-pass [{:keys [params session]}]
   :allowed-methods [:put]
+  :available-media-types ["application/json"]
   :malformed? (fn [context] (empty? (:password params)))
   :handle-malformed "Please provide a new password"
   :new? false
   :respond-with-entity? true
   :authorized? (authenticated? session)
   :put!  (fn [_] (update-user-pass-in-db session (assoc params :id (:id (:identity session)))))
-  :handle-ok (fn [_] (json/write-str "Password successfully edited"))
-  :available-media-types ["application/json"])
+  :handle-ok (fn [ctx] (ring-response (assoc-in (as-response (json/write-str "Password successfully edited") ctx)
+                                        [:session :identity] (first (db/get-user (:id (:identity session))))))))
+
 
 (defroutes user-routes
-  (DELETE "/user/:id" request (delete-user request))
+  (DELETE "/user" request (delete-user request))
   (PUT "/user" request (edit-user request))
   (PUT "/pass" request (change-user-pass request))
   (GET "/user/:id" request (get-user-page request)))

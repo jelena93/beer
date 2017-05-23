@@ -30,10 +30,9 @@
             <label class="radio-inline"><input type="radio" name="optradio" checked value="url">Image url</label>
            <label class="radio-inline"><input type="radio" name="optradio" value="upload">Upload image</label>
          </div>
-         <div class="form-group form-group-lg">
-           <input type="text" id="pic-url" name="url" placeholder="Image url"/>
-           <input style="display:none;"type="file" id="pic-upload" name="picture" accept="image/*" >
-         </div>
+         <div class="form-group form-group-lg" id="input-picture">
+           <input type="text" id="pic-url" name="url" placeholder="Image url" value="{{beer.picture}}"/>
+        </div>
          <div class="form-group form-group-lg">
             <input type="text" name="alcohol" placeholder="Alcohol (%)"/>
          </div>
@@ -47,7 +46,7 @@
             <textarea name="info" rows="5" placeholder="Info"></textarea>
          </div>
          <div class="form-group form-group-lg pull-right">
-            <input type="submit" value="Add"/>
+            <input type="button" value="Add" onclick="validation()"/>
          </div>
       </form>
    </div>

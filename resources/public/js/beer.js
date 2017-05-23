@@ -18,12 +18,11 @@ $(function() {
             info: {
                 required: true
             },
-            picture: {
+            file: {
                 required: true
             },
             url: {
-                required: true,
-                url: true
+                required: true
             }
         },
         messages: {
@@ -42,35 +41,69 @@ $(function() {
             info: {
                 required: "Please provide an info"
             },
-            picture: {
-                required: "Please provide a picture"
+            file: {
+                required: "Please provide a file picture"
             },
             url: {
-                required: "Please provide a picture"
+                required: "Please provide a url picture"
             }
         },
         submitHandler: function(form) {
+            $('[name="optradio"]').prop("disabled", true);
             form.submit();
         }
     });
 });
 
+function validation() {
+    if (validatorBeer.form()) {
+        if ($("#pic-url").length>0) {
+            imageExists($("#pic-url").val(), function(exists) {
+                if (exists) {
+                    validatorBeer.showErrors({
+                        "url": null
+                    });
+                     $("form[name='beer']").submit();
+                } else {
+                    validatorBeer.showErrors({
+                        "url": "Please add a valid url image"
+                    });
+                }
+            });
+        } else {
+             $("form[name='beer']").submit();
+
+        }
+
+    }
+
+}
+
+function imageExists(url, callback) {
+    console.log(url);
+    var img = new Image();
+    img.onload = function() {
+        callback(true);
+    };
+    img.onerror = function() {
+        callback(false);
+    };
+    img.src = url;
+}
+
+
 $(document).ready(function() {
     $("input[name='optradio']").change(function() {
         var option = $('input[name=optradio]:checked').val();
         if (option == "upload") {
-            $("#pic-url").prop("disabled", true);
-            $("#pic-upload").prop("disabled", false);
-            $("#pic-upload").show();
-            $("#pic-url").hide();
+            $("#input-picture").html('<input type="file" id="pic-upload" name="file" accept="image/*" />');
+        } else if (img != undefined) {
+            var img = $("#beer-img").attr('src');
+            $("#input-picture").html('<input type="text" id="pic-url" name="url" placeholder="Image url" value="' + img + '"/>');
         } else {
-            $("#pic-url").prop("disabled", false);
-            $("#pic-upload").prop("disabled", true);
-            $("#pic-upload").hide();
-            $("#pic-url").show();
+            $("#input-picture").html('<input type="text" id="pic-url" name="url" placeholder="Image url"/>');
         }
     });
-
 });
 
 function searchBeers(text) {
@@ -105,6 +138,35 @@ function searchBeers(text) {
 }
 
 function editBeer() {
+    if (validatorBeer.form()) {
+        validateImage();
+    }
+
+}
+
+function validateImage() {
+    if ($("#pic-url") != undefined) {
+        imageExists($("#pic-url").val(), function(exists) {
+            if (exists) {
+                validatorBeer.showErrors({
+                    "url": null
+                });
+                sendEditRequest();
+            } else {
+                validatorBeer.showErrors({
+                    "url": "Please add a valid url image"
+                });
+            }
+        });
+    } else {
+         $("form[name='beer']").submit();
+
+
+    }
+
+}
+
+function sendEditRequest() {
     var params = {};
     params["id"] = $("#id").val();
     params["name"] = $("#name").val();
@@ -117,24 +179,24 @@ function editBeer() {
     params["info"] = $("#info").val();
 
     if ($('#pic-url').val() != "") {
-        params["picture_url"] = $('#pic-url').val();
+        params["file"] = $('#pic-url').val();
     } else {
-        params["picture"] = $('#pic-upload').val();
+        params["url"] = $('#pic-upload').val();
     }
-    if (validatorBeer.form()) {
-        $.ajax({
-            type: "PUT",
-            url: "/beer",
-            data: params,
-            dataType: 'json',
-            success: function(data) {
-                showSuccessMessage(data);
-            },
-            error: function(xhr, status, error) {
-                showErrorMessage(xhr.responseText);
-            }
-        });
-    }
+
+    $.ajax({
+        type: "PUT",
+        url: "/beer",
+        data: params,
+        dataType: 'json',
+        success: function(data) {
+            $("#beer-picture").html('<img src="' + data.beer.picture + '" class="img-responsive zoom-img"/>');
+            showSuccessMessage(data.message);
+        },
+        error: function(xhr, status, error) {
+            showErrorMessage(xhr.responseText);
+        }
+    });
 
 }
 

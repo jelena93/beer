@@ -26,6 +26,9 @@
 (k/defentity comments
   (k/table :comments))
 
+(defn get-text-search [text]
+  (str "%" text "%"))
+
 (defn add-user [params]
   (k/insert user
   (k/values params)))
@@ -53,22 +56,13 @@
           (k/where {:id (:id params)})))
 
 (defn add-beer [params]
-  (println params)
   (k/insert beer
   (k/values params)))
 
-(defn update-beer [id bname origin price style alcohol manufacturer country info picture]
+(defn update-beer [params]
   (k/update beer
-          (k/set-fields {:name bname
-                       :origin origin
-                       :price price
-                       :style style
-                       :alcohol alcohol
-                       :manufacturer manufacturer
-                       :country country
-                       :info info
-                       :picture picture})
-          (k/where {:id id})))
+            (k/set-fields params)
+            (k/where {:id (:id params)})))
 
 (defn delete-beer [id]
   (k/delete beer
@@ -85,15 +79,15 @@
           (k/fields :* [:style.name :sname])
           (k/join style (= :style :style.id))
           (k/where (or {:id text}
-             (like :name text)
+             (like :name (get-text-search text))
              (:origin text)
              (:price text)
              (:style text)
-             (like :alcohol text)
-             (like :country text)
-             (like :manufacturer text)
-             (like :country text)
-             (like :info text)))
+             (like :alcohol (get-text-search text))
+             (like :country (get-text-search text))
+             (like :manufacturer (get-text-search text))
+             (like :country (get-text-search text))
+             (like :info (get-text-search text))))
          (k/order :id :ASC)))
 
 (defn get-styles []
@@ -107,7 +101,9 @@
 
 (defn search-styles [text]
  (k/select style
-  (k/where (or {:id text} (like :name text) (like :description text)))
+  (k/where (or {:id text}
+               (like :name (get-text-search text))
+               (like :description (get-text-search text))))
          (k/order :id :ASC)))
 
 (defn find-style-by-id [id]
