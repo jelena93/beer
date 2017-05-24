@@ -39,16 +39,16 @@
 (defn update-user-in-db [params session]
   (db/update-user (assoc params :id (:id (:identity session)))))
 
-(defn get-user-page [request]
+(defn get-user-page [{:keys [params session]}]
   (cond
-    (not= (authenticated? (:session request)))
+    (not= (authenticated? session))
     (redirect "/login")
-    (not (same-user? (:params request) (:session request)))
+    (not (same-user? params session))
     (redirect "/")
     :else
-    (render-file "templates/user.html" {:title (str "User " (:username (:params request)))
-                                        :logged (:identity (:session request))
-                                        :user (first (db/get-user (:id (:params request))))})))
+    (render-file "templates/user.html" {:title (str "User " (:username params))
+                                        :logged (:identity session)
+                                        :user (first (db/find-user params))})))
 
 (defresource delete-user [{:keys [params session]}]
   :allowed-methods [:delete]
@@ -82,7 +82,7 @@
   :authorized? (authenticated? session)
   :put!  (fn [_] (update-user-pass-in-db session (assoc params :id (:id (:identity session)))))
   :handle-ok (fn [ctx] (ring-response (assoc-in (as-response (json/write-str "Password successfully edited") ctx)
-                                        [:session :identity] (first (db/get-user (:id (:identity session))))))))
+                                        [:session :identity] (first (db/find-user (select-keys (:identity session) [:id])))))))
 
 
 (defroutes user-routes

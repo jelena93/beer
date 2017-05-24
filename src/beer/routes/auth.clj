@@ -34,6 +34,7 @@
 (defn registration-page [&[error]]
   (render-file "templates/register.html" {:title "Register"
                                           :error error}))
+
 (defn get-user-by-username-from-db [params]
   (-> (dissoc params :password)
       (db/find-user)

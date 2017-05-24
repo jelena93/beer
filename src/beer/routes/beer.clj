@@ -9,6 +9,7 @@
             [struct.core :as st]
             [clojure.java.io :as io]
             [liberator.representation :refer [ring-response as-response]]
+            [clojure.set :refer [rename-keys]]
             [ring.util.response :refer [redirect]]))
 
 (def file-config (clojure.edn/read-string (slurp "conf/file-config.edn")))
@@ -71,28 +72,24 @@
     :else
     (-> (get-add-beer-page session {:text "All fields are required" :type "error"}))))
 
+(defn get-beer-page [page params session &[message]]
+  (render-file page {:title (str "Beer " (:id params))
+                     :logged (:identity session)
+                     :message message
+                     :beer (first (db/find-beer params))
+                     :styles (db/get-styles)
+                     :likes (db/find-like (hash-map :beer (:id params)))
+                     :liked (count (db/find-like (hash-map :beer (:id params) :user (:id (:identity session)))))
+                     :comments (db/find-comment (select-keys (rename-keys params {:id :beer}) [:beer]))}))
+
 (defn get-beer [{:keys [params session]} &[message]]
   (cond
     (not (authenticated? session))
     (redirect "/login")
     (authenticated-admin? session)
-    (render-file "templates/beer-admin.html" {:title (str "Beer " (:id params))
-                                        :logged (:identity session)
-                                        :message message
-                                        :beer (first (db/find-beer-by-id (:id params)))
-                                        :styles (db/get-styles)
-                                        :likes (db/get-likes (:id params))
-                                        :liked (count (db/find-user-like-for-beer (:id params) (:id (:identity session))))
-                                        :comments (db/get-comments (:id params))})
+    (get-beer-page "templates/beer-admin.html" params session message)
     :else
-    (render-file "templates/beer-user.html" {:title (str "Beer " (:id params))
-                                        :logged (:identity session)
-                                        :message message
-                                        :beer (first (db/find-beer-by-id (:id params)))
-                                        :styles (db/get-styles)
-                                        :likes (db/get-likes (:id params))
-                                        :liked (count (db/find-user-like-for-beer (:id params) (:id (:identity session))))
-                                        :comments (db/get-comments (:id params))})))
+    (get-beer-page "templates/beer-user.html" params session message)))
 
 (defn get-beers [text]
   (if (or (nil? text)
@@ -105,7 +102,7 @@
                                              :logged (:identity session)
                                              :beers (get-beers nil)}))
 (defn get-beer-picture-from-db [params]
-  (:picture (first (db/find-beer-by-id (:id params)))))
+  (:picture (first (db/find-beer (select-keys params [:id])))))
 
 (defn file-exists? [params]
   (.exists (clojure.java.io/as-file (str (:resources-folder file-config) (get-beer-picture-from-db params)))))
@@ -136,20 +133,20 @@
   :available-media-types ["application/json"]
   :malformed? (fn [_] (not (beer-validation? params)))
   :handle-malformed "All fields are required"
-  :exists? (fn [_] (not (empty? (db/find-beer-by-id (:id params)))))
+  :exists? (fn [_] (not (empty? (db/find-beer (select-keys params [:id])))))
   :can-put-to-missing? false
   :authorized? (authenticated-admin? session)
   :new? false
   :respond-with-entity? true
   :put! (fn [_] (update-beer-in-db params))
-  :handle-ok (fn [_] (json/write-str {:message "Beer successfully edited" :beer (first (db/find-beer-by-id (:id params)))}))
+  :handle-ok (fn [_] (json/write-str {:message "Beer successfully edited" :beer (first (db/find-beer (select-keys params [:id])))}))
   :handle-not-implemented (fn [_] (str "There is no beer with id " (:id params))))
 
 (defresource delete-beer [{:keys [params session]}]
   :allowed-methods [:delete]
   :malformed? (fn [_] (empty? (:id params)))
   :handle-malformed (fn [_] "Please provide an id")
-  :exists? (fn [_] (not (empty? (db/find-beer-by-id (:id params)))))
+  :exists? (fn [_] (not (empty? (db/find-beer params))))
   :handle-not-found (fn [_] (str "There is no beer with id " (:id params)))
   :authorized? (authenticated-admin? session)
   :new? false

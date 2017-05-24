@@ -34,6 +34,7 @@ function send() {
             },
             dataType: 'json',
             success: function(data) {
+              console.log(data);
                 if (data.id != null) {
                     window.location = "/result?style=" + data.id + "&origin=" + data.origin + "&price=" + data.price;
                 } else {

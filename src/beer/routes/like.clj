@@ -11,13 +11,13 @@
   :malformed? (fn [_] (empty? (:beer params)))
   :handle-malformed "Beer id cannot be empty"
   :authorized? (authenticated? session)
-  :exists? (fn [_] (not (empty? (db/get-like (assoc params :user (:id (:identity session)))))))
+  :exists? (fn [_] (not (empty? (db/find-like (assoc params :user (:id (:identity session)))))))
   :handle-not-found (fn [_] (str "There is no beer with id: " (:beer params)))
   :respond-with-entity? true
   :post! (fn [_] (db/add-like (assoc params :user (:id (:identity session)))))
   :delete! (fn [_] (db/delete-like (assoc params :user (:id (:identity session)))))
-  :handle-ok (fn [_] (json/write-str (count (db/get-likes (:beer params)))))
-  :handle-created (fn [_] (json/write-str (count (db/get-likes (:beer params)))))
+  :handle-ok (fn [_] (json/write-str (count (db/find-like))))
+  :handle-created (fn [_] (json/write-str (count (db/find-like params))))
   :available-media-types ["application/json"])
 
 

@@ -330,9 +330,14 @@
   (.setStyleName ?q "Bock")
   (println "lager-dark-strong"))
 
+(defquery get-question []
+  [?q <- Question])
+
+(defn show-question [session]
+  (query session get-question))
+
 (defn ask-question [q]
   (-> (mk-session 'beer.models.rule)
-    (insert
-      q)
-    (fire-rules)))
-
+      (insert q)
+      (fire-rules)
+      (show-question)))

@@ -33,17 +33,14 @@
   (k/insert user
   (k/values params)))
 
-(defn get-user [id]
-  (k/select  user
-  (k/where {:id id})))
-
 (defn delete-user [id]
   (k/delete user
   (k/where {:id id})))
 
 (defn find-user [params]
   (k/select user
-  (k/where params)))
+            (k/where params)
+            (k/order :id :ASC)))
 
 (defn get-users []
   (k/select user
@@ -76,60 +73,42 @@
 
 (defn search-beers [text]
   (k/select beer
-          (k/fields :* [:style.name :sname])
-          (k/join style (= :style :style.id))
-          (k/where (or {:id text}
-             (like :name (get-text-search text))
-             (:origin text)
-             (:price text)
-             (:style text)
-             (like :alcohol (get-text-search text))
-             (like :country (get-text-search text))
-             (like :manufacturer (get-text-search text))
-             (like :country (get-text-search text))
-             (like :info (get-text-search text))))
-         (k/order :id :ASC)))
+            (k/fields :* [:style.name :sname])
+            (k/join style (= :style :style.id))
+            (k/where
+              (or (like :name (get-text-search text))
+                  (:style.name (get-text-search text))
+                  (like :alcohol (get-text-search text))
+                  (like :country (get-text-search text))
+                  (like :manufacturer (get-text-search text))
+                  (like :country (get-text-search text))))
+            (k/order :id :ASC)))
+
+(defn find-beer [params]
+  (k/select beer
+            (k/fields :* [:style.name :sname])
+            (k/join style (= :style :style.id))
+            (k/where params)
+            (k/order :id :ASC)))
 
 (defn get-styles []
   (k/select style
             (k/order :id :ASC)))
 
-(defn update-style [params]
+(defn update-style [{:keys [id description]}]
   (k/update style
-          (k/set-fields {:description (:description params)})
-          (k/where {:id (:id params)})))
+          (k/set-fields {:description description})
+          (k/where {:id id})))
 
 (defn search-styles [text]
- (k/select style
-  (k/where (or {:id text}
-               (like :name (get-text-search text))
-               (like :description (get-text-search text))))
-         (k/order :id :ASC)))
-
-(defn find-style-by-id [id]
   (k/select style
-  (k/where {:id id})))
+            (k/where (like :name (get-text-search text)))
+            (k/order :id :ASC)))
 
-(defn find-style-by-name [bs-name]
+(defn find-style [params]
   (k/select style
-  (k/where {:name bs-name})
-          (k/order :id :ASC)))
-
-(defn find-beer-by-id [id]
-  (k/select beer
-        (k/fields :* [:style.name :sname])
-        (k/join style (= :style :style.id))
-  (k/where {:id id})))
-
-(defn get-beers-for-style [bs-id]
-  (k/select beer
-          (k/where {:style bs-id})
-          (k/order :beer.id :ASC)))
-
-(defn find-beer-by-style-origin-price [bs-id origin price]
-  (k/select beer
-          (k/where {:style bs-id :origin origin :price price})
-          (k/order :beer.id :ASC)))
+            (k/where params)
+            (k/order :id :ASC)))
 
 (defn add-like [params]
   (k/insert likes
@@ -139,22 +118,14 @@
   (k/delete likes
   (k/where params)))
 
-(defn get-likes [beer]
-  (k/select  likes
-  (k/where {:beer beer})))
-
 (defn get-likes-count []
-  (k/select  likes
+  (k/select likes
           (k/fields :beer.name)
           (k/aggregate (count :*) :number)
           (k/group :beer)
           (k/join beer (= :beer :beer.id))))
 
-(defn find-user-like-for-beer [beer user]
-  (k/select likes
-  (k/where {:beer beer :user user})))
-
-(defn get-like [params]
+(defn find-like [params]
   (k/select likes
   (k/where params)))
 
@@ -162,16 +133,12 @@
   (k/insert comments
             (k/values (assoc params :date (c/to-sql-time (t/now))))))
 
-(defn get-comments [beer]
+(defn find-comment [{:keys [id]}]
   (k/select comments
           (k/fields :* :user.name :user.surname)
           (k/join user (= :user :user.id))
-          (k/where {:beer beer})
+          (k/where {:beer id})
           (k/order :id :ASC)))
-
-(defn find-comment-by-id [id]
-  (k/select comments
-  (k/where {:id id})))
 
 (defn get-comments-count []
   (k/select comments
