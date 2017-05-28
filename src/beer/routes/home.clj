@@ -14,7 +14,8 @@
 (defn get-home-page [page session]
   (render-file page
                {:title "Home"
-                :logged (:identity session)}))
+                :logged (:identity session)
+                :beers (db/get-beers)}))
 
 (defn home [session]
   (cond

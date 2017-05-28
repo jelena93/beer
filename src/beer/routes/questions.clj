@@ -10,48 +10,65 @@
             [buddy.auth :refer [authenticated?]])
   (:import [beer.models.question Question]))
 
-;; (def q (->Question nil nil nil nil nil nil 0 0 nil nil nil nil))
-
-(defn get-question-as-map [q]
-  {:text (.getText q)
-   :suggestedAnswers (.getSuggestedAnswers q)
-   :id (.getStyleId q)
-   :origin (.getOrigin q)
-   :price (.getPrice q)})
-
-(defn ask-question [params session]
-  (render-file "templates/question.html" {:title "Questions"
-                                          :logged (:identity session)
-                                          :question (get-question-as-map (:?q (first (rules/ask-question (->Question nil nil nil nil nil nil 0 0 nil nil nil nil)))))}))
-
-(defn get-question-page [{:keys [params session]}]
-  (if-not (authenticated? session)
-    (redirect "/login")
-    (ask-question params session)))
-
-(defn get-question-from-rules [{:keys [answer]}]
-  (.setAnswer q answer)
-  (rules/ask-question (:?q (first (rules/ask-question (->Question nil nil nil nil nil nil 0 0 nil nil nil nil)))))
+(defn question->map [q]
+  (.setAnswer q nil)
   (if-not (nil? (.getStyleName q))
     (.setStyleId q (->(.getStyleName q)
                       (hash-map :name)
                       (db/find-style)
                       (first)
-                      (:id)))))
+                      (:id))))
+  (println "posle: " q)
+  {:text (.getText q)
+   :answer (.getAnswer q)
+   :suggestedAnswers (.getSuggestedAnswers q)
+   :id (.getStyleId q)
+   :style (.getStyleName q)
+   :type (.getStyleType q)
+   :price (.getPrice q)
+   :origin (.getOrigin q)
+   :location (.getLocation q)
+   :strength (.getStrength q)
+   :color (.getColor q)
+   :taste (.getTaste q)})
+
+(defn map->question [{:keys [question]}]
+  (->Question (:text question)
+              (:answer question)
+              (:suggestedAnswers nil)
+              (:id question)
+              (:style question)
+              (:type question)
+              (:price question)
+              (:origin question)
+              (:location question)
+              (:strength question)
+              (:color question)
+              (:taste question)))
+
+(defn get-question-page [{:keys [params session]}]
+  (if-not (authenticated? session)
+    (redirect "/login")
+    (render-file "templates/question.html" {:title "Questions"
+                                            :logged (:identity session)})))
+
+(defn get-question-from-rules [params]
+    (-> (map->question params)
+        (rules/ask-question)
+        (first)
+        (:?q)
+        (question->map)))
 
 (defn find-style-result [{:keys [params session]}]
   (if-not (authenticated? session)
     (redirect "/login")
     (render-file "templates/style-user.html" {:title "Style"
-                                           :logged (:identity session)
-                                           :style (first (db/find-style (select-keys params [:style])))
-                                           :beers (db/find-beer (select-keys params [:style :origin :price]))})))
-
+                                              :logged (:identity session)
+                                              :style (first (db/find-style (select-keys params [:id])))
+                                              :beers (db/find-beer (select-keys params [:id :origin :price]))})))
 
 (defresource get-question [{:keys [params session]}]
   :allowed-methods [:post]
-  :malformed? (fn [_] (empty? (:answer params)))
-  :handle-malformed "Answer is required"
   :authorized? (fn [_] (authenticated? session))
   :new? false
   :respond-with-entity? true

@@ -2,7 +2,6 @@
   (:require [clojure.java.jdbc :as sql]
             [korma.core :as k]
             [korma.db :refer [defdb mysql]]
-            [clojure.set :as cs]
             [clj-time.coerce :as c]
             [clj-time.core :as t])
   (:import java.sql.DriverManager))
@@ -48,6 +47,7 @@
   (k/order :id :ASC)))
 
 (defn update-user [params]
+  (println params)
   (k/update user
           (k/set-fields params)
           (k/where {:id (:id params)})))
@@ -133,11 +133,11 @@
   (k/insert comments
             (k/values (assoc params :date (c/to-sql-time (t/now))))))
 
-(defn find-comment [{:keys [id]}]
+(defn find-comment [params]
   (k/select comments
           (k/fields :* :user.name :user.surname)
           (k/join user (= :user :user.id))
-          (k/where {:beer id})
+          (k/where params)
           (k/order :id :ASC)))
 
 (defn get-comments-count []

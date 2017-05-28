@@ -20,9 +20,9 @@
   :ring {:handler beer.handler/app
          :init beer.handler/init
          :destroy beer.handler/destroy}
-:migratus {:store :database
-           :migration-dir "migrations"
-           :db (clojure.edn/read-string (slurp "conf/migratus-config.edn"))}
+  :migratus {:store :database
+             :migration-dir "migrations"
+             :db (clojure.edn/read-string (slurp "conf/migratus-config.edn"))}
   :profiles
   {:uberjar {:aot :all}
    :production

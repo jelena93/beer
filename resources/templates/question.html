@@ -1,8 +1,9 @@
 {% extends "templates/base.html" %}
 {% block content %}
+<script type="text/javascript" src="/js/questions.js"></script>
 <div class="contact">
    <div class="container">
-     <h3 id="question-text">{{question.text}}</h3>
+     <h3 id="question-text"></h3>
      <hr/>
       <div class="row">
          <div class="col-lg-4 col-lg-offset-4">
@@ -19,14 +20,7 @@
               </div>
           </div>
           <div class="quiz" id="quiz" data-toggle="buttons">
-               {% for suggestedAnswer in question.suggestedAnswers %}
-              <label id="label-quiz" class="element-animation{{forloop.counter}} btn btn-lg btn-primary btn-block" onclick="sendAnswer(this)">
-                <span class="btn-label">
-                <i class="glyphicon glyphicon-chevron-right"></i></span>
-                <input type="radio" name="answer" value="{{suggestedAnswer}}">{{suggestedAnswer}}
-            </label>
-               {% endfor %}
-            </div>
+           </div>
            </div>
          </div>
       </div>

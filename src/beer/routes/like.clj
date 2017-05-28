@@ -16,7 +16,7 @@
   :respond-with-entity? true
   :post! (fn [_] (db/add-like (assoc params :user (:id (:identity session)))))
   :delete! (fn [_] (db/delete-like (assoc params :user (:id (:identity session)))))
-  :handle-ok (fn [_] (json/write-str (count (db/find-like))))
+  :handle-ok (fn [_] (json/write-str (count (db/find-like params))))
   :handle-created (fn [_] (json/write-str (count (db/find-like params))))
   :available-media-types ["application/json"])
 

@@ -337,6 +337,7 @@
   (query session get-question))
 
 (defn ask-question [q]
+  (println "pre:" q)
   (-> (mk-session 'beer.models.rule)
       (insert q)
       (fire-rules)

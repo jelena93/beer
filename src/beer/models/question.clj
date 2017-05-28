@@ -42,7 +42,8 @@
    ^:volatile-mutable taste]
   PQuestion
 
-  (toString [this] (str "text:" text "id: " styleId " name: " styleName " location: " location " type: " styleType " origin: " origin " price: " price " taste: " taste " color: " color))
+  (toString [this] (str "text:" text ",answer:" answer ",suggested:" suggestedAnswers ",id:" styleId ",name:" styleName ",type:" styleType
+      ",price:" price ",origin:" origin ",location:" location ",strength:" strength ",color:" color ",taste:" taste))
   (getText [this] text)
   (setText [this val] (set! text val))
   (getAnswer [this] answer)

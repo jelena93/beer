@@ -33,7 +33,7 @@
      (str (:id (:identity session)))))
 
 (defn update-user-pass-in-db [params session]
-  (->(update-in (:identity session) [:password] bcrypt/crypt-password)
+  (->(update-in params [:password] bcrypt/crypt-password)
      (db/update-user)))
 
 (defn update-user-in-db [params session]
@@ -80,7 +80,7 @@
   :new? false
   :respond-with-entity? true
   :authorized? (authenticated? session)
-  :put!  (fn [_] (update-user-pass-in-db session (assoc params :id (:id (:identity session)))))
+  :put!  (fn [_] (update-user-pass-in-db (assoc params :id (:id (:identity session))) session))
   :handle-ok (fn [ctx] (ring-response (assoc-in (as-response (json/write-str "Password successfully edited") ctx)
                                         [:session :identity] (first (db/find-user (select-keys (:identity session) [:id])))))))
 
