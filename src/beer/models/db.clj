@@ -47,10 +47,9 @@
   (k/order :id :ASC)))
 
 (defn update-user [params]
-  (println params)
   (k/update user
-          (k/set-fields params)
-          (k/where {:id (:id params)})))
+            (k/set-fields params)
+            (k/where {:id (:id params)})))
 
 (defn add-beer [params]
   (k/insert beer
@@ -75,13 +74,13 @@
   (k/select beer
             (k/fields :* [:style.name :sname])
             (k/join style (= :style :style.id))
-            (k/where
-              (or (like :name (get-text-search text))
-                  (:style.name (get-text-search text))
-                  (like :alcohol (get-text-search text))
-                  (like :country (get-text-search text))
-                  (like :manufacturer (get-text-search text))
-                  (like :country (get-text-search text))))
+            (k/where (or
+                       {:id text}
+                       {:name [like (get-text-search text)]}
+                       {:style.name [like (get-text-search text)]}
+                       {:alcohol text}
+                       {:country [like (get-text-search text)]}
+                       {:manufacturer [like (get-text-search text)]}))
             (k/order :id :ASC)))
 
 (defn find-beer [params]
@@ -102,7 +101,9 @@
 
 (defn search-styles [text]
   (k/select style
-            (k/where (like :name (get-text-search text)))
+            (k/where (or
+                       {:id text}
+                       {:name [like (get-text-search text)]}))
             (k/order :id :ASC)))
 
 (defn find-style [params]

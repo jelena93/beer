@@ -10,9 +10,19 @@
             [clojure.java.io :as io]
             [liberator.representation :refer [ring-response as-response]]
             [clojure.set :refer [rename-keys]]
+            [clojure.string :as str]
             [ring.util.response :refer [redirect]]))
 
 (def file-config (clojure.edn/read-string (slurp "conf/file-config.edn")))
+
+(defn create-file-name [{:keys [fname content-type]}]
+  (str (:short-img-location file-config) fname "." (last (str/split content-type #"/"))))
+
+(defn get-picture-url [params]
+  (if (contains? params :url)
+    (:url params)
+    (->(assoc (:file params) :fname (:name params))
+       (create-file-name))))
 
 (def beer-schema
   {:name [st/required st/string]
@@ -25,15 +35,6 @@
    :info [st/required st/string]
    :picture [st/required st/string]})
 
-(defn authenticated-admin? [session]
-  (and (authenticated? session)
-       (="admin" (:role (:identity session)))))
-
-(defn get-picture-url [params]
-  (if (contains? params :url)
-    (:url params)
-    (str (:short-img-location file-config) (:filename (:file params)))))
-
 (defn beer-validation? [params]
   (st/valid? {:name (:name params)
               :origin (read-string (:origin params))
@@ -45,8 +46,12 @@
               :info (:info params)
               :picture (get-picture-url params)} beer-schema))
 
-(defn upload-picture [{:keys [filename tempfile]}]
-  (io/copy tempfile (io/file (:full-img-location file-config) filename)))
+(defn authenticated-admin? [session]
+  (and (authenticated? session)
+       (="admin" (:role (:identity session)))))
+
+(defn upload-picture [{:keys [fname tempfile]}]
+  (io/copy tempfile (io/file (:resources-folder file-config) fname)))
 
 (defn get-add-beer-page [session &[message]]
   (if-not (authenticated? session)
@@ -57,11 +62,13 @@
                                             :styles (db/get-styles)})))
 
 (defn add-beer->db [params]
-  (if-not (contains? params :url)
-    (upload-picture (:file params)))
-  (-> (dissoc (assoc params :picture (get-picture-url params)) :file :url)
-    (db/add-beer)
-    (:generated_key)))
+  (let [file (get-picture-url params)]
+    (if-not (contains? params :url)
+      (->(assoc (:file params) :fname file))
+      (upload-picture))
+    (-> (dissoc (assoc params :picture file) :file :url)
+        (db/add-beer)
+        (:generated_key))))
 
 (defn add-beer [{:keys [params session]}]
   (cond
@@ -70,7 +77,8 @@
     (beer-validation? params)
     (redirect (str "/beer/" (add-beer->db params)))
     :else
-    (-> (get-add-beer-page session {:text "All fields are required" :type "error"}))))
+    (-> (get-add-beer-page session {:text "All fields are required"
+                                    :type "error"}))))
 
 (defn get-beer-page [page params session &[message]]
   (render-file page {:title (str "Beer " (:id params))
@@ -107,11 +115,13 @@
 (defn file-exists? [params]
   (.exists (clojure.java.io/as-file (str (:resources-folder file-config) (get-beer-picture-from-db params)))))
 
-(defn update-beer-in-db [params]
-  (if (file-exists? params)
-  (io/delete-file (str (:resources-folder file-config) (get-beer-picture-from-db params)))
-  (-> (dissoc (assoc params :picture (get-picture-url params)) :file :url)
-    (db/update-beer))))
+(defn update-beer-data [params]
+  (let [file (get-picture-url params)]
+    (if-not (contains? params :url)
+      (->(assoc (:file params) :fname file)
+         (upload-picture)))
+    (->(dissoc (assoc params :picture (get-picture-url params)) :file :url)
+      (db/update-beer))))
 
 (defresource search-beers [{:keys [params session]}]
   :allowed-methods [:post]
@@ -124,9 +134,11 @@
   :available-media-types ["text/html" "application/json"]
   :authorized? (fn [_] (authenticated-admin? session))
   :handle-ok #(let [media-type (get-in % [:representation :media-type])]
-                    (condp = media-type
-                      "text/html" (get-search-beers params session)
-                      "application/json" (json/write-str (get-beers (:text params))))))
+                (condp = media-type
+                  "text/html" (get-search-beers params session)
+                  "application/json" (->(:text params)
+                                        (get-beers)
+                                        (json/write-str)))))
 
 (defresource update-beer [{:keys [params session]}]
   :allowed-methods [:put]
@@ -138,8 +150,11 @@
   :authorized? (authenticated-admin? session)
   :new? false
   :respond-with-entity? true
-  :put! (fn [_] (update-beer-in-db params))
-  :handle-ok (fn [_] (json/write-str {:message "Beer successfully edited" :beer (first (db/find-beer (select-keys params [:id])))}))
+  :put! (fn [_] (update-beer-data params))
+  :handle-ok (fn [_] (json/write-str {:message "Beer successfully edited"
+                                      :beer (->(select-keys params [:id])
+                                               (db/find-beer)
+                                               (first))}))
   :handle-not-implemented (fn [_] (str "There is no beer with id " (:id params))))
 
 (defresource delete-beer [{:keys [params session]}]

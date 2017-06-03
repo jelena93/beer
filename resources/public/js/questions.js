@@ -37,7 +37,7 @@ function send() {
         dataType: 'json',
         success: function(data) {
             if (data.id != null && data.id != "") {
-                window.location = "/result?id=" + data.id + "&origin=" + data.origin + "&price=" + data.price;
+                window.location = "/result?style=" + data.id + "&origin=" + data.origin + "&price=" + data.price;
             } else {
                 $("#question-text").text(data.text);
                 question["text"] = data.text;

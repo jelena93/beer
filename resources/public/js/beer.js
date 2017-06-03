@@ -1,4 +1,7 @@
 var validatorBeer;
+$.validator.addMethod("url2", function(value, element) {
+    return this.optional(element) || /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)*(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(value);
+}, $.validator.messages.url);
 $(function() {
     validatorBeer = $("form[name='beer']").validate({
         rules: {
@@ -22,7 +25,8 @@ $(function() {
                 required: true
             },
             url: {
-                required: true
+                required: true,
+                url2: true
             }
         },
         messages: {
@@ -45,7 +49,7 @@ $(function() {
                 required: "Please provide a file picture"
             },
             url: {
-                required: "Please provide a url picture"
+                required: "Please provide a valid url"
             }
         },
         submitHandler: function(form) {
@@ -55,56 +59,27 @@ $(function() {
     });
 });
 
-function validation() {
-    if (validatorBeer.form()) {
-        if ($("#pic-url").length>0) {
-            imageExists($("#pic-url").val(), function(exists) {
-                if (exists) {
-                    validatorBeer.showErrors({
-                        "url": null
-                    });
-                     $("form[name='beer']").submit();
-                } else {
-                    validatorBeer.showErrors({
-                        "url": "Please add a valid url image"
-                    });
-                }
-            });
-        } else {
-             $("form[name='beer']").submit();
-
-        }
-
-    }
-
-}
-
-function imageExists(url, callback) {
-    console.log(url);
-    var img = new Image();
-    img.onload = function() {
-        callback(true);
-    };
-    img.onerror = function() {
-        callback(false);
-    };
-    img.src = url;
-}
-
-
 $(document).ready(function() {
+    test();
     $("input[name='optradio']").change(function() {
-        var option = $('input[name=optradio]:checked').val();
-        if (option == "upload") {
-            $("#input-picture").html('<input type="file" id="pic-upload" name="file" accept="image/*" />');
-        } else if (img != undefined) {
-            var img = $("#beer-img").attr('src');
-            $("#input-picture").html('<input type="text" id="pic-url" name="url" placeholder="Image url" value="' + img + '"/>');
-        } else {
-            $("#input-picture").html('<input type="text" id="pic-url" name="url" placeholder="Image url"/>');
-        }
+        test();
     });
 });
+
+function test() {
+    var option = $('input[name=optradio]:checked').val();
+    var img = $("#beer-img").attr('src');
+    if (option == "upload") {
+        $("#input-picture").html('<input type="file" id="pic-upload" name="file" accept="image/*" />');
+    } else if (img != undefined) {
+        if (img.indexOf("http") < 0) {
+            img = location.protocol + '//' + location.host + img;
+        }
+        $("#input-picture").html('<input type="text" id="pic-url" name="url" placeholder="Image url" value="' + img + '"/>');
+    } else {
+        $("#input-picture").html('<input type="text" id="pic-url" name="url" placeholder="Image url"/>');
+    }
+}
 
 function searchBeers(text) {
     $.ajax({
@@ -139,56 +114,34 @@ function searchBeers(text) {
 
 function editBeer() {
     if (validatorBeer.form()) {
-        validateImage();
-    }
-
-}
-
-function validateImage() {
-    if ($("#pic-url") != undefined) {
-        imageExists($("#pic-url").val(), function(exists) {
-            if (exists) {
-                validatorBeer.showErrors({
-                    "url": null
-                });
-                sendEditRequest();
-            } else {
-                validatorBeer.showErrors({
-                    "url": "Please add a valid url image"
-                });
-            }
-        });
-    } else {
-         $("form[name='beer']").submit();
-
-
+        sendEditRequest();
     }
 
 }
 
 function sendEditRequest() {
-    var params = {};
-    params["id"] = $("#id").val();
-    params["name"] = $("#name").val();
-    params["origin"] = $('input[name=origin]:checked').val();
-    params["price"] = $('input[name=price]:checked').val();
-    params["style"] = $("#style").val();
-    params["alcohol"] = $("#alcohol").val();
-    params["manufacturer"] = $("#manufacturer").val();
-    params["country"] = $("#country").val();
-    params["info"] = $("#info").val();
-
-    if ($('#pic-url').val() != "") {
-        params["file"] = $('#pic-url').val();
+    var params = new FormData();
+    params.append("id", $("#id").val());
+    params.append("name", $("#name").val());
+    params.append("origin", $('input[name=origin]:checked').val());
+    params.append("price", $('input[name=price]:checked').val());
+    params.append("style", $("#style").val());
+    params.append("alcohol", $("#alcohol").val());
+    params.append("manufacturer", $("#manufacturer").val());
+    params.append("country", $("#country").val());
+    params.append("info", $("#info").val());
+    if ($('#pic-url').length > 0) {
+        params.append("url", $('#pic-url').val());
     } else {
-        params["url"] = $('#pic-upload').val();
+        params.append('file', $('#pic-upload')[0].files[0]);
     }
-
     $.ajax({
         type: "PUT",
         url: "/beer",
         data: params,
         dataType: 'json',
+        processData: false,
+        contentType: false,
         success: function(data) {
             $("#beer-picture").html('<img src="' + data.beer.picture + '" class="img-responsive zoom-img"/>');
             showSuccessMessage(data.message);

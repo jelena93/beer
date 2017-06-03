@@ -65,7 +65,7 @@
     (render-file "templates/style-user.html" {:title "Style"
                                               :logged (:identity session)
                                               :style (first (db/find-style (select-keys params [:id])))
-                                              :beers (db/find-beer (select-keys params [:id :origin :price]))})))
+                                              :beers (db/find-beer (select-keys params [:style :origin :price]))})))
 
 (defresource get-question [{:keys [params session]}]
   :allowed-methods [:post]

@@ -26,7 +26,7 @@
   (if (or (nil? text)
           (= "" text))
     (db/get-styles)
-    (db/search-styles (str "%" text "%"))))
+    (db/search-styles text)))
 
 (defn get-style [page-name params session]
   (render-file page-name {:title "Style"

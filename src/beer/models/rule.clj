@@ -8,6 +8,8 @@
   [?q <- Question (= nil text) (= nil answer)]
   =>
   (.setText ?q "Where would you rather drink beer?")
+  (.setOrigin ?q 0)
+  (.setPrice ?q 0)
   (.setSuggestedAnswers ?q ["At home" "In front of a building" "In a pub" "In a club"])
   (println "location"))
 
@@ -94,7 +96,7 @@
   (println "lager-dark-strength"))
 
 (defrule lager-light-location-building-end
-  [?q <- Question (= "Do you prefer low or strong alcohol drinks?" text) (not= nil answer) (= "Lager" styleType) (= "In front of a building" location)]
+  [?q <- Question (= "You most like your beer?" text) (not= nil answer) (= "Lager" styleType) (= "In front of a building" location)]
   =>
   (.setTaste ?q (.getAnswer ?q))
   (println "lager-light-location-building-end"))
