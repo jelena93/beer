@@ -39,7 +39,7 @@ Beer recommendation Clojure project was generated using Leiningen, Ring and Comp
 
 ## Prerequisites
 
-You will need Leiningen 1.7.0 or above and MySql 5.6.17 or above installed.
+You will need Leiningen 1.7.0 or above and MySql installed.
 
 ## Running
 
@@ -49,14 +49,17 @@ These are steps for running the application:
 
 	CREATE DATABASE beer DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
 
-You can change this configuration in conf/db-config.edn: {:db "beer" :user "admin" :password "admin"}
+You can change database configuration in conf/db-config.edn: 
+    
+    {:db "beer" :user "admin" :password "admin"}
 
 2. Navigate to your project directory and execute the following command in the command line for database migrations:
 
     lein migratus migrate
 
 You can change configuration for database migration in conf/migratus-config.edn: 
-{:classname "com.mysql.jdbc.Driver" :subprotocol "mysql" :subname "//localhost/beer" :user "admin" :password "admin"}
+    
+    {:classname "com.mysql.jdbc.Driver" :subprotocol "mysql" :subname "//localhost/beer" :user "admin" :password "admin"}
 
 3. To start a web server for the application, run:
 
@@ -97,14 +100,14 @@ If the user is logged in as admin:
 
 2.3. Style page - Displays style's name, description and all beers of that style. Admin can edit description and delete beers on this page.
 
-2.4. Add beer - Admin can add new beer to the system, by providing new beer's name, origin(domestic, imported), price(expensive, cheap), style (by choosing one of the existing beer styles), pictue(either as url or by uploading image), alcohol(in %), country and info. All the information is required. Validation exists in fronted - [jQuery Validation Plugin][12] and in backend - [Structural validation library][13]
+2.4. Add beer - Admin can add new beer to the system, by providing new beer name, origin (domestic, imported), price (expensive, cheap), style (by choosing one of the existing beer styles), picture (either url or by uploading image), alcohol (in %), country and info. All the information is required. Validation exists in fronted - [jQuery Validation Plugin][12] and in backend - [Structural validation library][13]
 
 [12]: https://jqueryvalidation.org/
 [13]: https://github.com/funcool/struct
 
 2.5. Searh beers - search by beer id, name, beer style, alcohol, manufacturer or country (Rest Api), by clicking on one of the beers admin is redirected to the page of that beer, which has more detailed information and where he can delete or edit selected beer.
 
-2.6. Beer page - displays beer's data. Admin can edit all of beer's information or delete beer. Also admin can delete user comments on that beer, if he finds them inappropriate.
+2.6. Beer page - displays beer's data. Admin can edit all of beer's information or delete beer. Also admin can delete user comments on that beer.
 
 If the user is logged in as user:
 
@@ -116,19 +119,19 @@ If the user is logged in as user:
 
 The following dependencies were added to the project:
 
-				 [org.clojure/clojure "1.8.0"]
-                 [compojure "1.5.2"]
-                 [selmer "1.10.7"]
-                 [ring-server "0.4.0"]
-                 [org.clojure/java.jdbc "0.6.1"]
-                 [com.cerner/clara-rules "0.14.0"]
-                 [buddy/buddy-auth "1.4.1"]
-                 [bcrypt-clj "0.3.3"]
-                 [mysql/mysql-connector-java "5.1.6"]
-                 [liberator "0.10.0"]
-                 [ring/ring-json "0.4.0"]
-                 [migratus "0.8.28"]
-                 [korma/korma "0.4.3"]
-                 [funcool/struct "1.0.0"]
+                [org.clojure/clojure "1.8.0"]
+                [compojure "1.5.2"]
+                [selmer "1.10.7"]
+                [ring-server "0.4.0"]
+                [org.clojure/java.jdbc "0.6.1"]
+                [com.cerner/clara-rules "0.14.0"]
+                [buddy/buddy-auth "1.4.1"]
+                [bcrypt-clj "0.3.3"]
+                [mysql/mysql-connector-java "5.1.6"]
+                [liberator "0.10.0"]
+                [ring/ring-json "0.4.0"]
+                [migratus "0.8.28"]
+                [korma/korma "0.4.3"]
+                [funcool/struct "1.0.0"]
 
-The project was developed as part of the assignment for the course Software Engineering Tools and Methodology on Master's studies - Software Engineering and Computer Science at the Faculty of Organization Sciences, University of Belgrade, Serbia. 
+The project was developed as part of the assignment for the course Software Engineering Tools and Methodology on Master's studies - Software Engineering and Computer Sciences at the Faculty of Organization Sciences, University of Belgrade, Serbia. 

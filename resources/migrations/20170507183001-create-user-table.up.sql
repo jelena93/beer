@@ -11,5 +11,5 @@ CREATE TABLE IF NOT EXISTS user (
 --;;
 INSERT INTO user
 (username, password, name, surname, email, role) VALUES
-('a', '$2a$04$nICDa2s1MO7K9AidBviC7.7UPhsGqSOt3YJZbA/AymcEhAGZzViAK', 'Test', 'Admin', 'admin@gmail.com', 'admin'),
-('u', '$2a$04$D6IyS9yfO1wrkwAFi0uIr.vH5Ee.vp3QJI1ZijyfmUT1VSjH40CTu', 'Test', 'User', 'user@gmail.com', 'user');
+('admin', '$2a$04$RNs5Xtjo7F3upPGzSbVPTOfEOPkevYQYk96t82l4A47UenCK6l9Ou', 'Test', 'Admin', 'admin@gmail.com', 'admin'),
+('user', '$2a$04$s5fLFIIAa/BQhRgFicH6b.p3GhnJx.RJgdk6wv1ZygVrrtz5X.zlO', 'Test', 'User', 'user@gmail.com', 'user');
