@@ -15,7 +15,7 @@
    :password [st/required st/string]
    :name [st/required st/string]
    :surname [st/required st/string]
-   :email [st/required st/email]})
+   :email [st/required st/string]})
 
 (defn login-validaton? [params]
   (st/valid? {:username (:username params)
